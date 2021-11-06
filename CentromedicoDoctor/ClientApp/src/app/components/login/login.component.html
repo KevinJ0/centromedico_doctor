@@ -1,0 +1,46 @@
+<main>
+
+
+    <mat-card class="login-card">
+          <mat-card-content class="acceso" [@inOutAnimation]>
+            <form [formGroup]="loginFormGroup" (ngSubmit)="Login()" class="login-form">
+              <div class="mat-card-header">
+                CUENTA DE INGRESO
+              </div>
+
+              <mat-form-field floatLabel="always" appearance="outline" class="email">
+                <mat-label>Correo</mat-label>
+                <input [style.fontSize.px]="getFontSize()" type="email" matInput formControlName="loginEmailControl" [errorStateMatcher]="matcher"
+                       >
+                <mat-error *ngIf="loginFormGroup.get('loginEmailControl').hasError('email') && !loginFormGroup.get('loginEmailControl').hasError('required')">
+                  Por favor ingrese un correo válido
+                </mat-error>
+                <mat-error *ngIf="loginFormGroup.get('loginEmailControl').hasError('required')">
+                  Correo <strong>requerido</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field floatLabel="always" appearance="outline" class="password">
+                <mat-label>Contraseña</mat-label>
+                <input  [style.fontSize.px]="getFontSize()"  [errorStateMatcher]="matcher" formControlName="loginPasswordControl" matInput [type]="hide ? 'password' : 'text'">
+                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                  <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                </button>
+
+                <mat-error *ngIf="loginFormGroup.get('loginPasswordControl').hasError('required')">
+                  Contraseña <strong>requerida</strong>
+                </mat-error>
+              </mat-form-field>
+
+              <h5 class="forgotpass"><a href="#">¿Contraseña olvidada?</a></h5>
+              <button [disabled]="loading" type="submit" mat-flat-button color="primary">
+               Entrar
+              </button>
+            </form>
+          </mat-card-content>
+
+    </mat-card>
+
+
+
+</main>

@@ -1,0 +1,31 @@
+[class~="mat-icon"] {
+  height: 4rem;
+  width: 4rem;
+  font-size: 4rem;
+  margin-right: 5px;
+}
+
+.mat-icon-error {
+  color: #dc3545;
+}
+
+.mat-icon-warning {
+  color: #ffc107;
+}
+
+.mat-icon-info {
+  color: #4a93ff;
+}
+
+.mat-dialog-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.message {
+  margin: 0;
+}
