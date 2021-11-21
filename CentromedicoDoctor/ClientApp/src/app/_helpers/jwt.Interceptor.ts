@@ -4,6 +4,7 @@ import { AccountService } from '../services/account.service';
 import { Observable, BehaviorSubject, pipe, throwError } from 'rxjs';
 import { tap, catchError, switchMap, finalize, filter, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ClassGetter } from '@angular/compiler/src/output/output_ast';
 
 
 @Injectable({
@@ -28,7 +29,6 @@ export class JwtInterceptor implements HttpInterceptor {
         "Content-Type": "application/json",
         Authorization: "Bearer " + token
       }
-
     });
 
     return next.handle(authReq).pipe(
@@ -49,13 +49,14 @@ export class JwtInterceptor implements HttpInterceptor {
           if ((<HttpErrorResponse>err).status == 401 && grantType == "refresh_token") {
 
             console.log("TokenRefresh has expired");
-            this.router.navigate(['/paciente-login']);
-            return <any>this.acct.logout();
+            this.router.navigate(['login']);
+            this.acct.logout();
+            return throwError(err);
 
           } else {
             switch ((<HttpErrorResponse>err).status) {
               case 401:
-                console.log("Token expired. Attempting refresh ...");
+                console.log("Token expired. Attempting refresh...");
                 return this.handleHttpResponseError(request, next);
               case 400:
                 return this.handleError(<HttpErrorResponse>err);
@@ -69,7 +70,6 @@ export class JwtInterceptor implements HttpInterceptor {
           return throwError(this.handleError);
         }
       })
-
     );
 
   }
@@ -82,20 +82,21 @@ export class JwtInterceptor implements HttpInterceptor {
 
     try {
 
-    if (errorResponse.error instanceof ErrorEvent) {
-      // A client-side or network error occurred. Handle it accordingly.
-      errorMsg = "Un error ha ocurrido del lado del cliente: " + errorResponse.error.message;
-    } else {
-
-      console.log(typeof errorResponse.error.error[0]) 
-      if (errorResponse.error.customError && (typeof errorResponse.error.error[0] === 'string' || errorResponse.error instanceof String) && errorResponse.error.error[0].length < 150) {
-        errorMsg = `${errorResponse.error.error[0]}`;
-
-        // The backend returned an unsuccessful response code.
+      if (errorResponse.error instanceof ErrorEvent) {
+        // A client-side or network error occurred. Handle it accordingly.
+        errorMsg = "Un error ha ocurrido del lado del cliente: " + errorResponse.error?.message;
       } else {
-        errorMsg = `Ha ocurrido un error al tratar de procesar su petición.`;
+
+        if (errorResponse.error?.customError &&
+          (typeof errorResponse.error?.error[0] === 'string' || errorResponse.error instanceof String)
+          && errorResponse.error?.error[0].length < 150) {
+          errorMsg = `${errorResponse.error?.error[0]}`;
+
+          // The backend returned an unsuccessful response code.
+        } else {
+          errorMsg = `Ha ocurrido un error al tratar de procesar su petición.`;
+        }
       }
-    }
 
     } catch (e) {
       console.error(e)
@@ -116,6 +117,7 @@ export class JwtInterceptor implements HttpInterceptor {
       // Any existing value is set to null
       // Reset here so that the following requests wait until the token comes back from the refresh token API call
       this.tokenSubject.next(null);
+      console.log("hola estoy en refresh")
 
       /// call the API to refresh the token
       return this.acct.getNewRefreshToken().pipe(
@@ -123,19 +125,13 @@ export class JwtInterceptor implements HttpInterceptor {
           if (tokenresponse) {
 
             this.tokenSubject.next(tokenresponse.authToken.token);
-            localStorage.setItem('loginStatus', '1');
-            localStorage.setItem('jwt', tokenresponse.authToken.token);
-            localStorage.setItem('username', tokenresponse.authToken.username);
-            localStorage.setItem('expiration', tokenresponse.authToken.expiration);
-            localStorage.setItem('userRole', tokenresponse.authToken.roles);
-            localStorage.setItem('refreshToken', tokenresponse.authToken.refresh_token);
-            console.log("Token refreshed...");
+            //this.acct.setUserResult(tokenresponse);
+
             return next.handle(this.attachTokenToRequest(request));
           }
           return <any>this.acct.logout();
         }),
         catchError(err => {
-          //this.acct.logout();
           return this.handleError(err);
         }),
         finalize(() => {

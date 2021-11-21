@@ -23,7 +23,7 @@
               <mat-form-field floatLabel="always" appearance="outline" class="password">
                 <mat-label>Contraseña</mat-label>
                 <input  [style.fontSize.px]="getFontSize()"  [errorStateMatcher]="matcher" formControlName="loginPasswordControl" matInput [type]="hide ? 'password' : 'text'">
-                <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+                <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                   <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
                 </button>
 
@@ -35,7 +35,7 @@
               <h5 class="forgotpass"><a href="#">¿Contraseña olvidada?</a></h5>
               <button [disabled]="loading" type="submit" mat-flat-button color="primary">
                Entrar
-              </button>
+              </button> 
             </form>
           </mat-card-content>
 

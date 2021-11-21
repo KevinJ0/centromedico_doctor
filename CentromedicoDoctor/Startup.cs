@@ -1,21 +1,16 @@
-using Amazon.Runtime;
+using CentromedicoDoctor.Services.Interfaces;
 using Amazon.S3;
 using AutoMapper;
 using Centromedico.Database.DbModels;
 using Centromedico.Database.Context;
 using CentromedicoDoctor.Exceptions;
-//using Doctor.Repository.Repositories;
-//using Doctor.Repository.Repositories.Interfaces;
 using CentromedicoDoctor.Services;
-//using CentromedicoDoctor.Services.Helpers;
-//using CentromedicoDoctor.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,14 +20,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Text;
 using CentromedicoDoctor.Profiles;
-using CentromedicoDoctor.Services.Interfaces;
 using Doctor.Repository.Repositories;
 using Doctor.Repository.Repositories.Interfaces;
-//using Centromedico.Services;
+using System.Reflection;
+using System.IO;
 
 namespace CentromedicoDoctor
 
@@ -53,9 +46,16 @@ namespace CentromedicoDoctor
             
 
             services.AddHttpContextAccessor();
-            services.AddScoped<ITokenService, TokenService>();
 
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<ICitaService, CitaService>();
+            services.AddScoped<IServicioService, ServicioService>();
+
+            services.AddScoped<IServicioRepository, ServicioRepository>();
+            services.AddScoped<IMedicoRepository, MedicoRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
+            services.AddScoped<ICitaRepository, CitaRepository>();
+            services.AddScoped<IHorarioMedicoRepository, HorarioMedicoRepository>();
 
             services.AddSingleton<IS3Service, S3Service>();
             services.AddAWSService<IAmazonS3>();
@@ -110,22 +110,18 @@ namespace CentromedicoDoctor
                 options.AddPolicy("EnableCORS", builder =>
                 {
                     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-
                 });
             });
 
-            var mapperConfig = new MapperConfiguration(m =>
-            {
-                m.AddProfile(new MappingProfile());
-
-            });
+            var mapperConfig = new MapperConfiguration(m => m.AddProfile(new MappingProfile()));
             IMapper mapper = mapperConfig.CreateMapper();
             // services.AddSingleton(mapper);
+
             services.AddAutoMapper(typeof(Startup));
+            
             // Token Model
             services.AddScoped<token>();
 
-            //services.AddTransient<ITokenService, TokenService>();
             services.AddIdentity<MyIdentityUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 5;
@@ -166,9 +162,10 @@ namespace CentromedicoDoctor
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireLoggedIn",
-                    policy => policy.RequireRole("Client", "Patient").RequireAuthenticatedUser());
+                    policy => policy.RequireRole("Doctor", "Patient").RequireAuthenticatedUser());
 
             });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -177,7 +174,10 @@ namespace CentromedicoDoctor
                     Version = "v1",
                     Description = "Esta api describe las funciones de los diferentes endpoint que trabajan en la applicación que da vista al doctor y secretaria.",
                 });
-               
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
         }
 
@@ -200,7 +200,7 @@ namespace CentromedicoDoctor
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Centro Medico Cliente API");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Centro Medico Doctor API");
             });
             app.UseStaticFiles();
             app.UseAuthentication();

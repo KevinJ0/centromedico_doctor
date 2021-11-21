@@ -27,11 +27,12 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { MAT_MOMENT_DATE_ADAPTER_OPTIONS, MAT_MOMENT_DATE_FORMATS, MomentDateAdapter } from '@angular/material-moment-adapter';
-import { DateAdapter, MatNativeDateModule, MatRippleModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatNativeDateModule, MatRippleModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import {MatMenuModule} from '@angular/material/menu';
 
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTableModule } from '@angular/material/table';
@@ -45,11 +46,17 @@ import { SecretaryComponent } from './components/secretary/secretary.component';
 import { AppointmentListComponent } from './components/appointment-list/appointment-list.component';
 import { ReportsComponent } from './components/reports/reports.component';
 import { UserSettingsComponent } from './components/user-settings/user-settings.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { CalendarComponent } from './components/calendar/calendar.component';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import { NavbarComponent } from './components/navbar/navbar.component';
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { DialogPatientDetailsComponent } from './components/dialog-patient-details/dialog-patient-details.component';
 
-export function tokenGetter() {
-  //return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb3NlQGdtYWlsLmNvbSIsImp0aSI6IjdjOGY5ZGIyLTAyNzYtNDJkMS1iNTc3LTUyNTg1NjhjMTdlZSIsIm5hbWVpZCI6IjAxZTNhMjJiLTI2MjctNDgyMS05ZTBlLTE0NzE1MTNhOWY5NCIsInJvbGUiOiJQYXRpZW50IiwiTG9nZ2VkT24iOiI1LzI0LzIwMjEgMTA6Mjk6NTggUE0iLCJuYmYiOjE2MjE5MDk3OTgsImV4cCI6MTcxNDYyMzcxOCwiaWF0IjoxNjIxOTA5Nzk4LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMzNyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzM3In0.Auc5Om1B4G5M5BJ31EEEtElCsBTug4WMO1ugChYdcEE";
-  return localStorage.getItem("jwt");
-}
+registerLocaleData(localeEs);
 
 @NgModule({
   declarations: [
@@ -61,17 +68,27 @@ export function tokenGetter() {
     SecretaryComponent,
     AppointmentListComponent,
     ReportsComponent,
-    UserSettingsComponent
+    UserSettingsComponent,
+    CalendarComponent,
+    NavbarComponent,
+    DialogPatientDetailsComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     ReactiveFormsModule,
-    HttpClientModule,
+    HttpClientModule, 
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
+    FlatpickrModule.forRoot(),
+    NgbModalModule,
     MatStepperModule,
     MatTabsModule,
     MatCheckboxModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    MatMenuModule,
     MatFormFieldModule,
     MatExpansionModule,
     MatButtonToggleModule,
@@ -94,36 +111,37 @@ export function tokenGetter() {
     MatInputModule,
     JwtModule.forRoot({
       config: {
-        tokenGetter: tokenGetter,
         allowedDomains: ['localhost:4200', 'centromedico2-001-site1.etempurl.com'],
         disallowedRoutes: [],
         authScheme: "Bearer ",
       }
     }),
     RouterModule.forRoot([
-      { path: '', component: LoginComponent, pathMatch: 'full' },
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', component: LoginComponent, pathMatch: 'full' },
       {
         path: 'doctor', component: DoctorComponent, children: [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-          { path: 'dashboard', component: DashboardComponent, canActivateChild: [AuthGuardService] },
-          { path: 'citas', component: AppointmentListComponent, canActivateChild: [AuthGuardService] },
-          { path: 'reportes', component: ReportsComponent, canActivateChild: [AuthGuardService] },
-          { path: 'configuracion', component: UserSettingsComponent, canActivateChild: [AuthGuardService] },
+          { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService] },
+          { path: 'citas', component: AppointmentListComponent, canActivate: [AuthGuardService] },
+          { path: 'reportes', component: ReportsComponent, canActivate: [AuthGuardService] },
+          { path: 'configuracion', component: UserSettingsComponent, canActivate: [AuthGuardService] },
         ]
       },
       {
         path: 'auxiliar', component: SecretaryComponent, children: [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-          { path: 'dashboard', component: DashboardComponent, canActivateChild: [AuthGuardService] },
-          { path: 'citas', component: AppointmentListComponent, canActivateChild: [AuthGuardService] },
-          { path: 'reportes', component: ReportsComponent, canActivateChild: [AuthGuardService] },
-          { path: 'configuracion', component: UserSettingsComponent, canActivateChild: [AuthGuardService] },
+          { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuardService] },
+          { path: 'citas', component: AppointmentListComponent, canActivate: [AuthGuardService] },
+          { path: 'reportes', component: ReportsComponent, canActivate: [AuthGuardService] },
+          { path: 'configuracion', component: UserSettingsComponent, canActivate: [AuthGuardService] },
         ]
       },
     ]),
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     AccountService],
+  exports: [CalendarComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

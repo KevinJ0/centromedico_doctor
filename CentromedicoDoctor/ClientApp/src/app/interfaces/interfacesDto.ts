@@ -10,7 +10,7 @@ export interface UserInfo {
 
 }
 export interface especialidad {
-  id: number;
+  id: number | string;
   descrip: string;
 }
 export interface hora {
@@ -48,9 +48,10 @@ export interface cita {
   segurosID: number;
   nota: string;
 }
-export interface citaCard {
+export interface citaResponse {
 
-  id: number;
+  id: number | string;
+  doc_identidad: string;
   medicosID: number;
   medico_nombre: string;
   medico_apellido: string;
@@ -74,8 +75,9 @@ export interface citaCard {
   pago: number;
   turno: number;
   consultorio: number;
+  appointmentDuration: string;
 }
-export interface citaResult {
+export interface ticket {
 
   cod_verificacion: string;
   servicio: string;
@@ -120,7 +122,7 @@ export interface medico {
 }
 
 export interface doctorCard {
-  id: number;
+  id: number | string;
   exequatur: string;
   colegiatura: string;
   nombre: string;
@@ -145,6 +147,8 @@ export interface User {
   name?: string;
   email?: string;
   role?: string;
+  profilePhoto: string
+
 }
 
 export interface TokenResponse {

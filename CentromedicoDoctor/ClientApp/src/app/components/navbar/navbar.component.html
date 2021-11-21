@@ -1,0 +1,27 @@
+<header>
+
+
+  <mat-icon>code</mat-icon>
+  <div class="session-container">
+    
+      <button mat-button  [matMenuTriggerFor]="menu" aria-label="icon-button with a menu">
+        <div class="session">
+            <div class="session-info">
+              <span class="user-name">{{userName}}</span>
+              <span class="role">{{userRole}}</span>
+            </div>
+        <div class="flex-center">
+          <mat-icon>account_circle</mat-icon>
+          <mat-icon class="expand">expand_more</mat-icon>
+        </div>
+    </div>
+      </button>
+    <mat-menu xPosition="before" #menu="matMenu">
+      <button (click)="logOut()" mat-menu-item>
+        <mat-icon>logout</mat-icon>
+        <span>Cerrar sesión</span>
+      </button>
+
+    </mat-menu>
+  </div>
+</header>

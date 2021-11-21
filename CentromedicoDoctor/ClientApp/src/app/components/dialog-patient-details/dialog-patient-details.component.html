@@ -1,0 +1,76 @@
+<h1 mat-dialog-title>DETALLES DE CITA </h1>
+<div mat-dialog-content>
+  <section class="header-info">
+    <div>
+      <p>Código: <span class="primary-color">{{data.id}}</span></p>
+      <p>Turno: {{data.turno}}</p>
+      <p>Fecha y hora: {{data.fecha_hora}}</p>
+    </div>
+
+    <div class="action-buttons">
+      <button mat-button>Actualizar</button>
+      <button mat-button>Posponer</button>
+      <button mat-button>Eliminar</button>
+
+    </div>
+
+  </section>
+  <section class="body-info">
+    <form [formGroup]="citaDetailFormGroup" class="login-form">
+
+        <mat-form-field appearance="fill">
+            <mat-label>Nombre</mat-label>
+            <input formControlName="nameControl" matInput [(ngModel)]="data.nombre">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Cédula</mat-label>
+            <input matInput ![(ngModel)]="data.cedula">
+          </mat-form-field>
+          <!-- <mat-form-field appearance="fill">
+            <mat-label>Tipo de servicio</mat-label>
+            <mat-select formControlName="serviceControl"> 
+                <mat-option *ngFor="let servicio of data.servicio | async" [value]="servicio.id">
+                  {{servicio.descrip}}
+                </mat-option>
+              </mat-select> 
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Tipo de servicio</mat-label>
+            <mat-select formControlName="serviceControl"> 
+                <mat-option *ngFor="let servicio of data.servicio | async" [value]="servicio.id">
+                  {{servicio.descrip}}
+                </mat-option>
+              </mat-select> 
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Tipo de servicio</mat-label>
+            <mat-select formControlName="serviceControl"> 
+                <mat-option *ngFor="let servicio of doctor.especialidad | async" [value]="servicio.id">
+                  {{servicio.descrip}}
+                </mat-option>
+              </mat-select> 
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Tipo de servicio</mat-label>
+            <mat-select formControlName="serviceControl"> 
+                <mat-option *ngFor="let servicio of doctor.servicio | async" [value]="servicio.id">
+                  {{servicio.descrip}}
+                </mat-option>
+              </mat-select> 
+          </mat-form-field> -->
+          <mat-form-field appearance="fill">
+            <mat-label>Nota del paciente</mat-label>
+            <input matInput [(ngModel)]="data.nota">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Diferencia</mat-label>
+            <input matInput [(ngModel)]="data.diferencia">
+          </mat-form-field>
+    </form>
+  </section>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Ok</button>
+</div>

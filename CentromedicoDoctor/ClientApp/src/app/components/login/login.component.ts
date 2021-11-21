@@ -40,7 +40,7 @@ import { DialogContentComponent } from '../dialog-content/dialog-content.compone
         )
       ]
     )
-  ]
+  ] 
 })
 export class LoginComponent implements OnInit {
 

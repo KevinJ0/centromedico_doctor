@@ -18,12 +18,12 @@ export class AuthGuardService implements CanActivate {
       const destination: string = state.url;
       // To check if user is not logged in
       console.log(loginStatus)
+      
       if (!loginStatus) {
-        this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+        this.router.navigate(['login'], { queryParams: { returnUrl: state.url } });
         return false;
       }
       console.log(destination)
-
       // if the user is already logged in
 
       if (destination.includes('/resultados')) {
@@ -36,7 +36,6 @@ export class AuthGuardService implements CanActivate {
         return true;
       else if (destination.includes('doctor/citas') && localStorage.getItem("userRole") === "Doctor")
       {
-        alert();
         return true;
     }
       else if (destination.includes('doctor/reportes') && localStorage.getItem("userRole") === "Doctor")

@@ -25,9 +25,11 @@ namespace CentromedicoDoctor.Services
         private readonly MyDbContext _db;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public TokenService(ITokenRepository tokenRepo,
+
+        public TokenService(
+            ITokenRepository tokenRepo,
             RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration,
+            IConfiguration configuration,
             UserManager<MyIdentityUser> userManager,
             MyDbContext db)
         {
@@ -43,7 +45,7 @@ namespace CentromedicoDoctor.Services
 
 
         /// <summary>
-        /// Método que crea un New JWT y refresca el token.
+        /// Método que crea un nuevo JWT y refresca el token.
         /// </summary>
         /// <remarks>
         /// Sample request:
@@ -64,15 +66,15 @@ namespace CentromedicoDoctor.Services
         {
             try
             {
-
-
                 var user = await _userManager.FindByNameAsync(model.UserCredential) ?? await _userManager.FindByEmailAsync(model.UserCredential);
 
                 // Validate credentials
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
+                    bool isDoctor = _userManager.IsInRoleAsync(user, "Doctor").Result;
+                    bool isSecretery = _userManager.IsInRoleAsync(user, "Secretery").Result;
 
-                    if (_userManager.IsInRoleAsync(user, "Doctor").Result)
+                    if (isDoctor || isSecretery)
                     {
                         // username & password matches: create the refresh token
                         token newRtoken = CreateRefreshToken(_configuration["Authorization:ClientId"], user.Id, mobile);
@@ -97,7 +99,7 @@ namespace CentromedicoDoctor.Services
                     }
                 }
                 throw new BadRequestException("El usuario o ontraseña son invalidos, por favor verifique sus credenciales.");
-             
+
             }
             catch (Exception)
             {
@@ -132,10 +134,9 @@ namespace CentromedicoDoctor.Services
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _configuration["Authorization:Issuer"],
                 Audience = _configuration["Authorization:Audience"],
-                Expires = DateTime.UtcNow.AddYears((int)tokenExpiryTime)
+                Expires = DateTime.UtcNow.AddMinutes((int)tokenExpiryTime)
             };
 
-            // Generate token
 
             var newtoken = tokenHandler.CreateToken(tokenDescriptor);
             var encodedToken = tokenHandler.WriteToken(newtoken);
@@ -146,7 +147,7 @@ namespace CentromedicoDoctor.Services
                 expiration = newtoken.ValidTo,
                 refresh_token = refreshToken,
                 roles = roles.FirstOrDefault(),
-                username = user.UserName
+                username = user.UserName,
             };
         }
 
@@ -189,27 +190,19 @@ namespace CentromedicoDoctor.Services
                     && t.Value == model.RefreshToken.ToString());
 
                 if (rt == null)
-                {
                     // refresh token not found or invalid (or invalid clientId)
                     throw new UnauthorizedException("El refresh token no se ha encontrado o es inválido.");
-                }
 
                 // check if refresh token is expired
                 if (rt.ExpiryTime < DateTime.UtcNow)
-                {
                     throw new UnauthorizedException("El resfresh token ha expirado.");
-                }
 
                 // check if there's an user with the refresh token's userId
                 var user = await _userManager.FindByIdAsync(rt.UserId);
 
-
                 if (user == null)
-                {
                     // UserId not found or invalid
                     throw new UnauthorizedException("El userId no es valido.");
-
-                }
 
                 // generate a new refresh token 
 

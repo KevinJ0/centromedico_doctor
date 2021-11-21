@@ -20,7 +20,7 @@ export class AccountService {
   // User related properties
   private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus());
   private UserName = new BehaviorSubject<string>(localStorage.getItem('userName'));
-  private UserRole = new BehaviorSubject<string>(localStorage.getItem('userRoles'));
+  private UserRole = new BehaviorSubject<string>(localStorage.getItem('userRole'));
 
   constructor(private router: Router, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
@@ -35,18 +35,20 @@ export class AccountService {
 
     return this.http.post<TokenResponse>(this.baseUrl + this.baseUrlToken, { usercredential, refreshToken, grantType }).pipe(
       map((result: TokenResponse) => {
+        console.log(result)
+
         if (result && result.authToken.token) {
-          this.loginStatus.next(true);
-          localStorage.setItem('loginStatus', '1');
-          localStorage.setItem('jwt', result.authToken.token);
-          localStorage.setItem('userName', result.authToken.username);
-          localStorage.setItem('expiration', result.authToken.expiration);
-          localStorage.setItem('userRole', result.authToken.roles);
-          localStorage.setItem('refreshToken', result.authToken.refresh_token);
+
+
+          this.setUserResult(result)
         }
 
         return <TokenResponse>result;
 
+      }),
+      catchError(err => {
+
+        return throwError(err);
       })
     );
 
@@ -103,6 +105,7 @@ export class AccountService {
     this.UserRole.next(result.authToken.roles);
 
   }
+
   checkLoginStatus(): boolean {
 
     var loginCookie = localStorage.getItem("loginStatus");
@@ -176,7 +179,7 @@ export class AccountService {
   }
 
   get currentUserRole() {
-    this.UserRole.next((localStorage.getItem("UserRole")));
+    this.UserRole.next((localStorage.getItem("userRole")));
     return this.UserRole.asObservable();
   }
 

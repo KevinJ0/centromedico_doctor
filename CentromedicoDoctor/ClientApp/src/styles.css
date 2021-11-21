@@ -9,11 +9,42 @@ code {
   color: #e01a76;
 }
 
+p {
+  margin: 0;
+}
+
+.mat-icon-button .mat-icon {
+  line-height: auto;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+main {
+  max-width: 1920px;
+}
+
+
+html,
+body {
+  box-sizing: border-box;
+  height: 100%;
+  background-color: #fafafa;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.mat-drawer-content {
+
+  transition: margin 200ms cubic-bezier(0.13, 0.06, 0.58, 1.18) 0s !important;
+  padding: 12px;
+  overflow-x: hidden !important;
+}
+
+
