@@ -97,6 +97,10 @@ export class LoginComponent implements OnInit {
 
             this.loading = false;
             let token = (<any>result).authToken.token;
+
+            //set all config data for further uses
+            //---
+
             console.log("User Logged In Successfully");
             this.invalidLogin = false;
             this.router.navigate(['doctor']);

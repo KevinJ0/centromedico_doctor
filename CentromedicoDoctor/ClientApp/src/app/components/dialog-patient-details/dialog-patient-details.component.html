@@ -1,76 +1,77 @@
-<h1 mat-dialog-title>DETALLES DE CITA </h1>
-<div mat-dialog-content>
-  <section class="header-info">
-    <div>
-      <p>Código: <span class="primary-color">{{data.id}}</span></p>
-      <p>Turno: {{data.turno}}</p>
-      <p>Fecha y hora: {{data.fecha_hora}}</p>
-    </div>
-
-    <div class="action-buttons">
-      <button mat-button>Actualizar</button>
-      <button mat-button>Posponer</button>
-      <button mat-button>Eliminar</button>
-
+<h1 class="title" mat-dialog-title>DETALLES DE CITA </h1>
+<mat-dialog-content>
+  <section>
+    <div class="header-info">
+      <p><b>Código: </b><span class="primary-color">{{data.id}}</span></p>
+      <p><b>Turno: </b>{{data.turno}}</p>
+      <p><b>Fecha y hora: </b> {{data.fecha_hora}}</p>
     </div>
 
   </section>
+
   <section class="body-info">
-    <form [formGroup]="citaDetailFormGroup" class="login-form">
 
-        <mat-form-field appearance="fill">
-            <mat-label>Nombre</mat-label>
-            <input formControlName="nameControl" matInput [(ngModel)]="data.nombre">
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Cédula</mat-label>
-            <input matInput ![(ngModel)]="data.cedula">
-          </mat-form-field>
-          <!-- <mat-form-field appearance="fill">
-            <mat-label>Tipo de servicio</mat-label>
-            <mat-select formControlName="serviceControl"> 
-                <mat-option *ngFor="let servicio of data.servicio | async" [value]="servicio.id">
-                  {{servicio.descrip}}
-                </mat-option>
-              </mat-select> 
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Tipo de servicio</mat-label>
-            <mat-select formControlName="serviceControl"> 
-                <mat-option *ngFor="let servicio of data.servicio | async" [value]="servicio.id">
-                  {{servicio.descrip}}
-                </mat-option>
-              </mat-select> 
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Tipo de servicio</mat-label>
-            <mat-select formControlName="serviceControl"> 
-                <mat-option *ngFor="let servicio of doctor.especialidad | async" [value]="servicio.id">
-                  {{servicio.descrip}}
-                </mat-option>
-              </mat-select> 
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Tipo de servicio</mat-label>
-            <mat-select formControlName="serviceControl"> 
-                <mat-option *ngFor="let servicio of doctor.servicio | async" [value]="servicio.id">
-                  {{servicio.descrip}}
-                </mat-option>
-              </mat-select> 
-          </mat-form-field> -->
-          <mat-form-field appearance="fill">
-            <mat-label>Nota del paciente</mat-label>
-            <input matInput [(ngModel)]="data.nota">
-          </mat-form-field>
-          <mat-form-field appearance="fill">
-            <mat-label>Diferencia</mat-label>
-            <input matInput [(ngModel)]="data.diferencia">
-          </mat-form-field>
-    </form>
+    <div class="patient-data box-info">
+      <h4>Datos Paciente</h4>
+      <mat-divider>
+      </mat-divider>
+
+      <div class="data">
+        <p *ngIf="data.paciente_nombre_tutor"><b>Doc. Identidad: </b>{{data.doc_identidad}}</p>
+        <p><b>Nombre: </b>{{data.paciente_nombre}}</p>
+        <p><b>Apellidos: </b>{{data.paciente_apellido}}</p>
+        <p><b>Edad: </b>{{data.edad}} <span *ngIf="data.menor_un_ano">meses</span></p>
+      </div>
+    </div>
+
+    <div class="tutor-data box-info" *ngIf="data.paciente_nombre_tutor">
+      <h4>Datos Tutor</h4>
+      <mat-divider>
+      </mat-divider>
+
+      <div class="data">
+        <p ><b>Doc. Identidad: </b>{{data.doc_identidad}}</p>
+        <p><b>Nombre: </b>{{data.paciente_nombre_tutor}}</p>
+        <p><b>Apellidos: </b>{{data.paciente_apellido_tutor}}</p>
+      </div>
+    </div>
+
+    <div class="appointment-data box-info" >
+      <h4>Datos Citas</h4>
+
+      <mat-divider>
+      </mat-divider>
+
+      <div class="data">
+        <p><b>Servicio: </b>{{data.servicio_descrip}}</p>
+        <p><b>Seguro: </b>{{data.seguro_descrip}}</p>
+        <p class="note"><b>Nota: </b>{{data.nota}}</p>
+      </div>
+    </div>
+
+    <div class="cost-data box-info" >
+      <h4>Costos</h4>
+
+      <mat-divider>
+      </mat-divider>
+
+      <div class="data">
+        <p><b>Pago: </b>RD${{data.pago}}</p>
+        <p><b>Descuento: </b>RD${{data.descuento}}</p>
+        <p ><b>Cobertura: </b>RD${{data.cobertura}}</p>
+        <p ><b>Diferencia: </b>RD${{data.diferencia}}</p>
+      </div>
+    </div>
+
   </section>
+</mat-dialog-content>
+<div class="action-buttons">
+  <button color="primary" mat-stroked-button (click)="openDialogEntry(event)">Dar entrada</button>
+  <button mat-stroked-button>Modificar</button>
+  <button mat-stroked-button>Posponer</button>
+  <button mat-stroked-button color="warn">Eliminar</button>
 </div>
-
-<div mat-dialog-actions>
-  <button mat-button (click)="onNoClick()">No Thanks</button>
-  <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Ok</button>
-</div>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" cdkFocusInitial>Cerrar</button>
+  <!-- <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Ok</button> -->
+</mat-dialog-actions>

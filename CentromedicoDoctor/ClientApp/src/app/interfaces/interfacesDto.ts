@@ -1,13 +1,11 @@
 export interface UserInfo {
-
-  doc_identidad: string
-  nombre: string
-  apellido: string
-  confirm_doc_identidad?: boolean
-  contacto: string
-  fecha_nacimiento: Date
-  sexo: string
-
+  doc_identidad: string;
+  nombre: string;
+  apellido: string;
+  confirm_doc_identidad?: boolean;
+  contacto: string;
+  fecha_nacimiento: Date;
+  sexo: string;
 }
 export interface especialidad {
   id: number | string;
@@ -29,11 +27,17 @@ export interface cobertura {
   pago: number;
   cobertura: number;
   diferencia: number;
-
 }
 
+export interface citaEntry {
+  medicoId: number | string;
+  id: number | string;
+  descuento: number;
+  observacion: string;
+}
 
 export interface cita {
+  id?: number | string;
   nombre: string;
   apellido: string;
   sexo: string;
@@ -48,8 +52,8 @@ export interface cita {
   segurosID: number;
   nota: string;
 }
-export interface citaResponse {
 
+export interface citaCalendar {
   id: number | string;
   doc_identidad: string;
   medicosID: number;
@@ -64,6 +68,8 @@ export interface citaResponse {
   paciente_nombre_tutor: string;
   paciente_apellido_tutor: string;
   nota: string;
+  menor_un_ano: boolean;
+  edad: number;
   contacto: string;
   contacto_whatsapp: string;
   fecha_hora: string;
@@ -78,7 +84,6 @@ export interface citaResponse {
   appointmentDuration: string;
 }
 export interface ticket {
-
   cod_verificacion: string;
   servicio: string;
   consultorio: number;
@@ -95,28 +100,27 @@ export interface ticket {
   contacto: string;
   correo: string;
   turno: number;
-
 }
 
 export interface medico {
-  id: number,
-  exequatur: string,
-  colegiatura: string,
-  cedula: string,
-  nombre: string,
-  apellido: string,
-  sexo: string,
-  correo: string,
-  url_twitter: string,
-  url_facebook: string,
-  url_instagram: string,
-  telefono1: string,
-  telefono2: string,
-  consultorio: number,
-  estado: Boolean,
-  profilePhoto: string,
-  especialidades: string[],
-  seguros: string[],
+  id: number;
+  exequatur: string;
+  colegiatura: string;
+  cedula: string;
+  nombre: string;
+  apellido: string;
+  sexo: string;
+  correo: string;
+  url_twitter: string;
+  url_facebook: string;
+  url_instagram: string;
+  telefono1: string;
+  telefono2: string;
+  consultorio: number;
+  estado: Boolean;
+  profilePhoto: string;
+  especialidades: string[];
+  seguros: string[];
   servicios: string[];
   horarios: Object;
 }
@@ -135,20 +139,18 @@ export interface doctorCard {
   telefono1: string;
   telefono2: string;
   consultorio: number;
-  profilePhoto: string
+  profilePhoto: string;
   telefono1_contact: string;
   telefono2_contact: string;
   especialidades: string[];
 }
-
 
 export interface User {
   id?: string;
   name?: string;
   email?: string;
   role?: string;
-  profilePhoto: string
-
+  profilePhoto: string;
 }
 
 export interface TokenResponse {
@@ -158,22 +160,62 @@ export interface TokenResponse {
     refresh_token: string;
     roles: string;
     username: string;
-  }
+  };
 }
 export interface CorreoPregunta {
-
   nombre: string;
   correo: string;
   contacto: string;
   motivo: number;
   mensaje: string;
-
 }
 
 export interface servicioCobertura {
-
   id: number;
   descrip: string;
   coberturas: cobertura[];
+}
 
+export interface citaForm {
+  medico: {
+    id: number;
+    nombre: string;
+    apellido: string;
+  };
+  servicios: {
+    id: number;
+    descrip: string;
+    coberturas: {
+      segurosID: number;
+      descrip: string;
+      porciento: number;
+      pago: number;
+      cobertura: number;
+      diferencia: number;
+    }[];
+  }[];
+  diasLaborables: Date[];
+}
+
+export interface citaAndUser {
+  userInfo: UserInfo;
+
+  id: number | string;
+  doc_identidad: string;
+  medicosID: number;
+  medico_nombre: string;
+  medico_apellido: string;
+  serviciosID: number;
+  pacientesID: number;
+  paciente_nombre: string;
+  paciente_apellido: string;
+  paciente_nombre_tutor: string;
+  paciente_apellido_tutor: string;
+  nota: string;
+  menor_un_ano: boolean;
+  edad: number;
+  contacto: string;
+  contacto_whatsapp: string;
+  fecha_hora: string;
+  segurosID: number;
 }

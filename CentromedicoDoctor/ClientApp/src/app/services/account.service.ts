@@ -13,7 +13,6 @@ export class AccountService {
 
   // Url to access to the Web API
   // Token Controller
-  private baseUrlRegister: string = "api/token/register";
   private baseUrlToken: string = "api/token/auth";
 
 
@@ -74,24 +73,7 @@ export class AccountService {
 
     );
   }
-
-  //Signup Method
-  Signup(email: string, password: string) {
-    return this.http.post<TokenResponse>(this.baseUrl + this.baseUrlRegister, { email, password }).pipe(
-      map((result: TokenResponse) => {
-
-        // login successful if there's a jwt token in the response
-        if (result && result.authToken.token) {
-          // store user details and jwt token in local storage to keep user logged in between page refreshes
-          this.setUserResult(result);
-        }
-        console.log(result);
-        return result;
-
-      })
-
-    );
-  }
+  
 
   setUserResult(result: TokenResponse): void {
     this.loginStatus.next(true);
@@ -127,13 +109,13 @@ export class AccountService {
       }));
   }
 
-  getUserInfo(): Observable<UserInfo> {
-    return this.http.get<UserInfo>(this.baseUrl + "api/account/getUserInfo")
-      .pipe(map((data: UserInfo) => data),
-        catchError(err => {
-          return throwError(err);
-        })
-      );
+    getUserInfo(): Observable<UserInfo> {
+      return this.http.get<UserInfo>(this.baseUrl + "api/account/getUserInfo")
+        .pipe(map((data: UserInfo) => data),
+          catchError(err => {
+            return throwError(err);
+          })
+        );
 
   }
 

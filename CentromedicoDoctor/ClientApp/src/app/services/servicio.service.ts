@@ -1,15 +1,22 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { map, Observable, of } from "rxjs";
+import {
+  BehaviorSubject,
+  catchError,
+  map,
+  Observable,
+  of,
+  Subject,
+  throwError,
+} from "rxjs";
 import { servicioCobertura } from "../interfaces/InterfacesDto";
 
 @Injectable({
   providedIn: "root",
 })
 export class ServicioService {
-  servicios: servicioCobertura[];
-
+  public serviciosCoberturas$ = new BehaviorSubject<servicioCobertura[]>(null);
   baseUrl: string;
 
   // Url to access our Web API’s
@@ -21,21 +28,17 @@ export class ServicioService {
     this.baseUrl = baseUrl;
   }
 
-  GetServiciosCoberturas() {
-    try {
-      this.http
-        .get<servicios>(this.baseUrl + `api/service/getServiceCobertura`)
-        .pipe(
-          map((result) => {
-            this.servicios = result;
-          })
-        );
-    } catch (error) {
-      console.log(
-        "Ha ocurrido un error al tratar de obtener los datos del formulario para la cita: ",
-        error
+  GetServiciosCoberturas(
+    medicoId?: string | number
+  ): Observable<servicioCobertura[]> {
+    return this.http
+      .get<servicioCobertura[]>(
+        this.baseUrl +
+          `api/servicios/getServiciosCoberturas?medicoid=${medicoId}`
+      )
+      .pipe(
+        catchError((error) => throwError(() => error)),
+        map((result: servicioCobertura[]) => result)
       );
-      return of([]);
-    }
   }
 }

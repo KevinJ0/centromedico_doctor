@@ -25,7 +25,7 @@ import {
   CalendarView,
 } from "angular-calendar";
 import { CitaService } from "src/app/services/cita.service";
-import { citaResponse } from "src/app/interfaces/InterfacesDto";
+import { citaCalendar } from "src/app/interfaces/InterfacesDto";
 import * as _moment from "moment";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
@@ -58,7 +58,7 @@ export class CalendarComponent {
   view: CalendarView = CalendarView.Month;
   locale: string = "es";
   CalendarView = CalendarView;
-  viewDate: Date = new Date();
+  viewDate: Date = new Date("2021-10-10");
   loadingC: boolean = true;
   mode: ProgressSpinnerMode = "indeterminate";
 
@@ -91,17 +91,16 @@ export class CalendarComponent {
 
   activeDayIsOpen: boolean = false;
 
-  constructor( 
+  constructor(
     public dialog: MatDialog,
     private modal: NgbModal,
     private citaSvc: CitaService
   ) {}
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
     this.citaSvc.GetCitaList().subscribe({
-      next: (re: citaResponse[]) => {
-        this.events = re.map((r: citaResponse) => {
-          // this.loadingC = false;
+      next: (re: citaCalendar[]) => {
+        this.events = re.map((r: citaCalendar) => {
           return {
             start: new Date(r.fecha_hora),
             end: _moment(new Date(r.fecha_hora))
@@ -116,7 +115,7 @@ export class CalendarComponent {
         console.log(re);
       },
       error: (err) => console.error(err),
-      complete: () =>  this.loadingC = false,
+      complete: () => (this.loadingC = false),
     });
   }
 
@@ -162,8 +161,8 @@ export class CalendarComponent {
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
     // this.modal.open(this.modalContent, { size: "lg" });
-    console.log(event.patientData)
-    this.openDialog(event.patientData)
+    console.log(event.patientData);
+    this.openDialogDetails(event);
   }
 
   addEvent(): void {
@@ -195,12 +194,14 @@ export class CalendarComponent {
     this.activeDayIsOpen = false;
   }
 
-  openDialog(data: citaResponse) {
+  openDialogDetails(event: CalendarEvent) {
+    const dialogRef = this.dialog.open(DialogPatientDetailsComponent, {
+      data: event,
+    });
 
-    const dialogRef = this.dialog.open(DialogPatientDetailsComponent, { data });
-
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed().subscribe((result: CalendarEvent) => {
+      if(result)
+      this.deleteEvent(event);
     });
   }
 }
