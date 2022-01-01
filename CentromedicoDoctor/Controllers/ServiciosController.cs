@@ -30,7 +30,7 @@ namespace CentromedicoDoctor.Controllers
             _servicioSvc = servicioSvc;
         }
 
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor,Secretary")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor, Secretary")]
         [HttpGet("[action]")]
         public async Task<ActionResult<List<servicio_coberturasDTO>>> getServiciosCoberturasAsync(int medicoID)
         {

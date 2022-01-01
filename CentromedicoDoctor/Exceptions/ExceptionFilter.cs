@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,11 @@ namespace CentromedicoDoctor.Exceptions
     {
         public override void OnException(ExceptionContext context)
         {
+            var _exception = context.Exception;
+
+            if (context.Exception is AggregateException)
+                _exception = context.Exception.InnerException;
+
             var statusCode = HttpStatusCode.InternalServerError;
             var customError = false;
             if (context.Exception is EntityNotFoundException)
@@ -22,10 +28,10 @@ namespace CentromedicoDoctor.Exceptions
             }
 
 
-            switch (context.Exception)
+            switch (_exception)
             {
 
-                case BadRequestException or ArgumentOutOfRangeException or ArgumentException:
+                case BadHttpRequestException or BadHttpRequestException or ArgumentOutOfRangeException or ArgumentException:
                     statusCode = HttpStatusCode.BadRequest;
                     customError = true;
                     break;
@@ -35,7 +41,10 @@ namespace CentromedicoDoctor.Exceptions
                     customError = true;
                     break;
 
-
+                case NoContentException:
+                    statusCode = HttpStatusCode.NoContent;
+                    customError = true;
+                    break;
 
             }
 
@@ -44,8 +53,8 @@ namespace CentromedicoDoctor.Exceptions
             context.HttpContext.Response.StatusCode = (int)statusCode;
             context.Result = new JsonResult(new
             {
-                error = new[] { context.Exception.Message },
-                Exception = context.Exception,
+                error = new[] { _exception.Message },
+                Exception = _exception,
                 customError = customError
             });
         }

@@ -1,0 +1,257 @@
+<main>
+  <div class="title-container">
+    <h2 class="title">Cita de paciente</h2>
+    <mat-divider></mat-divider>
+  </div>
+
+  <form (ngSubmit)="onClickSubmit()" [formGroup]="citaFormGroup" class="form-group _row insurance-form"
+    *ngIf="!loading else load">
+
+    <section>
+      <h6>¿Quién es el paciente?</h6>
+      <mat-button-toggle-group formControlName="appointmentTypeControl" aria-label="Font Style">
+        <mat-button-toggle checked style="min-width: 5rem;" value=0>Adulto</mat-button-toggle>
+        <mat-button-toggle value=1>Menor de edad</mat-button-toggle>
+      </mat-button-toggle-group>
+    </section>
+
+    <div class="under-age" [style.display]="underAgeShow">
+      <div class="box-container">
+
+        <div class="sub-title">
+          <p>Datos del dependiente</p>
+          <mat-divider></mat-divider>
+        </div>
+
+        <div class="item">
+          <div class="name-wrapper">
+            <mat-form-field class="name" appearance="legacy">
+              <mat-label>Nombre del dependiente</mat-label>
+              <input [required]="isDependent" formControlName="dependentNameControl" matInput
+                placeholder="Nombre del paciente">
+            </mat-form-field>
+
+            <mat-form-field class="lastName" appearance="legacy">
+              <mat-label>Apellido(s) del dependiente</mat-label>
+              <input [required]="isDependent" formControlName="dependentLastNameControl" matInput
+                placeholder="Apellido(s) del paciente">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="item">
+          <mat-form-field appearance="legacy">
+            <mat-label>Fecha de nacimiento</mat-label>
+            <input [required]="isDependent" formControlName="dependentBirthDateControl" placeholder="Escoge una fecha"
+              matInput [min]="minDBDDate" [max]="maxDBDDate" [matDatepicker]="DBDpicker">
+            <mat-datepicker-toggle matSuffix [for]="DBDpicker"></mat-datepicker-toggle>
+            <mat-datepicker #DBDpicker></mat-datepicker>
+          </mat-form-field>
+
+          <div class="radio-wrapper">
+            <label>Sexo del dependiente: </label>
+            <mat-radio-group [required]="isDependent" ariaLabel="Sexo:" style="display: block;" class="radio-group"
+              formControlName="dependentSexControl">
+              <mat-radio-button class="insurance-radio-button" value="m">Masculino</mat-radio-button>
+              <mat-radio-button class="insurance-radio-button" value="f">Femenino</mat-radio-button>
+              <mat-error *ngIf="citaFormGroup.get('dependentSexControl').invalid && loading">
+                {{getDSexErrorMessage()}}
+              </mat-error>
+            </mat-radio-group>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box-container">
+
+      <div class="sub-title">
+        <p>Datos del usuario</p>
+        <mat-divider></mat-divider>
+      </div>
+
+      <div class="item">
+
+        <mat-form-field appearance="legacy">
+          <mat-label>Tipo de documento</mat-label>
+          <mat-select formControlName="typeIdentityDocControl" name="tipoDoc" required>
+
+            <mat-option [value]=0 selected>Cédula</mat-option>
+            <mat-option [value]=1>Pasaporte</mat-option>
+            <mat-option [value]=2>RNC</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="legacy">
+          <mat-label>Documento de identidad</mat-label>
+          <mat-icon matSuffix>badge</mat-icon>
+          <input required [mask]="identDocMask" [readonly]="isUserConfirmed" formControlName="identityDocControl"
+            maxlength="15" matInput placeholder="Documento de identidad">
+        </mat-form-field>
+
+        <div class="name-wrapper">
+          <mat-form-field class="name" appearance="legacy">
+            <mat-label>Nombre</mat-label>
+            <input required formControlName="userNameControl" matInput [readonly]="isUserConfirmed"
+              placeholder="Nombre">
+          </mat-form-field>
+
+          <mat-form-field class="lastName" appearance="legacy">
+            <mat-label>Apellido(s)</mat-label>
+            <input required formControlName="userLastNameControl" [readonly]="isUserConfirmed" matInput
+              placeholder="Apellido(s)">
+          </mat-form-field>
+        </div>
+
+        <!--mantiene el width ration del los mat-form-field -->
+        <div class="radio-wrapper">
+          <label>Sexo: </label>
+          <mat-radio-group required ariaLabel="Sexo:" style="display: block;" required class="radio-group"
+            formControlName="userSexControl">
+            <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="m">
+              Masculino
+            </mat-radio-button>
+            <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="f">
+              Femenino
+            </mat-radio-button>
+            <mat-error *ngIf="citaFormGroup.get('userSexControl').invalid && loading">
+              {{getSexErrorMessage()}}
+            </mat-error>
+          </mat-radio-group>
+        </div>
+      </div>
+      <div class="item">
+
+        <mat-form-field appearance="legacy">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input required [readonly]="isUserConfirmed" formControlName="birthDateControl" placeholder="Escoge una fecha"
+            matInput [min]="minBDDate" [max]="maxBDDate" [matDatepicker]="BDpicker">
+          <mat-datepicker-toggle [disabled]="isUserConfirmed" matSuffix [for]="BDpicker">
+          </mat-datepicker-toggle>
+          <mat-datepicker #BDpicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="legacy">
+          <mat-label>Teléfono</mat-label>
+          <input required formControlName="contactControl" mask="000-000-0000" type="tel" matInput
+            placeholder="555-555-1234">
+          <mat-icon matSuffix>phone</mat-icon>
+        </mat-form-field>
+
+        <mat-checkbox class="wsReach" formControlName="wsReachControl">
+          Contactarme vía Whatsapp
+        </mat-checkbox>
+
+
+        <mat-form-field appearance="legacy">
+          <mat-label>Nota</mat-label>
+          <textarea formControlName="noteControl" rows="8" #matInputNote maxlength="200" matInput
+            placeholder="Nota para el médico"></textarea>
+          <mat-hint align="end">{{matInputNote.value?.length || 0}}/200</mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+
+    <!-- -----------------------------------------------------------------------  -->
+    <div class="sub-title">
+      <p>Datos de cita</p>
+      <mat-divider></mat-divider>
+    </div>
+    <div class="box-container">
+      <div class="item">
+        <mat-form-field (click)="picker.open()" appearance="legacy">
+          <mat-label>Fecha</mat-label>
+          <input class="date-appointment" formControlName="dateControl" [matDatepickerFilter]="dateFilter" matInput
+            [matDatepicker]="picker" required (click)="picker.open()" [readonly]="true">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker touchUi #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <div class="item">
+        <mat-form-field appearance="legacy">
+          <mat-label>Hora</mat-label>
+          <mat-select formControlName="timeControl" name="hora" required [disabled]="loadingDateControl">
+            <mat-option *ngFor="let hora of Horas" [value]="hora.id">
+              {{hora.descrip}}
+            </mat-option>
+          </mat-select>
+          <mat-hint><span *ngIf="!loadingDateControl else loadHours"></span></mat-hint>
+
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- -----------------------------------------------------------------------  -->
+
+    <div class="box-container">
+
+      <div class="item">
+        <mat-form-field appearance="legacy">
+          <mat-label>Tipo de servicio</mat-label>
+          <mat-select formControlName="serviceTypeControl" name="service" required>
+            <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
+              {{servicio.descrip}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="item">
+        <mat-form-field appearance="legacy">
+          <mat-label>Seguro</mat-label>
+          <mat-select required formControlName="insuranceControl">
+            <mat-option *ngFor="let seguro of coberturas" [value]="seguro.segurosID">
+              {{seguro.descrip}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <ng-template [ngIf]="loadingPayment" [ngIfElse]="payment">
+      <section class="payment-form dark">
+        <div class="content-payment">
+          <div class="item-payment">
+            <p class="item-description">Cargando...</p>
+          </div>
+        </div>
+      </section>
+    </ng-template>
+
+    <div class="btn-container">
+      <button mat-flat-button color="primary" [disabled]="loading" type="submit">Confirmar</button>
+    </div>
+  </form>
+</main>
+
+
+<ng-template #payment>
+  <section class="payment-form dark">
+    <div class="products">
+      <h3 class="title">Pago</h3>
+      <div class="item-payment">
+        <span class="price">RD${{pago}}</span>
+        <p class="item-name">Costo</p>
+        <p class="item-description">Costo de la consulta con el médico</p>
+      </div>
+      <div class="item-payment">
+        <span class="price">RD${{cobertura}}</span>
+        <p class="item-name">Cobertura</p>
+        <p class="item-description">Cobertura que aplica el seguro médico</p>
+      </div>
+      <div class="total">Diferencia<span class="price">RD${{diferencia}}</span></div>
+    </div>
+  </section>
+</ng-template>
+
+<ng-template #load>
+  <div class="loading-container" style="margin: auto; height: 30vh;">
+    <app-loading></app-loading>
+  </div>
+</ng-template>
+
+<ng-template #loadHours>
+  Cargando...
+</ng-template>

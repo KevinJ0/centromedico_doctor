@@ -9,7 +9,7 @@ namespace Doctor.DTO
 {
     public class citaDTO
     {
-
+        int _edad;
         public int ID { get; set; }
         public int? medicosID { get; set; }
 
@@ -34,8 +34,9 @@ namespace Doctor.DTO
         public string paciente_nombre_tutor { get; set; }
 #pragma warning disable CS8632 
         public string? paciente_apellido_tutor { get; set; }
-#pragma warning restore CS8632 
-
+#pragma warning restore CS8632
+        public int edad { get; set; }
+        public bool menor_un_año { get; set; }
         [Column(TypeName = "text")]
         public string nota { get; set; }
         [StringLength(10)]
@@ -60,6 +61,7 @@ namespace Doctor.DTO
           public string especialidad_descrip { get; set; }*/
         public int consultorio { get; set; }
         public int turno { get; set; }
+        public bool estado{ get; set; }
         public TimeSpan appointmentDuration { get; set; }
 
 

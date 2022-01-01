@@ -21,7 +21,6 @@ namespace Doctor.Repository.Repositories
 
         private readonly IMapper _mapper;
         private readonly MyDbContext _db;
-        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<MyIdentityUser> _userManager;
 
         public ServicioRepository( 
@@ -29,15 +28,15 @@ namespace Doctor.Repository.Repositories
             MyDbContext db)
         {
             _db = db;
-           
-            _mapper = mapper;
+             _mapper = mapper;
         }
 
         public async Task<List<servicio_coberturasDTO>> getAllByDoctorIdAsync(int medicoID)
         {
 
-
-            List<servicio_coberturasDTO> r = await _db.servicios_medicos
+            try
+            {
+                List<servicio_coberturasDTO> r = await _db.servicios_medicos
                    .Where(x => x.medicosID == medicoID).Select(x => new servicio_coberturasDTO
                    {
                        ID = x.servicios.ID,
@@ -46,9 +45,14 @@ namespace Doctor.Repository.Repositories
                       .Where(c => c.medicosID == x.medicosID && c.serviciosID == x.servicios.ID)
                    .ToList())
                    }).ToListAsync();
-
             return r;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
+
 
         public async Task<servicios> getByIdAsync(int? segurosID)
         {

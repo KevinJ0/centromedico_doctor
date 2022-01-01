@@ -213,7 +213,7 @@ namespace Doctor.Repository.Repositories
             try
             {
 
-                var availableTimelst = getAvailableHoursTurnDic(fecha_hora, medicoID)?.Select(x => x.Key).ToList(); 
+                var availableTimelst = getAvailableHoursTurnDic(fecha_hora, medicoID)?.Select(x => x.Key).ToList(); ;
 
                 if (availableTimelst == null || availableTimelst.Contains(fecha_hora))
                     throw new ArgumentException("Este doctor(a) no labora el día escogido.");
@@ -225,7 +225,5 @@ namespace Doctor.Repository.Repositories
                 throw;
             }
         }
-
-      
     }
 }

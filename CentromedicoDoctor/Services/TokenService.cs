@@ -5,6 +5,7 @@ using CentromedicoDoctor.Exceptions;
 using CentromedicoDoctor.Services.Interfaces;
 using Doctor.DTO;
 using Doctor.Repository.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -72,9 +73,9 @@ namespace CentromedicoDoctor.Services
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
                 {
                     bool isDoctor = _userManager.IsInRoleAsync(user, "Doctor").Result;
-                    bool isSecretery = _userManager.IsInRoleAsync(user, "Secretery").Result;
+                    bool isSecretary = _userManager.IsInRoleAsync(user, "Secretary").Result;
 
-                    if (isDoctor || isSecretery)
+                    if (isDoctor || isSecretary)
                     {
                         // username & password matches: create the refresh token
                         token newRtoken = CreateRefreshToken(_configuration["Authorization:ClientId"], user.Id, mobile);
@@ -98,7 +99,7 @@ namespace CentromedicoDoctor.Services
                         return new OkObjectResult(new { authToken = accessToken });
                     }
                 }
-                throw new BadRequestException("El usuario o ontraseña son invalidos, por favor verifique sus credenciales.");
+                throw new BadHttpRequestException("El usuario o ontraseña son invalidos, por favor verifique sus credenciales.");
 
             }
             catch (Exception)
@@ -134,7 +135,7 @@ namespace CentromedicoDoctor.Services
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
                 Issuer = _configuration["Authorization:Issuer"],
                 Audience = _configuration["Authorization:Audience"],
-                Expires = DateTime.UtcNow.AddMinutes((int)tokenExpiryTime)
+                Expires = DateTime.UtcNow.AddYears((int)tokenExpiryTime)
             };
 
 

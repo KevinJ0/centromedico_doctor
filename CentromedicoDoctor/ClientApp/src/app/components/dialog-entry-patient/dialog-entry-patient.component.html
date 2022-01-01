@@ -1,0 +1,78 @@
+<h1 class="title" mat-dialog-title>ENTRADA A PACIENTE</h1>
+
+<mat-dialog-content>
+  <div class="content">
+    <div class="loading-layer" *ngIf="loadingC">
+
+      <app-loading></app-loading>
+    </div>
+    <section>
+      <div class="header-info">
+        <p class="name">{{data.paciente_nombre+" "+data.paciente_apellido}}</p>
+        <p><b>Código: </b><span class="primary-color">{{data.id}}</span></p>
+        <p><b>Turno: </b>{{data.turno}}</p>
+        <p><b>Fecha y hora: </b> {{data.fecha_hora}}</p>
+      </div>
+
+    </section>
+
+    <section class="body-info">
+      <form autocomplete="off" class="form-group" [formGroup]="EntryAppntFormGroup">
+        <div class="notes">
+          <mat-form-field appearance="legacy">
+            <mat-label>Nota del paciente</mat-label>
+            <textarea [value]="data.nota" rows="4" matInput placeholder="Nota del paciente"></textarea>
+          </mat-form-field>
+
+          <mat-form-field floatLabel="always" appearance="legacy">
+            <mat-label>Nota del médico</mat-label>
+            <textarea formControlName="observation" rows="4" #matDoctorNote maxlength="200" matInput
+              placeholder="Observación médica"></textarea>
+            <mat-hint align="end">{{matDoctorNote.value?.length || 0}}/200</mat-hint>
+          </mat-form-field>
+        </div>
+        <div class="costs">
+          <mat-form-field appearance="legacy" floatLabel="always">
+            <mat-label>Cobertura</mat-label>
+            <input class="example-right-align" readonly [value]="data.cobertura" type="number" placeholder="0" matInput>
+            <span matPrefix>RD$&nbsp;</span>
+            <span matSuffix>.00</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="legacy" floatLabel="always">
+            <mat-label>Diferencia</mat-label>
+            <input class="example-right-align" readonly [value]="data.diferencia" type="number" placeholder="0"
+              matInput>
+            <span matPrefix>RD$&nbsp;</span>
+            <span matSuffix>.00</span>
+          </mat-form-field>
+
+          <mat-form-field appearance="legacy" floatLabel="always">
+            <mat-label>Descuento</mat-label>
+            <input formControlName="discount" [allowNegativeNumbers]="false" mask="0*" class="example-right-align"
+              placeholder="0" matInput>
+            <span matPrefix>RD$&nbsp;</span>
+            <span matSuffix>.00</span>
+          </mat-form-field>
+
+        </div>
+
+        <mat-form-field appearance="legacy" floatLabel="always">
+          <mat-label>Total a pagar</mat-label>
+          <input formControlName="total" readonly class="example-right-align" placeholder="0" matInput>
+          <span matPrefix>RD$&nbsp;</span>
+          <span matSuffix>.00</span>
+        </mat-form-field>
+      </form>
+    </section>
+  </div>
+
+
+</mat-dialog-content>
+<div class="action-buttons">
+  <button [disabled]="loadingC" (click)="SaveAppointment()" color="primary" mat-stroked-button>Confirmar</button>
+</div>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()" cdkFocusInitial>Cerrar</button>
+  <!-- <button mat-button [mat-dialog-close]="data.id" cdkFocusInitial>Ok</button> -->
+</mat-dialog-actions>

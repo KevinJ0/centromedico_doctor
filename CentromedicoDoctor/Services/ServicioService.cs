@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Centromedico.Database.DbModels;
 using Microsoft.AspNetCore.Identity;
+using CentromedicoDoctor.Exceptions;
 
 namespace CentromedicoDoctor.Services
 {
@@ -21,13 +22,16 @@ namespace CentromedicoDoctor.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<MyIdentityUser> _userManager;
         private readonly IMedicoRepository _medicoRepo;
+        private readonly ISecretariaRepository _secretaryRepo;
 
         public ServicioService(
             IMedicoRepository medicoRepo,
+            ISecretariaRepository secretaryRepo,
         UserManager<MyIdentityUser> userManager,
             IHttpContextAccessor httpContextAccessor,
             IServicioRepository servicioRepo)
         {
+            _secretaryRepo = secretaryRepo;
             _medicoRepo = medicoRepo;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
@@ -43,14 +47,20 @@ namespace CentromedicoDoctor.Services
                    .FindByNameAsync(_httpContextAccessor.HttpContext.User
                    .FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-                bool isSecretery = _userManager.IsInRoleAsync(user, "Secretery").Result;
+                bool isSecretary = _userManager.IsInRoleAsync(user, "Secretary").Result;
                 bool isDoctor = _userManager.IsInRoleAsync(user, "Doctor").Result;
 
                 if (isDoctor)
                     medicoID = _medicoRepo.get(user).ID;
-                else if (isSecretery)
-                    if (user.medicos.FirstOrDefault(medicos => medicos.ID == medicoID) == null)
-                        throw new Exception("Este personal no tiene acceso al listado de citas del médico solicitado.");
+                else if (isSecretary)
+                {
+
+                    bool existDoctor = await _secretaryRepo.existDoctorAsync(medicoID);
+
+                    if(!existDoctor)
+                        throw new BadHttpRequestException("Este personal no tiene acceso al listado de citas del médico solicitado.");
+
+                }
 
                 var result = _servicioRepo.getAllByDoctorIdAsync(medicoID).Result;
                 return result;

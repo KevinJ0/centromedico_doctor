@@ -30,7 +30,6 @@ export class JwtInterceptor implements HttpInterceptor {
         Authorization: "Bearer " + token
       }
     });
-
     return next.handle(authReq).pipe(
       tap((event: HttpEvent<any>) => {
         if (event instanceof HttpResponse) {

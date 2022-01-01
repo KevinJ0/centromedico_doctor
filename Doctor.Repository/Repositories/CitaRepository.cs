@@ -51,19 +51,33 @@ namespace Doctor.Repository.Repositories
 
         }
 
-        public async Task<List<citaDTO>> getCitasListAsync()
-        { 
+        public citas get(int Id,int medicoId)
+        {
 
             try
-            { 
+            {
 
-                MyIdentityUser user = await _userManager
-                                    .FindByNameAsync(_httpContextAccessor.HttpContext.User
-                                    .FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                citas cita =_db.citas
+                    .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
+                    .FirstOrDefault(c => (c.ID == Id && c.medicosID == medicoId));
+
+                return cita;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error al intentar acceder a la cita solicitada, por favor intente más tarde." + e.StackTrace);
+            }
+        }
+
+        public async Task<List<citaDTO>> getCitasListAsync(int medicoId)
+        {
+
+            try
+            {
 
                 List<citaDTO> citaslst = _db.citas
                     .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
-                    .Where(p => (p.medicos.MyIdentityUsers == user || p.medicos.MyIdentityUsers == user.medicos) && p.estado == true)
+                    .Where(p => (p.medicos.ID == medicoId) && p.estado == true)
                     .ProjectTo<citaDTO>(_mapper.ConfigurationProvider).ToList();
 
                 return citaslst;
@@ -89,7 +103,7 @@ namespace Doctor.Repository.Repositories
         {
             _db.citas.Add(entity);
         }
-            public bool Exist(medicos medico, MyIdentityUser user)
+        public bool Exist(medicos medico, MyIdentityUser user)
         {
             try
             {
@@ -123,6 +137,22 @@ namespace Doctor.Repository.Repositories
             catch (Exception)
             {
 
+                throw;
+            }
+        }
+
+        public async void saveCita(citas cita)
+        {
+            try
+            {
+                _db.citas.Update(cita);
+                var r = _db.SaveChanges();
+
+                if (r <= 0)
+                    throw new Exception("Ha ocurrido un error al tratar e guardar la entidad en la base de datos.");
+            }
+            catch (Exception)
+            {
                 throw;
             }
         }

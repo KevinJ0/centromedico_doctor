@@ -2026,6 +2026,9 @@
       "Doctor.DTO/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v5.0",
+        "dependencies": {
+          "Centromedico.Database": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/Doctor.DTO.dll": {}
         },
@@ -6749,7 +6752,6 @@
       "AWSSDK.Extensions.NETCore.Setup >= 3.7.0.1",
       "AWSSDK.S3 >= 3.7.1",
       "AutoMapper >= 10.1.1",
-      "Centromedico.Database >= 1.0.0",
       "Doctor.DTO >= 1.0.0",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 5.0.5",
       "Microsoft.AspNetCore.Identity >= 2.2.0",
@@ -6761,19 +6763,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\KevinJ\\.nuget\\packages\\": {}
+    "C:\\Users\\Pc\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\Doctor.Repository.csproj",
+      "projectUniqueName": "C:\\Users\\Pc\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\Doctor.Repository.csproj",
       "projectName": "Doctor.Repository",
-      "projectPath": "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\Doctor.Repository.csproj",
-      "packagesPath": "C:\\Users\\KevinJ\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\obj\\",
+      "projectPath": "C:\\Users\\Pc\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\Doctor.Repository.csproj",
+      "packagesPath": "C:\\Users\\Pc\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Pc\\source\\repos\\Centro Medico\\Doctor\\Doctor.Repository\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\KevinJ\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Pc\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -6787,11 +6789,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\CentromedicoDatabase\\Centromedico.Database.csproj": {
-              "projectPath": "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\CentromedicoDatabase\\Centromedico.Database.csproj"
-            },
-            "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\Doctor\\Doctor.DTO\\Doctor.DTO.csproj": {
-              "projectPath": "C:\\Users\\KevinJ\\source\\repos\\Centro Medico\\Doctor\\Doctor.DTO\\Doctor.DTO.csproj"
+            "C:\\Users\\Pc\\source\\repos\\Centro Medico\\Doctor\\Doctor.DTO\\Doctor.DTO.csproj": {
+              "projectPath": "C:\\Users\\Pc\\source\\repos\\Centro Medico\\Doctor\\Doctor.DTO\\Doctor.DTO.csproj"
             }
           }
         }

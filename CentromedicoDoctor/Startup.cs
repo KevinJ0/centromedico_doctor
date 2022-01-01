@@ -50,12 +50,18 @@ namespace CentromedicoDoctor
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICitaService, CitaService>();
             services.AddScoped<IServicioService, ServicioService>();
+            services.AddScoped<IAccountService, AccountService>();
+            services.AddScoped<IHorarioMedicoService, HorarioMedicoService>();
 
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IServicioRepository, ServicioRepository>();
             services.AddScoped<IMedicoRepository, MedicoRepository>();
             services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<ICitaRepository, CitaRepository>();
             services.AddScoped<IHorarioMedicoRepository, HorarioMedicoRepository>();
+            services.AddScoped<ICoberturaRepository, CoberturaRepository>();
+            services.AddScoped<IHorarioMedicoReservaRepository, HorarioMedicoReservaRepository>();
+            services.AddScoped<ISecretariaRepository, SecretariaRepository>();
 
             services.AddSingleton<IS3Service, S3Service>();
             services.AddAWSService<IAmazonS3>();
@@ -162,7 +168,7 @@ namespace CentromedicoDoctor
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireLoggedIn",
-                    policy => policy.RequireRole("Doctor", "Patient").RequireAuthenticatedUser());
+                    policy => policy.RequireRole("Doctor", "Secretary").RequireAuthenticatedUser());
 
             });
 
