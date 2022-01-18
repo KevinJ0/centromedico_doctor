@@ -30,11 +30,18 @@ namespace CentromedicoDoctor.Controllers
         private readonly MyDbContext _db;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountSvc;
+        private readonly IPacienteService _pacienteSvc;
 
 
-        public PacienteController(IAccountService accountSvc,
-            RoleManager<IdentityRole> roleManager, UserManager<MyIdentityUser> userManager,
-      SignInManager<MyIdentityUser> signManager, MyDbContext context, IConfiguration configuration, IMapper mapper)
+        public PacienteController(
+            IPacienteService pacienteSvc,
+            IAccountService accountSvc,
+            RoleManager<IdentityRole> roleManager,
+            UserManager<MyIdentityUser> userManager,
+            SignInManager<MyIdentityUser> signManager,
+            MyDbContext context,
+            IConfiguration configuration,
+            IMapper mapper)
         {
             _accountSvc = accountSvc;
             _userManager = userManager;
@@ -43,6 +50,7 @@ namespace CentromedicoDoctor.Controllers
             _configuration = configuration;
             _db = context;
             _mapper = mapper;
+            _pacienteSvc = pacienteSvc;
 
         }
 
@@ -70,7 +78,7 @@ namespace CentromedicoDoctor.Controllers
         public async Task<ActionResult> setUserInfoAsync(UserInfo formuser)
         {
 
-            bool result = await _accountSvc.saveUserInfoAsync(formuser);
+            bool result = await _pacienteSvc.updateAsync(formuser);
 
             if (!result)
                 return BadRequest("La fecha de nacimiento no es valida, debe ser mayor de edad.");

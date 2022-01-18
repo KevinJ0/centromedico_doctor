@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 
 namespace Doctor.Repository.Repositories.Interfaces
 {
-    public interface IHorarioMedicoReservaRepository
+    public interface IPacienteRepository
     {
-        public void Add(horarios_medicos_reservados entity);
-        void Remove(horarios_medicos_reservados horaReservacion);
+        public void Add(pacientes entity);
+        public void Update(pacientes entity);
+        pacientes get(int pacienteId);
+         Task<string> getEmailAsync(int pacienteId);
     }
-    }
+}

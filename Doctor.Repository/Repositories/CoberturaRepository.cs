@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Centromedico.Database.Context;
+using Centromedico.Database.DbModels;
 using Doctor.DTO;
 using Doctor.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,10 @@ namespace Doctor.Repository.Repositories
             _mapper = mapper;
         }
 
-        public async Task<coberturaMedicoDTO> getAsync(int medicosID, int? segurosID, int? serviciosID)
+        public async Task<cobertura_medicos> getAsync(int medicosID, int? segurosID, int? serviciosID)
         {
 
-            coberturaMedicoDTO r = await _db.cobertura_medicos.ProjectTo<coberturaMedicoDTO>(_mapper.ConfigurationProvider)
-                                .FirstOrDefaultAsync(x =>
-                               //  x.especialidadesID == formdata.especialidadesID &&
+            var r = await _db.cobertura_medicos.FirstOrDefaultAsync(x =>
                                x.medicosID == medicosID &&
                                x.segurosID == segurosID &&
                                x.serviciosID == serviciosID);

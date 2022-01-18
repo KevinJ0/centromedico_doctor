@@ -65,7 +65,7 @@ namespace CentromedicoDoctor.Controllers
         /// <param name="formuser"></param>
         /// <returns>ActionResult</returns>
         /// <response code="400">La fecha suministrada no es válida.</response>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
         [HttpPost("[action]")]
         public async Task<ActionResult> setUserInfoAsync(UserInfo formuser)
         {
@@ -100,7 +100,7 @@ namespace CentromedicoDoctor.Controllers
         ///      }
         /// </remarks>
         /// <returns>UserInfo</returns>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
         [HttpGet("[action]")]
         public async Task<ActionResult<UserInfo>> getUserInfoAsync()
         {

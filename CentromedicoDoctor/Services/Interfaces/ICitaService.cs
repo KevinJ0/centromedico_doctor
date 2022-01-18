@@ -9,8 +9,9 @@ namespace CentromedicoDoctor.Services.Interfaces
     {
         citaDTO get(int Id, int? medicoId);
         Task<List<citaDTO>> getCitasListAsync(int? medicoId);
-        Task<bool> saveCita(citaEntryDTO formdata);
+        Task<bool> entryCita(citaEntryDTO formdata);
         Task<citaFormDTO> getFormCitaAsync(int citaId, int medicoId);
-        Task<citaUserDTO> getCitaPatienteAsync(int citaId, int? medicoId);
+        Task<citaPacienteDTO> getCitaPatienteAsync(int citaId, int? medicoId);
+        Task<bool> updateCitaAsync(int citaID, citaPacienteDTO formdata);
     }
 }

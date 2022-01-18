@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Doctor.Repository.Repositories.Interfaces
 {
-    public interface ICoberturaRepository
+    public interface ISeguroRepository
     {
-        public Task<List<coberturaDTO>> getAllByDoctorIdAsync(int medicoID);
-        public Task<cobertura_medicos> getAsync(int medicosID, int? segurosID, int? serviciosID);
+        List<seguros> getAllByDoctorId(int medicoID);
+        Task<seguros> getByIdAsync(int? segurosID);
+        List<seguros> getSegurosByServicio(int medicoID, int servicioID);
     }
 }

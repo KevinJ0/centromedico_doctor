@@ -4,7 +4,7 @@ import {
   citaCalendar,
   citaEntry,
   citaForm,
-  citaAndUser,
+  citaPaciente,
 } from "../interfaces/InterfacesDto";
 import { Observable, of, throwError } from "rxjs";
 import { map, catchError } from "rxjs/operators";
@@ -18,9 +18,9 @@ export class CitaService {
 
 
 
-  GetCitaPaciente(citaId: number): Observable<citaAndUser> {
+  GetCitaPaciente(citaId: number): Observable<citaPaciente> {
     return this.http
-    .get<citaAndUser>(this.baseUrl + `api/citas/getCitaPaciente?citaid=${citaId}&medicoid=${this.medicoId}`)
+    .get<citaPaciente>(this.baseUrl + `api/citas/getCitaPaciente?citaid=${citaId}&medicoid=${this.medicoId}`)
     .pipe(
       catchError((err) => throwError(() => new Error(err))),
       map((result) => {
@@ -41,8 +41,16 @@ export class CitaService {
       );
   }
 
-  UpdateCita(_cita: cita): Observable<boolean> {
-    throw new Error("Method not implemented.");
+  UpdateCita(citaId: number, citaP: citaPaciente): Observable<boolean> {
+    return this.http
+    .put<boolean>(this.baseUrl + `api/citas/${citaId}`,citaP)
+    .pipe(
+      catchError((err) => throwError(() => new Error(err))),
+      map((result) => {
+        return result;
+      })
+    );
+
   }
 
   baseUrl: string;

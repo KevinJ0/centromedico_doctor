@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace CentromedicoDoctor.Services
 {
-    public class AccountService : IAccountService
+    public class PacienteService : IPacienteService
     {
         private readonly UserManager<MyIdentityUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -25,7 +25,7 @@ namespace CentromedicoDoctor.Services
         private readonly IMapper _mapper;
         private readonly IAccountRepository _accountRepo;
 
-        public AccountService(RoleManager<IdentityRole> roleManager,
+        public PacienteService(RoleManager<IdentityRole> roleManager,
             IHttpContextAccessor httpContextAccessor,
           UserManager<MyIdentityUser> userManager,
             MyDbContext db,
@@ -47,7 +47,8 @@ namespace CentromedicoDoctor.Services
                 MyIdentityUser user = await _userManager
                  .FindByNameAsync(_httpContextAccessor.HttpContext.User
                  .FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
+                    
+                    
                  
                     var validateB = validateBirth(formuser.fecha_nacimiento);
 
@@ -95,6 +96,11 @@ namespace CentromedicoDoctor.Services
                 throw;
             }
 
+        }
+
+        public Task<bool> updateAsync(UserInfo formuser)
+        {
+            throw new NotImplementedException();
         }
 
         private bool validateBirth(DateTime _fechaNacimiento)

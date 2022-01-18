@@ -26,6 +26,7 @@ using Doctor.Repository.Repositories;
 using Doctor.Repository.Repositories.Interfaces;
 using System.Reflection;
 using System.IO;
+using CentromedicoDoctor.Services.Helpers;
 
 namespace CentromedicoDoctor
 
@@ -52,7 +53,14 @@ namespace CentromedicoDoctor
             services.AddScoped<IServicioService, ServicioService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IHorarioMedicoService, HorarioMedicoService>();
+            services.AddScoped<IPacienteService, PacienteService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IEmailService, EmailService>();
+            
 
+
+            services.AddScoped<IPacienteRepository, PacienteRepository>();
+            services.AddScoped<ISeguroRepository, SeguroRepository>();
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IServicioRepository, ServicioRepository>();
             services.AddScoped<IMedicoRepository, MedicoRepository>();
@@ -65,6 +73,8 @@ namespace CentromedicoDoctor
 
             services.AddSingleton<IS3Service, S3Service>();
             services.AddAWSService<IAmazonS3>();
+            
+            services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory

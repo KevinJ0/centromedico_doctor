@@ -41,9 +41,9 @@ namespace CentromedicoDoctor.Services
                 var dateTimeDic = _horarioMedicoRepo.getAvailableHoursTurnDic(fecha_hora, medicoID);
 
                 if (dateTimeDic == null)
-                    throw new EntityNotFoundException("Este médico no labora el día escogido: " + fecha_hora.Date.ToShortDateString());
+                    throw new EntityNotFoundException("Este médico no labora el día escogido: " + fecha_hora.Date.ToString("dd/MM/yyyy"));
                 else if (!dateTimeDic.Any())
-                    throw new BadHttpRequestException("El médico no cuenta con días hábiles en la fecha escogida: " + fecha_hora.Date.ToShortDateString());
+                    throw new BadHttpRequestException("El médico no cuenta con días hábiles en la fecha escogida: " + fecha_hora.Date.ToString("dd/MM/yyyy"));
 
                 return dateTimeDic;
 

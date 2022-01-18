@@ -10,40 +10,39 @@ using System.Threading.Tasks;
 namespace Doctor.DTO
 {
 
-    public class citaUserDTO
+    public class citaPacienteDTO
     {
 
-        int _edad;
-        public UserInfo userInfo { get; set; }
-        public int ID { get; set; }
-        public int? medicosID { get; set; }
-
-        public string medico_nombre { get; set; }
-        public string medico_apellido { get; set; }
-
-#pragma warning restore CS8632 
+        public int? ID { get; set; }
+        public int medicosID { get; set; }
+        [Required]
+        public string doc_identidad { get; set; }
+        //public string medico_nombre { get; set; }
+        //public string medico_apellido { get; set; }
         public int? serviciosID { get; set; }
-
-        [StringLength(8)]
-#pragma warning disable CS8632 
         public int? pacientesID { get; set; }
+        [Required]
         public string paciente_nombre { get; set; }
-#pragma warning disable CS8632 
+        [Required]
         public string? paciente_apellido { get; set; }
-#pragma warning restore CS8632 
         public string paciente_nombre_tutor { get; set; }
-#pragma warning disable CS8632 
         public string? paciente_apellido_tutor { get; set; }
-#pragma warning restore CS8632
-        public int edad { get; set; }
-        public bool menor_un_año { get; set; }
+        [Required]
+        public DateTime fecha_nacimiento { get; set; }
+        [StringLength(1)]
+        [Required]
+        public string sexo { get; set; }
+        public string contacto { get; set; }
+        public int? edad { get; set; }
+        public bool? menor_un_año { get; set; }
         [Column(TypeName = "text")]
         public string nota { get; set; }
-        [StringLength(10)]
-        public bool? contacto_whatsapp { get; set; }
+        public bool contacto_whatsapp { get; set; }
         [Column(TypeName = "datetime")]
+        [Required]
         public DateTime fecha_hora { get; set; }
-        public int segurosID { get; set; }
+        public int? segurosID { get; set; }
+        public int turno { get; set; }
     }
 
 }

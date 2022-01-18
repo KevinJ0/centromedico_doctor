@@ -46,8 +46,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\assets\TicketTemplateSecond.html" />
+    <Content Remove="wwwroot\TicketTemplateFirst.html" />
+    <Content Remove="wwwroot\TicketTemplateSecond.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="ClientApp\src\app\Pipes\" />
-    <Folder Include="Helpers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\TicketTemplateFirst.html" />
+    <None Include="wwwroot\assets\TicketTemplateSecond.html" />
   </ItemGroup>
 
   <ItemGroup>

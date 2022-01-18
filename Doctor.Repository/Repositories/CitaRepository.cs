@@ -51,13 +51,13 @@ namespace Doctor.Repository.Repositories
 
         }
 
-        public citas get(int Id,int medicoId)
+        public citas get(int Id, int medicoId)
         {
 
             try
             {
 
-                citas cita =_db.citas
+                citas cita = _db.citas
                     .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
                     .FirstOrDefault(c => (c.ID == Id && c.medicosID == medicoId));
 
@@ -141,15 +141,14 @@ namespace Doctor.Repository.Repositories
             }
         }
 
-        public async void saveCita(citas cita)
+
+
+        public void Update(citas entity)
         {
             try
             {
-                _db.citas.Update(cita);
-                var r = _db.SaveChanges();
-
-                if (r <= 0)
-                    throw new Exception("Ha ocurrido un error al tratar e guardar la entidad en la base de datos.");
+                _db.citas.Update(entity);
+            
             }
             catch (Exception)
             {

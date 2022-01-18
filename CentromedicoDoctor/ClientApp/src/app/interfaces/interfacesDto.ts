@@ -12,7 +12,7 @@ export interface especialidad {
   descrip: string;
 }
 export interface hora {
-  id: Date;
+  id: string;
   descrip: string;
 }
 export interface seguro {
@@ -197,25 +197,25 @@ export interface citaForm {
   diasLaborables: Date[];
 }
 
-export interface citaAndUser {
-  userInfo: UserInfo;
-
-  id: number | string;
+export interface citaPaciente {
+  id?: number | string;
   doc_identidad: string;
   medicosID: number;
-  medico_nombre: string;
-  medico_apellido: string;
   serviciosID: number;
-  pacientesID: number;
+  pacientesID?: number;
   paciente_nombre: string;
   paciente_apellido: string;
-  paciente_nombre_tutor: string;
-  paciente_apellido_tutor: string;
-  nota: string;
-  menor_un_ano: boolean;
-  edad: number;
-  contacto: string;
+  paciente_nombre_tutor?: string;
+  paciente_apellido_tutor?: string;
+  nota?: string;
+  menor_un_ano?: boolean;
+  edad?: number;
+  contacto?: string;
+  fecha_nacimiento: string;
+  sexo: string;
   contacto_whatsapp: string;
   fecha_hora: string;
   segurosID: number;
+  turno?: number;
+
 }

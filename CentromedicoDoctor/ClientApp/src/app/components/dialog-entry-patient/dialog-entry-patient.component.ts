@@ -41,9 +41,8 @@ export class DialogEntryPatientComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public event: CalendarEvent
   ) {
     console.log(this.event)
-
-
   }
+  
   total: number = 0;
 
   updateTotal(discount: number): void {

@@ -71,6 +71,7 @@ import { LoadingComponent } from "./components/loading/loading.component";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { AppointmentModifyComponent } from "./components/appointment-modify/appointment-modify.component";
 import { HorarioMedicoService } from "./services/horario-medico-service.service";
+import { SnackBarService } from "./services/snack-bar.service";
 
 registerLocaleData(localeEs);
 
@@ -213,16 +214,17 @@ export const MY_FORMATS = {
           },
         ],
       },
-    ]),
+    ]), 
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'es' },
-   
+    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     AccountService,
     ServicioService,
     HorarioMedicoService,
+    SnackBarService,
     CitaService,
   ],
   exports: [CalendarComponent],

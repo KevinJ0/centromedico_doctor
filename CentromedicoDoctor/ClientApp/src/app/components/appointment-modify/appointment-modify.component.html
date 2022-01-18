@@ -15,64 +15,18 @@
       </mat-button-toggle-group>
     </section>
 
-    <div class="under-age" [style.display]="underAgeShow">
-      <div class="box-container">
-
-        <div class="sub-title">
-          <p>Datos del dependiente</p>
-          <mat-divider></mat-divider>
-        </div>
-
-        <div class="item">
-          <div class="name-wrapper">
-            <mat-form-field class="name" appearance="legacy">
-              <mat-label>Nombre del dependiente</mat-label>
-              <input [required]="isDependent" formControlName="dependentNameControl" matInput
-                placeholder="Nombre del paciente">
-            </mat-form-field>
-
-            <mat-form-field class="lastName" appearance="legacy">
-              <mat-label>Apellido(s) del dependiente</mat-label>
-              <input [required]="isDependent" formControlName="dependentLastNameControl" matInput
-                placeholder="Apellido(s) del paciente">
-            </mat-form-field>
-          </div>
-        </div>
-
-        <div class="item">
-          <mat-form-field appearance="legacy">
-            <mat-label>Fecha de nacimiento</mat-label>
-            <input [required]="isDependent" formControlName="dependentBirthDateControl" placeholder="Escoge una fecha"
-              matInput [min]="minDBDDate" [max]="maxDBDDate" [matDatepicker]="DBDpicker">
-            <mat-datepicker-toggle matSuffix [for]="DBDpicker"></mat-datepicker-toggle>
-            <mat-datepicker #DBDpicker></mat-datepicker>
-          </mat-form-field>
-
-          <div class="radio-wrapper">
-            <label>Sexo del dependiente: </label>
-            <mat-radio-group [required]="isDependent" ariaLabel="Sexo:" style="display: block;" class="radio-group"
-              formControlName="dependentSexControl">
-              <mat-radio-button class="insurance-radio-button" value="m">Masculino</mat-radio-button>
-              <mat-radio-button class="insurance-radio-button" value="f">Femenino</mat-radio-button>
-              <mat-error *ngIf="citaFormGroup.get('dependentSexControl').invalid && loading">
-                {{getDSexErrorMessage()}}
-              </mat-error>
-            </mat-radio-group>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="box-container">
 
       <div class="sub-title">
-        <p>Datos del usuario</p>
+        <p>Datos del paciente</p>
         <mat-divider></mat-divider>
       </div>
 
       <div class="item">
 
-        <mat-form-field appearance="legacy">
+        <div class="identity-wrapper">
+        <mat-form-field appearance="fill">
           <mat-label>Tipo de documento</mat-label>
           <mat-select formControlName="typeIdentityDocControl" name="tipoDoc" required>
 
@@ -82,36 +36,49 @@
           </mat-select>
         </mat-form-field>
 
-        <mat-form-field appearance="legacy">
+        <mat-form-field appearance="fill">
           <mat-label>Documento de identidad</mat-label>
           <mat-icon matSuffix>badge</mat-icon>
-          <input required [mask]="identDocMask" [readonly]="isUserConfirmed" formControlName="identityDocControl"
+          <input required [mask]="identDocMask" formControlName="identityDocControl"
             maxlength="15" matInput placeholder="Documento de identidad">
         </mat-form-field>
 
+      </div>
+
         <div class="name-wrapper">
-          <mat-form-field class="name" appearance="legacy">
-            <mat-label>Nombre</mat-label>
-            <input required formControlName="userNameControl" matInput [readonly]="isUserConfirmed"
-              placeholder="Nombre">
+          <mat-form-field class="name" appearance="fill">
+            <mat-label>Nombre del paciente</mat-label>
+            <input required formControlName="userNameControl" matInput
+              placeholder="Nombre del paciente">
           </mat-form-field>
 
-          <mat-form-field class="lastName" appearance="legacy">
-            <mat-label>Apellido(s)</mat-label>
-            <input required formControlName="userLastNameControl" [readonly]="isUserConfirmed" matInput
-              placeholder="Apellido(s)">
+          <mat-form-field class="lastName" appearance="fill">
+            <mat-label>Apellido(s) del paciente</mat-label>
+            <input required formControlName="userLastNameControl" matInput
+              placeholder="Apellido(s) del paciente">
           </mat-form-field>
+          
         </div>
-
+        
+        <mat-form-field appearance="fill">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input required formControlName="userBirthDateControl" placeholder="Escoge una fecha" matInput
+            [min]="minDate" [max]="maxDate" [matDatepicker]="DBpicker">
+          <mat-datepicker-toggle matSuffix [for]="DBpicker"></mat-datepicker-toggle>
+          <mat-datepicker #DBpicker></mat-datepicker>
+        </mat-form-field>
+        
+        
+        
         <!--mantiene el width ration del los mat-form-field -->
         <div class="radio-wrapper">
           <label>Sexo: </label>
           <mat-radio-group required ariaLabel="Sexo:" style="display: block;" required class="radio-group"
             formControlName="userSexControl">
-            <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="m">
+            <mat-radio-button class="insurance-radio-button" value="m">
               Masculino
             </mat-radio-button>
-            <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="f">
+            <mat-radio-button class="insurance-radio-button" value="f">
               Femenino
             </mat-radio-button>
             <mat-error *ngIf="citaFormGroup.get('userSexControl').invalid && loading">
@@ -119,31 +86,38 @@
             </mat-error>
           </mat-radio-group>
         </div>
+        <mat-checkbox class="wsReach" formControlName="wsReachControl">
+          Contactarme vía Whatsapp
+        </mat-checkbox>
       </div>
+      
+
       <div class="item">
+        <div class="under-age" [style.display]="underAgeShow">    
 
-        <mat-form-field appearance="legacy">
-          <mat-label>Fecha de nacimiento</mat-label>
-          <input required [readonly]="isUserConfirmed" formControlName="birthDateControl" placeholder="Escoge una fecha"
-            matInput [min]="minBDDate" [max]="maxBDDate" [matDatepicker]="BDpicker">
-          <mat-datepicker-toggle [disabled]="isUserConfirmed" matSuffix [for]="BDpicker">
-          </mat-datepicker-toggle>
-          <mat-datepicker #BDpicker></mat-datepicker>
-        </mat-form-field>
+          <div class="name-wrapper">
+            <mat-form-field class="name" appearance="fill">
+              <mat-label>Nombre del tutor</mat-label>
+              <input [required]="isDependent" formControlName="tutorNameControl" matInput
+                placeholder="Nombre del tutor">
+            </mat-form-field>
 
-        <mat-form-field appearance="legacy">
+            <mat-form-field class="lastName" appearance="fill">
+              <mat-label>Apellido(s) del tutor</mat-label>
+              <input [required]="isDependent" formControlName="tutorLastNameControl" matInput
+                placeholder="Apellido(s) del tutor">
+            </mat-form-field>
+          </div>
+        </div>
+
+        <mat-form-field appearance="fill">
           <mat-label>Teléfono</mat-label>
           <input required formControlName="contactControl" mask="000-000-0000" type="tel" matInput
             placeholder="555-555-1234">
           <mat-icon matSuffix>phone</mat-icon>
         </mat-form-field>
 
-        <mat-checkbox class="wsReach" formControlName="wsReachControl">
-          Contactarme vía Whatsapp
-        </mat-checkbox>
-
-
-        <mat-form-field appearance="legacy">
+        <mat-form-field appearance="fill">
           <mat-label>Nota</mat-label>
           <textarea formControlName="noteControl" rows="8" #matInputNote maxlength="200" matInput
             placeholder="Nota para el médico"></textarea>
@@ -155,12 +129,12 @@
 
     <!-- -----------------------------------------------------------------------  -->
     <div class="sub-title">
-      <p>Datos de cita</p>
+      <p>Datos de la cita</p>
       <mat-divider></mat-divider>
     </div>
     <div class="box-container">
       <div class="item">
-        <mat-form-field (click)="picker.open()" appearance="legacy">
+        <mat-form-field (click)="picker.open()" appearance="fill">
           <mat-label>Fecha</mat-label>
           <input class="date-appointment" formControlName="dateControl" [matDatepickerFilter]="dateFilter" matInput
             [matDatepicker]="picker" required (click)="picker.open()" [readonly]="true">
@@ -170,7 +144,7 @@
       </div>
 
       <div class="item">
-        <mat-form-field appearance="legacy">
+        <mat-form-field appearance="fill">
           <mat-label>Hora</mat-label>
           <mat-select formControlName="timeControl" name="hora" required [disabled]="loadingDateControl">
             <mat-option *ngFor="let hora of Horas" [value]="hora.id">
@@ -188,7 +162,7 @@
     <div class="box-container">
 
       <div class="item">
-        <mat-form-field appearance="legacy">
+        <mat-form-field appearance="fill">
           <mat-label>Tipo de servicio</mat-label>
           <mat-select formControlName="serviceTypeControl" name="service" required>
             <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
@@ -199,7 +173,7 @@
       </div>
 
       <div class="item">
-        <mat-form-field appearance="legacy">
+        <mat-form-field appearance="fill">
           <mat-label>Seguro</mat-label>
           <mat-select required formControlName="insuranceControl">
             <mat-option *ngFor="let seguro of coberturas" [value]="seguro.segurosID">

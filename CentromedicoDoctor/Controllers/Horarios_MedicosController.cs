@@ -55,11 +55,12 @@ namespace CentromedicoDoctor.Controllers
                     return result;
                 }
                 catch (Exception)
-                {
+            {
 
-                    throw;
-                }
+                throw;
+
             }
+        }
 
      
     }

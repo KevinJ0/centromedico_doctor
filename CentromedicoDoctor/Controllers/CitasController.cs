@@ -39,12 +39,12 @@ namespace CentromedicoDoctor.Controllers
         /// <response code="500"></response>  
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor, Secretary")]
         [HttpPost("[action]")]
-        public async Task<ActionResult> SaveCita(citaEntryDTO formdata)
+        public async Task<ActionResult> entryCita(citaEntryDTO formdata)
         {
 
             try
             {
-                var result = await _citaSvc.saveCita(formdata);
+                var result = await _citaSvc.entryCita(formdata);
                 return Ok(result);
             }
             catch (Exception)
@@ -120,7 +120,7 @@ namespace CentromedicoDoctor.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<citaUserDTO>> getCitaPacienteAsync(int citaId, int? medicoId)
+        public async Task<ActionResult<citaPacienteDTO>> getCitaPacienteAsync(int citaId, int? medicoId)
         {
             try
             {
@@ -135,11 +135,23 @@ namespace CentromedicoDoctor.Controllers
 
         }
 
-        enum appointment : int
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [HttpPut("{citaID:int}")]
+        public async Task<ActionResult<bool>> updateCitaAsync(int citaID, citaPacienteDTO formdata)
         {
-            me = 0,
-            other = 1,
+            try
+            {
+
+                bool result = await _citaSvc.updateCitaAsync(citaID,formdata);
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
         }
+
     }
 
 }
