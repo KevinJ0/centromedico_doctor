@@ -8,6 +8,7 @@ using Doctor.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -67,7 +68,8 @@ namespace CentromedicoDoctor.Services
         {
             try
             {
-                var user = await _userManager.FindByNameAsync(model.UserCredential) ?? await _userManager.FindByEmailAsync(model.UserCredential);
+
+                var user = _userManager.FindByNameAsync(model.UserCredential).Result ?? _userManager.FindByEmailAsync(model.UserCredential).Result;
 
                 // Validate credentials
                 if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -96,7 +98,7 @@ namespace CentromedicoDoctor.Services
 
                         TokenResponseDTO accessToken = await CreateAccessToken(user, newRtoken.Value);
 
-                        return new OkObjectResult(new { authToken = accessToken });
+                        return new OkObjectResult(accessToken);
                     }
                 }
                 throw new BadHttpRequestException("El usuario o ontraseña son invalidos, por favor verifique sus credenciales.");
@@ -149,6 +151,19 @@ namespace CentromedicoDoctor.Services
                 refresh_token = refreshToken,
                 roles = roles.FirstOrDefault(),
                 username = user.UserName,
+
+                medicos = _db.medicos.Include(sm => sm.secretarias_medicos)
+                .ThenInclude(m => m.secretarias.MyIdentityUsers)
+                .SelectMany(x => x.secretarias_medicos.Where(sm => sm.secretarias.MyIdentityUsers == user))
+                .Select(m => new { 
+                    id = m.medicos.ID,
+                    nombre = m.medicos.nombre,
+                    apellido = m.medicos.apellido,
+                    profilePhoto = m.medicos.ProfilePhoto,
+                    especialidades = m.medicos.especialidades_medicos.ToList().Select(x=>x.especialidades.descrip),
+                }).ToList(),
+
+              
             };
         }
 
@@ -221,7 +236,7 @@ namespace CentromedicoDoctor.Services
 
                 var response = await CreateAccessToken(user, rtNew.Value);
 
-                return new OkObjectResult(new { authToken = response });
+                return new OkObjectResult(response);
 
             }
             catch (Exception)

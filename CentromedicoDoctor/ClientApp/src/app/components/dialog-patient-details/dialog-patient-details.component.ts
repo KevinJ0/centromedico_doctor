@@ -1,4 +1,8 @@
 import { Component, OnInit, Inject } from "@angular/core";
+
+import { timer } from 'rxjs';
+
+
 import {
   MatDialog,
   MatDialogRef,
@@ -7,21 +11,27 @@ import {
 import {
   citaCalendar,
   cobertura,
+  CustomError,
   seguro,
   servicioCobertura,
 } from "src/app/interfaces/InterfacesDto";
 import * as _moment from "moment";
-const moment = _moment;
-import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
+import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { ServicioService } from "src/app/services/servicio.service";
 import { DialogEntryPatientComponent } from "../dialog-entry-patient/dialog-entry-patient.component";
 import { CalendarEvent } from "angular-calendar";
+import { DialogAppointmentPostponeComponent } from "../dialog-appointment-postpone/dialog-appointment-postpone.component";
+import { DialogComponent } from "../dialog/dialog.component";
+import { CitaService } from "src/app/services/cita.service";
+import { SnackBarService } from "src/app/services/snack-bar.service";
+import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 
 @Component({
   selector: "app-dialog-patient-details",
   templateUrl: "./dialog-patient-details.component.html",
   styleUrls: ["./dialog-patient-details.component.css"],
+ 
 })
 export class DialogPatientDetailsComponent implements OnInit {
   private data: citaCalendar = this.event.patientData;
@@ -36,13 +46,21 @@ export class DialogPatientDetailsComponent implements OnInit {
   pago: number = 0;
   cobertura: number = 0;
   loading: boolean = false;
+  deleteCita: boolean = false;
+  _fechaHora: string;
 
+  
   constructor(
+    private _formBuilder: FormBuilder,
     private servicioSvc: ServicioService,
-    public dialogEntry: MatDialog,
+    private citaSvc: CitaService,
+    private openSnackBar: SnackBarService,
+    public dialog: MatDialog,
     public dialogRef: MatDialogRef<DialogPatientDetailsComponent>,
     @Inject(MAT_DIALOG_DATA) public event: CalendarEvent
   ) {
+
+
     this.citaDetailFormGroup = new FormGroup({
       name: new FormControl(this.data.paciente_nombre),
       identification: new FormControl(this.data.doc_identidad),
@@ -56,7 +74,7 @@ export class DialogPatientDetailsComponent implements OnInit {
       tutorIdentification: new FormControl(this.data.doc_identidad),
     });
 
-    this.data.fecha_hora = _moment(this.data.fecha_hora)
+    this._fechaHora = _moment(this.data.fecha_hora)
       .format("D/M/YYYY - hh:mm a")
       .toString();
   }
@@ -113,15 +131,57 @@ export class DialogPatientDetailsComponent implements OnInit {
       this.diferencia = 0;
     }
   }
+
+  openDeleteDialog(): void {
+    const dialogRef = this.dialog.open(DialogComponent, {
+      data: { title: "Confirmar eliminación", msj: `¿Está seguro que desea eliminar la cita ${this.data.id} del paciente ${this.data.paciente_nombre}? ` },
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+
+      if (result?.response)
+        this.citaSvc.DeleteCita(this.data.id).subscribe(
+          () => {
+            console.log("completado");
+            this.openSnackBar.open("Operación realizada correctamente.", 0);
+            this.dialogRef.close({ data: true });
+          },
+          (err: CustomError) => {
+            this.loading = false;
+            this.openSnackBar.open(err.message, 1);
+            console.error(err);
+          },
+          () => {
+            this.loading = false;
+          }
+        );;
+
+    });
+  }
+
+  openDialogAppointmentPostpone(event: CalendarEvent) {
+    const dialogRef = this.dialog.open(DialogAppointmentPostponeComponent, {
+      data: event,
+    });
+
+    dialogRef.afterClosed().subscribe((result: CalendarEvent) => {
+
+      if (result)
+        this.dialogRef.close({ data: event });
+    });
+  }
+
+
   openDialogEntry(event: CalendarEvent) {
-    const dialogRef = this.dialogEntry.open(DialogEntryPatientComponent, {
+    const dialogRef = this.dialog.open(DialogEntryPatientComponent, {
       data: event,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
 
-      if (result) 
+      if (result)
         this.dialogRef.close({ data: event });
+
     });
   }
 }

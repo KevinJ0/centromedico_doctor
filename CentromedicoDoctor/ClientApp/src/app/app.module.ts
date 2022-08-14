@@ -50,14 +50,12 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { DialogContentComponent } from "./components/dialog-content/dialog-content.component";
 import { AuthGuardService } from "./guards/auth-guard.service";
-import { DoctorComponent } from "./components/doctor/doctor.component";
-import { SecretaryComponent } from "./components/secretary/secretary.component";
+import { MainContainerComponent } from "./components/main-container/main-container.component";
 import { AppointmentListComponent } from "./components/appointment-list/appointment-list.component";
 import { ReportsComponent } from "./components/reports/reports.component";
 import { UserSettingsComponent } from "./components/user-settings/user-settings.component";
 import { CalendarModule, DateAdapter } from "angular-calendar";
 import { adapterFactory } from "angular-calendar/date-adapters/date-fns";
-import { CalendarComponent } from "./components/calendar/calendar.component";
 import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { registerLocaleData } from "@angular/common";
 import localeEs from "@angular/common/locales/es";
@@ -72,6 +70,23 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { AppointmentModifyComponent } from "./components/appointment-modify/appointment-modify.component";
 import { HorarioMedicoService } from "./services/horario-medico-service.service";
 import { SnackBarService } from "./services/snack-bar.service";
+import { BuildingComponent } from './components/building/building.component';
+import { DialogAppointmentPostponeComponent } from './components/dialog-appointment-postpone/dialog-appointment-postpone.component';
+import { DialogComponent } from './components/dialog/dialog.component';
+import { SignalrCustomService } from "./services/signalr-custom.service";
+import { SelectDoctorComponent } from './components/select-doctor/select-doctor.component';
+import { GrupoService } from "./services/grupo.service";
+import { SnackbarUpdateComponent } from './components/snackbar-update/snackbar-update.component';
+import { CustomPaginator } from "./shared/CustomPaginatorConfiguration";
+import { AngularSvgIconModule } from 'angular-svg-icon';
+import { DialogAppointmentDetailComponent } from './components/dialog-appointment-detail/dialog-appointment-detail.component';
+import { TableAppointmentsComponent } from './components/table-appointments/table-appointments.component';
+import { MatSortModule } from "@angular/material/sort";
+
+export function tokenGetter() {
+  //return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb3NlQGdtYWlsLmNvbSIsImp0aSI6IjdjOGY5ZGIyLTAyNzYtNDJkMS1iNTc3LTUyNTg1NjhjMTdlZSIsIm5hbWVpZCI6IjAxZTNhMjJiLTI2MjctNDgyMS05ZTBlLTE0NzE1MTNhOWY5NCIsInJvbGUiOiJQYXRpZW50IiwiTG9nZ2VkT24iOiI1LzI0LzIwMjEgMTA6Mjk6NTggUE0iLCJuYmYiOjE2MjE5MDk3OTgsImV4cCI6MTcxNDYyMzcxOCwiaWF0IjoxNjIxOTA5Nzk4LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMzNyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzM3In0.Auc5Om1B4G5M5BJ31EEEtElCsBTug4WMO1ugChYdcEE";
+  return sessionStorage.getItem("jwt");
+}
 
 registerLocaleData(localeEs);
 
@@ -93,17 +108,22 @@ export const MY_FORMATS = {
     LoginComponent,
     DashboardComponent,
     DialogContentComponent,
-    DoctorComponent,
-    SecretaryComponent,
+    MainContainerComponent,
     AppointmentListComponent,
     ReportsComponent,
     UserSettingsComponent,
-    CalendarComponent,
     NavbarComponent,
     DialogPatientDetailsComponent,
     DialogEntryPatientComponent,
     LoadingComponent,
     AppointmentModifyComponent,
+    BuildingComponent,
+    DialogAppointmentPostponeComponent,
+    DialogComponent,
+    SelectDoctorComponent,
+    SnackbarUpdateComponent,
+    DialogAppointmentDetailComponent,
+    TableAppointmentsComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
@@ -115,6 +135,7 @@ export const MY_FORMATS = {
     }),
     FlatpickrModule.forRoot(),
     NgbModalModule,
+    MatSortModule,
     MatStepperModule,
     MatTabsModule,
     MatCheckboxModule,
@@ -142,22 +163,24 @@ export const MY_FORMATS = {
     FormsModule,
     MatSidenavModule,
     MatInputModule,
+    AngularSvgIconModule.forRoot(),
     JwtModule.forRoot({
       config: {
+        tokenGetter: tokenGetter,
         allowedDomains: [
           "localhost:4200",
-          "centromedico2-001-site1.etempurl.com",
         ],
         disallowedRoutes: [],
         authScheme: "Bearer ",
       },
     }),
     RouterModule.forRoot([
-      { path: "", redirectTo: "login", pathMatch: "full" },
       { path: "login", component: LoginComponent, pathMatch: "full" },
+      { path: "select-doctor", component: SelectDoctorComponent, pathMatch: "full",canActivate: [AuthGuardService]},
+      { path: "", component: LoginComponent, pathMatch: "full"},
       {
-        path: "doctor",
-        component: DoctorComponent,
+        path: "app",
+        component: MainContainerComponent,
         children: [
           { path: "", redirectTo: "dashboard", pathMatch: "full" },
           {
@@ -185,40 +208,15 @@ export const MY_FORMATS = {
             component: UserSettingsComponent,
             canActivate: [AuthGuardService],
           },
-        ],
+        ], canActivate: [AuthGuardService]
       },
-      {
-        path: "auxiliar",
-        component: SecretaryComponent,
-        children: [
-          { path: "", redirectTo: "dashboard", pathMatch: "full" },
-          {
-            path: "dashboard",
-            component: DashboardComponent,
-            canActivate: [AuthGuardService],
-          },
-          {
-            path: "citas",
-            component: AppointmentListComponent,
-            canActivate: [AuthGuardService],
-          },
-          {
-            path: "reportes",
-            component: ReportsComponent,
-            canActivate: [AuthGuardService],
-          },
-          {
-            path: "configuracion",
-            component: UserSettingsComponent,
-            canActivate: [AuthGuardService],
-          },
-        ],
-      },
-    ]), 
+      { path: "**", redirectTo: "login", pathMatch: "full" },
+    ]),
   ],
   providers: [
+    { provide: MatPaginatorIntl, useValue: CustomPaginator() },
     { provide: MAT_DATE_LOCALE, useValue: 'es' },
-    {provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: {useUtc: true}},
+    //{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     AccountService,
@@ -226,8 +224,10 @@ export const MY_FORMATS = {
     HorarioMedicoService,
     SnackBarService,
     CitaService,
+    SignalrCustomService,
+    GrupoService
   ],
-  exports: [CalendarComponent],
-  bootstrap: [AppComponent], 
+  exports: [DashboardComponent],
+  bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

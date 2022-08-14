@@ -31,19 +31,16 @@ namespace Doctor.Repository.Repositories
              _mapper = mapper;
         }
 
-        public async Task<List<servicio_coberturasDTO>> getAllByDoctorIdAsync(int medicoID)
+        public async Task<List<serviciosDTO>> getAllByDoctorIdAsync(int medicoID)
         {
 
             try
             {
-                List<servicio_coberturasDTO> r = await _db.servicios_medicos
-                   .Where(x => x.medicosID == medicoID).Select(x => new servicio_coberturasDTO
+                List<serviciosDTO> r = await _db.servicios_medicos
+                   .Where(x => x.medicosID == medicoID).Select(x => new serviciosDTO
                    {
                        ID = x.servicios.ID,
-                       descrip = x.servicios.descrip,
-                       coberturas = _mapper.Map<List<coberturaDTO>>( _db.cobertura_medicos.Include("seguros")
-                      .Where(c => c.medicosID == x.medicosID && c.serviciosID == x.servicios.ID)
-                   .ToList())
+                       descrip = x.servicios.descrip
                    }).ToListAsync();
             return r;
             }
@@ -54,11 +51,11 @@ namespace Doctor.Repository.Repositories
         }
 
 
-        public async Task<servicios> getByIdAsync(int? segurosID)
+        public async Task<servicios> getByIdAsync(int? servicioID)
         {
             try
             {
-                servicios servicio = await _db.servicios.FindAsync(segurosID);
+                servicios servicio = await _db.servicios.FindAsync(servicioID);
                 return servicio;
             }
             catch (Exception)
@@ -66,6 +63,31 @@ namespace Doctor.Repository.Repositories
                 throw;
             }
         }
+
+
+        public async Task<List<servicio_coberturasDTO>> getServicio_coberturaByDoctorIdAsync(int medicoID)
+        {
+
+            try
+            {
+                List<servicio_coberturasDTO> r = await _db.servicios_medicos
+                   .Where(x => x.medicosID == medicoID).Select(x => new servicio_coberturasDTO
+                   {
+                       ID = x.servicios.ID,
+                       descrip = x.servicios.descrip,
+                       coberturas = _mapper.Map<List<coberturaDTO>>(_db.cobertura_medicos.Include("seguros")
+                      .Where(c => c.medicosID == x.medicosID && c.serviciosID == x.servicios.ID)
+                   .ToList())
+                   }).ToListAsync();
+                return r;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+
 
     }
 }

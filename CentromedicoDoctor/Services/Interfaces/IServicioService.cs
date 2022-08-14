@@ -6,6 +6,8 @@ namespace CentromedicoDoctor.Services.Interfaces
 {
     public interface IServicioService
     {
-        public Task<List<servicio_coberturasDTO>> getAllByDoctorIdAsync(int medicoID);
+        public Task<List<servicio_coberturasDTO>> getServicio_coberturaByDoctorIdAsync(int medicoID);
+        public Task<List<serviciosDTO>> getAllAsync(int medicoID);
+
     }
 }

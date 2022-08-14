@@ -80,3 +80,15 @@ header .mat-button {
   font-weight: 400;
   color: #e3e3e3;
 }
+
+
+.logo p {
+  color: rgb(105, 105, 105);
+}
+
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-left: clamp(1rem, 20vw, 3rem);
+}

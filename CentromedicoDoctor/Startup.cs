@@ -27,6 +27,9 @@ using Doctor.Repository.Repositories.Interfaces;
 using System.Reflection;
 using System.IO;
 using CentromedicoDoctor.Services.Helpers;
+using CentromedicoDoctor.Hubs;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace CentromedicoDoctor
 
@@ -44,19 +47,20 @@ namespace CentromedicoDoctor
         public void ConfigureServices(IServiceCollection services)
         {
             // configure strongly typed settings object
-            
+
 
             services.AddHttpContextAccessor();
 
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ICitaService, CitaService>();
             services.AddScoped<IServicioService, ServicioService>();
+            services.AddScoped<ISeguroService, SeguroService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IHorarioMedicoService, HorarioMedicoService>();
             services.AddScoped<IPacienteService, PacienteService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEmailService, EmailService>();
-            
+            services.AddScoped<IGrupoService, GrupoService>();
 
 
             services.AddScoped<IPacienteRepository, PacienteRepository>();
@@ -70,11 +74,22 @@ namespace CentromedicoDoctor
             services.AddScoped<ICoberturaRepository, CoberturaRepository>();
             services.AddScoped<IHorarioMedicoReservaRepository, HorarioMedicoReservaRepository>();
             services.AddScoped<ISecretariaRepository, SecretariaRepository>();
+            services.AddScoped<IDatabaseChangeNotificationService, SqlDependencyService>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IS3Service, S3Service>();
             services.AddAWSService<IAmazonS3>();
-            
+
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("EnableCORS", builder =>
+                {
+                    builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((Host) => true).AllowCredentials();
+                });
+            });
+            services.AddSignalR();
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -121,20 +136,13 @@ namespace CentromedicoDoctor
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
-            services.AddCors(options =>
-            {
-                options.AddPolicy("EnableCORS", builder =>
-                {
-                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                });
-            });
 
             var mapperConfig = new MapperConfiguration(m => m.AddProfile(new MappingProfile()));
             IMapper mapper = mapperConfig.CreateMapper();
             // services.AddSingleton(mapper);
 
             services.AddAutoMapper(typeof(Startup));
-            
+
             // Token Model
             services.AddScoped<token>();
 
@@ -163,16 +171,38 @@ namespace CentromedicoDoctor
                 op.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).
                 AddJwtBearer(o =>
-                o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["Authorization:Issuer"],
-                    ValidAudience = Configuration["Authorization:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authorization:LlaveSecreta"])),
-                    ClockSkew = TimeSpan.Zero
+
+                    o.RequireHttpsMetadata = false;
+                    o.SaveToken = true;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Authorization:Issuer"],
+                        ValidAudience = Configuration["Authorization:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authorization:LlaveSecreta"])),
+                        ClockSkew = TimeSpan.Zero
+                    };
+
+                    o.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                         // If the request is for our hub...
+                         var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/citas")))
+                            {
+                             // Read the token out of the query string
+                             context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
             services.AddAuthorization(options =>
@@ -198,7 +228,10 @@ namespace CentromedicoDoctor
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IDatabaseChangeNotificationService notificationService)
         {
             /*if (env.IsDevelopment())
             {*/
@@ -220,6 +253,7 @@ namespace CentromedicoDoctor
             });
             app.UseStaticFiles();
             app.UseAuthentication();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
@@ -233,7 +267,9 @@ namespace CentromedicoDoctor
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<NotificationCitaHub>("/citas").RequireAuthorization();
             });
+
 
             app.UseSpa(spa =>
             {
@@ -248,6 +284,8 @@ namespace CentromedicoDoctor
                     // spa.UseAngularCliServer(npmScript: "start");
                 }
             });
+
+            notificationService.Config();
 
         }
     }

@@ -12,6 +12,7 @@ import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AutoUnsubscribe } from "ngx-auto-unsubscribe";
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogContentComponent } from '../dialog-content/dialog-content.component';
+import { CustomError } from 'src/app/interfaces/InterfacesDto';
 
 @AutoUnsubscribe()
 @Component({
@@ -53,14 +54,15 @@ export class LoginComponent implements OnInit {
   ErrorMessage: string;
   invalidLogin: boolean = false;
 
-  constructor(public dialog: MatDialog,
+  constructor(
+    public dialog: MatDialog,
     private router: Router,
     private rutaActiva: ActivatedRoute,
     private accountSvc: AccountService,
     private _formBuilder: FormBuilder) {
     //go back user is already logged in
     if (this.accountSvc.checkLoginStatus())
-      this.router.navigate(['doctor']);
+      this.router.navigate(['app']);
   }
 
   showError(dataMjs: any) {
@@ -71,7 +73,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.returnUrl = this.rutaActiva.snapshot.queryParams['returnUrl'] || '/';
+    //this.returnUrl = this.rutaActiva.snapshot.queryParams['returnUrl'] || '/';
 
     this.loginFormGroup = this._formBuilder.group({
       loginEmailControl: ['', [
@@ -88,30 +90,29 @@ export class LoginComponent implements OnInit {
     if (this.loginFormGroup.valid) {
       if (!this.loading) {
         this.loading = true;
-        const credentials = JSON.stringify(this.loginFormGroup.value);
-        let userLogin = this.loginFormGroup.value;
+         let userLogin = this.loginFormGroup.value;
 
         this.accountSvc
           .Login(userLogin.loginEmailControl, userLogin.loginPasswordControl)
-          .subscribe(result => {
-
-            this.loading = false;
-            let token = (<any>result).authToken.token;
-
-            //set all config data for further uses
-            //---
-
-            console.log("User Logged In Successfully");
-            this.invalidLogin = false;
-            this.router.navigate(['doctor']);
-
-          },
-            (error) => {
-              this.invalidLogin = true;
+          .subscribe(   
+            
+            result => {
+ 
               this.loading = false;
 
-              this.ErrorMessage = "Ha ocurrido un error al intentar iniciar sessión";
-              this.showError({ type: 1, message: error});
+              console.log("User Logged In Successfully");
+              this.invalidLogin = false;
+              this.router.navigate(['select-doctor'], { state: { medicos: result.medicos }, 
+              skipLocationChange:true});
+
+          },
+          (err) => {
+
+              this.invalidLogin = true;
+              this.loading = false;
+              this.ErrorMessage = "Ha ocurrido un error al tratar de entrar al sistema."
+              this.ErrorMessage = err.message;
+              this.showError({ type: 1, message: this.ErrorMessage});
             }
           )
       }

@@ -10,7 +10,8 @@ namespace Doctor.Repository.Repositories.Interfaces
 {
     public interface IServicioRepository
     {
-        Task<List<servicio_coberturasDTO>> getAllByDoctorIdAsync(int medicoID);
-        Task<servicios> getByIdAsync(int? segurosID);
+        Task<List<serviciosDTO>> getAllByDoctorIdAsync(int medicoID);
+        Task<List<servicio_coberturasDTO>> getServicio_coberturaByDoctorIdAsync(int medicoID);
+        Task<servicios> getByIdAsync(int? servicioID);
     }
 }

@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject, pipe, throwError } from 'rxjs';
 import { tap, catchError, switchMap, finalize, filter, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { ClassGetter } from '@angular/compiler/src/output/output_ast';
+import { CustomError } from '../interfaces/InterfacesDto';
 
 
 @Injectable({
@@ -22,7 +23,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Check if the user is logging in for the first time
-    var token = localStorage.getItem('jwt');
+    var token = sessionStorage.getItem('jwt');
     var authReq = request.clone({
       setHeaders: {
         Accept: "application/json",
@@ -76,32 +77,39 @@ export class JwtInterceptor implements HttpInterceptor {
 
   // Global error handler method 
   private handleError(errorResponse: HttpErrorResponse) {
-    let errorMsg: string;
+
+    let myError: CustomError = {status:0, message:''};
     console.error(errorResponse)
 
     try {
+      myError.status = errorResponse.status;
 
       if (errorResponse.error instanceof ErrorEvent) {
+
+        myError.message = `Ha ocurrido un error del lado del cliente.`;
+
         // A client-side or network error occurred. Handle it accordingly.
-        errorMsg = "Un error ha ocurrido del lado del cliente: " + errorResponse.error?.message;
       } else {
 
         if (errorResponse.error?.customError &&
           (typeof errorResponse.error?.error[0] === 'string' || errorResponse.error instanceof String)
           && errorResponse.error?.error[0].length < 150) {
-          errorMsg = `${errorResponse.error?.error[0]}`;
+
+          myError.message = errorResponse.error?.error[0];
 
           // The backend returned an unsuccessful response code.
         } else {
-          errorMsg = `Ha ocurrido un error al tratar de procesar su petición.`;
+          myError.message = `Ha ocurrido un error al tratar de procesar su petición.`;
         }
       }
 
     } catch (e) {
       console.error(e)
-      errorMsg = `Ha ocurrido un error al tratar de procesar su petición.`;
+      myError.message = `No se ha podido procesar el error.`;
+    }finally{
+
+      return throwError(myError);
     }
-    return throwError(errorMsg);
   }
 
 
@@ -116,7 +124,6 @@ export class JwtInterceptor implements HttpInterceptor {
       // Any existing value is set to null
       // Reset here so that the following requests wait until the token comes back from the refresh token API call
       this.tokenSubject.next(null);
-      console.log("hola estoy en refresh")
 
       /// call the API to refresh the token
       return this.acct.getNewRefreshToken().pipe(
@@ -150,7 +157,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
 
   private attachTokenToRequest(request: HttpRequest<any>) {
-    var token = localStorage.getItem('jwt');
+    var token = sessionStorage.getItem('jwt');
     return request.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
   }
 }

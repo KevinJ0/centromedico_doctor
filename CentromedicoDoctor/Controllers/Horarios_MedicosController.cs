@@ -53,7 +53,8 @@ namespace CentromedicoDoctor.Controllers
                     //get the  appointment list schedule of this doctor
                     var result = _horarioMedicoSvc.getHoursList(fecha_hora, medicoID);
                     return result;
-                }
+             
+            }
                 catch (Exception)
             {
 

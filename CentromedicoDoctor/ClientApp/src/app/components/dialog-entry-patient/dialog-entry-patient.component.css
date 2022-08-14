@@ -1,9 +1,9 @@
 .title {
   text-align: center;
 }
-.content
-{
-  position:relative;
+
+.content {
+  position: relative;
 }
 
 .header-info {
@@ -18,7 +18,7 @@
   flex-wrap: wrap;
   flex-direction: row;
 
-} 
+}
 
 
 .header-info p {
@@ -45,16 +45,22 @@
   padding-top: 2rem;
 }
 
-.notes{
+.notes {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
 }
-.costs{
+
+.costs {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap:  1rem;
+  gap: 1rem;
 }
+
+.costs>.mat-form-field {
+  width: clamp(8rem, 21vw, 15rem);
+}
+
 .example-container .mat-form-field+.mat-form-field {
   margin-left: 8px;
 }
@@ -72,21 +78,41 @@ input.example-right-align {
   -moz-appearance: textfield;
 }
 
-.action-buttons{
+
+.action-buttons {
   display: flex;
   text-align: center;
-  gap: 10px;
+  gap: 20px;
   justify-content: center;
   margin-top: 2rem;
   flex-wrap: wrap;
 }
+
+@media screen and (max-width: 580px) {
+  
+  .costs {
+    grid-template-columns: auto;
+  }
+
+  .costs>.mat-form-field {
+    width: 100%;
+  }
+
+
+
+}
+
 @media screen and (max-width: 850px) {
   .header-info {
     grid-template-columns: 1fr;
   }
 
+
   .header-info :nth-child(even) {
     text-align: left;
+  }
+  .notes {
+    grid-template-columns: auto;
   }
 
 }

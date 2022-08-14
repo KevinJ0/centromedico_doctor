@@ -3,36 +3,25 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { catchError, of } from "rxjs";
-import { cita, citaAndUser, citaCalendar, citaForm, citaPaciente, cobertura, hora, seguro, servicioCobertura, UserInfo, } from "src/app/interfaces/InterfacesDto";
-import { AccountService } from "src/app/services/account.service";
+import { citaForm, citaPaciente, cobertura, CustomError, hora, seguro, servicioCobertura, UserInfo, } from "src/app/interfaces/InterfacesDto";
 import { CitaService } from "src/app/services/cita.service";
 import { HorarioMedicoService } from "src/app/services/horario-medico-service.service";
 import * as _moment from "moment";
-import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { SnackBarService } from "src/app/services/snack-bar.service";
 import * as moment from "moment-timezone";
+import { NavigationService } from "src/app/services/navigation.service";
 
 @Component({
   selector: "app-appointment-modify",
   templateUrl: "./appointment-modify.component.html",
   styleUrls: ["./appointment-modify.component.css"],
-  providers: [
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: {
-        showError: true,
-        displayDefaultIndicatorType: false,
-      },
-    },
-  ],
 })
 export class AppointmentModifyComponent implements OnInit {
   citaId: number;
-  medicoId: number = Number.parseInt(localStorage.getItem("medicoId"));
+  medicoId: number = Number.parseInt(sessionStorage.getItem("medicoId"));
   mode: ProgressSpinnerMode = "indeterminate";
-  count = of(NaN);
   citaFormGroup: FormGroup;
-  citaData: citaAndUser;
+  citaData: citaPaciente;
 
   seguros: seguro[];
   coberturas: cobertura[];
@@ -44,8 +33,6 @@ export class AppointmentModifyComponent implements OnInit {
   loadingPayment: boolean;
   loadingDateControl: boolean = false;
   loading: boolean = false;
-
-  insuranceOption: boolean = true;
 
   isDependent = false;
   isEditable = false;
@@ -63,23 +50,22 @@ export class AppointmentModifyComponent implements OnInit {
   selectedTypeDoc: number = 0;
 
   constructor(
+    private navigation: NavigationService,
     private openSnackBar: SnackBarService,
     private router: Router,
     private horarioMedicoSvc: HorarioMedicoService,
-    private accountSvc: AccountService,
     private _formBuilder: FormBuilder,
     private citaSvc: CitaService,
     private rutaActiva: ActivatedRoute
   ) {
     this.loading = true;
-    console.log(this.citaSvc.citaPsArr);
+    console.log(this.citaSvc._citasArr);
 
     this.rutaActiva.params.subscribe((params: Params) => {
       this.citaId = Number.parseInt(params.id);
 
-      if (this.citaId == 0) 
+      if (this.citaId == 0)
         this.router.navigate([".."]);
-      
 
       //inicializa las fechas permitidas
       this.citaSvc
@@ -112,7 +98,7 @@ export class AppointmentModifyComponent implements OnInit {
           };
 
           //Relleno los datos del usuario si existe e cita
-          this.setCitaAndUserInfo();
+          this.setcitaPacienteInfo();
 
           console.table(this.diasLaborables);
         });
@@ -185,6 +171,7 @@ export class AppointmentModifyComponent implements OnInit {
               };
             });
 
+            // agregamos por ultimo la hora actual selecta que no viene en la api
             if (
               _fechaCita.toDateString() == value.toDateString() &&
               new Date().getTime() <= _fechaCita.getTime()
@@ -194,8 +181,7 @@ export class AppointmentModifyComponent implements OnInit {
                 descrip:
                   _moment(this.citaData.fecha_hora).format(" hh:mm A") +
                   " - Turno " +
-                  this.citaData.turno +
-                  " Actual",
+                  this.citaData.turno
               });
             }
 
@@ -207,20 +193,19 @@ export class AppointmentModifyComponent implements OnInit {
               return 0;
             });
 
-            console.log(this.Horas);
-
-            this.citaFormGroup.get("timeControl").setValue(_fechaISOString);
+            if (new Date(value).toDateString() == _fechaCita.toDateString())
+              this.citaFormGroup.get("timeControl").setValue(_fechaISOString);
 
             this.loadingDateControl = false;
           },
-          (err) => {
+          (err: CustomError) => {
+            this.openSnackBar.open(err.message, 1);
             this.citaFormGroup.get("dateControl").reset(null);
             this.loadingDateControl = false;
-            this.openSnackBar.open(err, 1);
 
             console.error(
               "Ha ocurrido un error al tratar de obtener la lista de las horas disponibles: ",
-              err
+              err.message
             );
           }
         );
@@ -279,27 +264,27 @@ export class AppointmentModifyComponent implements OnInit {
   }
 
   onClickSubmit() {
-    console.log(
-      _moment.utc(this.citaFormGroup.get("timeControl").value).format()
-    );
 
     if (!this.citaFormGroup.valid) {
-      //    this.openSnackBar("Las información ingresada no es valida");
+      this.openSnackBar.open("Hay campos que necesitan ser completados.", 1);
+      console.error("Las información ingresada no es valida");
     } else {
       if (!this.loading) {
         this.loading = true;
 
         let formdata = Object.assign(this.citaFormGroup.value);
         let citaP: citaPaciente;
-        let fecha_hora: Date = formdata["timeControl"];
+        let fecha_hora: string = formdata["timeControl"];
         let contacto = formdata["contactControl"];
         let nombre = formdata["userNameControl"];
         let apellido = formdata["userLastNameControl"];
+        let nombre_tutor = formdata["tutorNameControl"];
+        let apellido_tutor = formdata["tutorLastNameControl"];
         let doc_identidad = formdata["identityDocControl"];
         let sexo = formdata["userSexControl"];
         let fecha_nacimiento = _moment(
           formdata["userBirthDateControl"]
-        ).toDate();
+        ).toISOString();
 
         let userInfo: UserInfo = {
           doc_identidad: formdata["identityDocControl"],
@@ -310,49 +295,38 @@ export class AppointmentModifyComponent implements OnInit {
           contacto: contacto,
         };
 
-        if (this.isDependent) {
-          nombre = formdata["tutorNameControl"];
-          apellido = formdata["tutorLastNameControl"];
-          sexo = formdata["dependentSexControl"];
-          fecha_nacimiento = _moment(formdata["userBirthDateControl"]).toDate();
-        }
 
         citaP = {
           paciente_nombre: nombre,
           paciente_apellido: apellido,
+          paciente_apellido_tutor: apellido_tutor,
+          paciente_nombre_tutor: nombre_tutor,
           sexo: sexo,
           doc_identidad: doc_identidad,
-          fecha_hora: fecha_hora.toISOString(),
+          fecha_hora: fecha_hora,
           medicosID: this.medicoId,
           serviciosID: formdata["serviceTypeControl"],
-          fecha_nacimiento: fecha_nacimiento.toISOString(),
+          fecha_nacimiento: fecha_nacimiento,
           contacto: formdata["contactControl"],
           contacto_whatsapp: formdata["wsReachControl"],
           segurosID: formdata["insuranceControl"],
           nota: formdata["noteControl"],
         };
 
-        console.log(userInfo);
         console.log(citaP);
 
-        this.accountSvc.setUserInfo(userInfo).subscribe(
-          (arg) => { },
-          (err) => (this.loading = false),
+        this.citaSvc.UpdateCita(this.citaId, citaP).subscribe(
           () => {
-            console.log(citaP);
-            this.citaSvc.UpdateCita(this.citaId, citaP).subscribe(
-              () => {
-                console.log("completado");
-              },
-              (err: string) => {
-                this.loading = false;
-                // this.openSnackBar(err);
-                console.error(err);
-              },
-              () => {
-                this.loading = false;
-              }
-            );
+            console.log("completado");
+            this.openSnackBar.open("Actualizado", 0);
+          },
+          (err: CustomError) => {
+            this.loading = false;
+            this.openSnackBar.open(err.message, 1);
+            console.error(err);
+          },
+          () => {
+            this.loading = false;
           }
         );
       }
@@ -384,9 +358,9 @@ export class AppointmentModifyComponent implements OnInit {
     }
   }
 
-  setCitaAndUserInfo() {
+  setcitaPacienteInfo() {
     this.citaSvc.GetCitaPaciente(this.citaId).subscribe(
-      (re: citaAndUser) => {
+      (re: citaPaciente) => {
         this.citaData = re;
         console.log(re);
 
@@ -420,6 +394,7 @@ export class AppointmentModifyComponent implements OnInit {
 
         if (regExp.test(re.doc_identidad))
           this.citaFormGroup.get("typeIdentityDocControl").setValue(1);
+
         this.citaFormGroup.get("dateControl").setValue(new Date(re.fecha_hora));
         this.citaFormGroup.get("serviceTypeControl").setValue(re.serviciosID);
         this.citaFormGroup.get("insuranceControl").setValue(re.segurosID);
@@ -439,4 +414,10 @@ export class AppointmentModifyComponent implements OnInit {
       ? "Debe seleccionar una opción"
       : "";
   }
+
+
+  back(): void {
+    this.navigation.back()
+  }
+
 }

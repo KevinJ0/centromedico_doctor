@@ -1,3 +1,8 @@
+export interface CustomError {
+  status: number;
+  message: string;
+}
+
 export interface UserInfo {
   doc_identidad: string;
   nombre: string;
@@ -72,16 +77,18 @@ export interface citaCalendar {
   edad: number;
   contacto: string;
   contacto_whatsapp: string;
-  fecha_hora: string;
+  fecha_hora: string | Date;
   segurosID: number;
   seguro_descrip: string;
   diferencia: number;
   cobertura: number;
   descuento: number;
   pago: number;
+  total: number;
   turno: number;
   consultorio: number;
   appointmentDuration: string;
+  estado: boolean;
 }
 export interface ticket {
   cod_verificacion: string;
@@ -153,16 +160,22 @@ export interface User {
   profilePhoto: string;
 }
 
-export interface TokenResponse {
-  authToken: {
-    token: string;
-    expiration: string; //date
-    refresh_token: string;
-    roles: string;
-    username: string;
-  };
+export interface group {
+  type: string;
+  group_name: string;
 }
-export interface CorreoPregunta {
+
+export interface TokenResponse {
+  token: string;
+  expiration: string; //date
+  refresh_token: string;
+  roles: string;
+  username: string;
+  groups: group[];
+  medicos: medico[];
+}
+
+export interface correoPregunta {
   nombre: string;
   correo: string;
   contacto: string;
@@ -170,9 +183,12 @@ export interface CorreoPregunta {
   mensaje: string;
 }
 
-export interface servicioCobertura {
+export interface servicio{
   id: number;
   descrip: string;
+}
+
+export interface servicioCobertura extends servicio  {
   coberturas: cobertura[];
 }
 
@@ -211,10 +227,10 @@ export interface citaPaciente {
   menor_un_ano?: boolean;
   edad?: number;
   contacto?: string;
-  fecha_nacimiento: string;
+  fecha_nacimiento: string | Date;
   sexo: string;
   contacto_whatsapp: string;
-  fecha_hora: string;
+  fecha_hora: string | Date;
   segurosID: number;
   turno?: number;
 

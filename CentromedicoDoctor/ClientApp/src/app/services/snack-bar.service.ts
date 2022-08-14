@@ -8,7 +8,7 @@ export class SnackBarService {
   
   constructor(private _snackBar: MatSnackBar) {}
 
-  open(message: string, type?: number) {
+  open(message: string, type?: number, action: string = "Cerrar", autoClose: boolean = true) {
     const config = new MatSnackBarConfig();
     switch (type) {
       case 0:
@@ -21,8 +21,9 @@ export class SnackBarService {
       default:
         break;
     }
+    if(autoClose)
+      config.duration = 3000;
 
-    config.duration = 5000;
-    this._snackBar.open(message, null, config);
+    this._snackBar.open(message, action, config);
   }
 }

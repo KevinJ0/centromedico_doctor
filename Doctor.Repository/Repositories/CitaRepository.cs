@@ -69,7 +69,9 @@ namespace Doctor.Repository.Repositories
             }
         }
 
-        public async Task<List<citaDTO>> getCitasListAsync(int medicoId)
+        public async Task<List<citaDTO>> getCitasListAsync(int medicoId, DateTime? inicio = null,
+                                                           DateTime? fin = null, bool? estado = null,
+                                                           int? servicioId = null, int? seguroId = null)
         {
 
             try
@@ -77,7 +79,12 @@ namespace Doctor.Repository.Repositories
 
                 List<citaDTO> citaslst = _db.citas
                     .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
-                    .Where(p => (p.medicos.ID == medicoId) && p.estado == true)
+                    .Where(p => p.medicosID == medicoId
+                                && p.serviciosID == (servicioId == null ? p.serviciosID : servicioId.Value)
+                                && p.segurosID == (seguroId == null ? p.segurosID : seguroId.Value)
+                                && p.fecha_hora.Date >= (inicio == null ? p.fecha_hora.Date : inicio.Value.Date)
+                                && p.fecha_hora.Date <= (fin == null ? p.fecha_hora.Date : fin.Value.Date)
+                                && p.estado == (estado == null ? p.estado : estado.Value))
                     .ProjectTo<citaDTO>(_mapper.ConfigurationProvider).ToList();
 
                 return citaslst;
@@ -141,19 +148,31 @@ namespace Doctor.Repository.Repositories
             }
         }
 
-
-
-        public void Update(citas entity)
+        public void Remove(citas entity)
         {
             try
             {
-                _db.citas.Update(entity);
-            
+                _db.citas.Remove(entity);
+
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        public void Update(citas entity)
+        {
+            try
+            {
+                _db.citas.Update(entity);
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
     }
 }

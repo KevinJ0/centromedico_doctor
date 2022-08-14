@@ -1,0 +1,148 @@
+.balance {
+  display: flex;
+  box-shadow: rgba(0, 0, 0, .1) 0px 2px 5px;
+  margin: 1rem auto;
+  background-color: white;
+  flex-wrap: wrap;
+
+
+}
+
+.b-item {
+  display: flex;
+  margin-right: clamp(1rem, 4vw, 8rem);
+}
+
+mat-card-title {
+  font-size: 1.2rem;
+}
+
+.b-item .item-content {
+  padding: 0.6rem 0 1.2rem 0;
+}
+
+.b-item .item-content .value {
+  font-size: 1rem;
+}
+
+.b-item .item-content .item-header {
+  font-size: .8rem;
+  font-weight: bold;
+}
+
+
+.form-group {
+  padding-top: 1rem;
+  display: grid;
+  grid-template-areas:
+    'dates states serviceType insurance'
+    'search search . info ';
+  gap: .4rem;
+  align-items: start;
+  max-width: 1000px;
+
+}
+
+.item-icon {
+  padding: 0.5rem 1rem;
+  display: flex;
+  background-color: blueviolet;
+  margin-right: 5px;
+  align-items: center;
+}
+
+.difference .item-icon {
+  background-color: #8e8e8e;
+}
+
+.insurance .item-icon {
+  background-color: #f44336;
+}
+
+.no-insurance .item-icon {
+  background-color: #f4c036;
+}
+
+.discount .item-icon {
+  background-color: #a214ff;
+}
+
+.total .item-icon {
+  background-color: #5ac37f;
+}
+
+.b-item .item-icon mat-icon {
+  color: white;
+  font-size: 2rem;
+  width: 35px;
+  height: 35px;
+
+  display: flex;
+  align-items: center;
+}
+
+.radio-wrapper {
+  margin: 0 1em;
+
+}
+
+.mat-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.info {
+  padding: 5px 7px;
+  font-weight: 400;
+  background-color: #d4d0ff8c;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td,
+th {
+  width: auto;
+}
+
+.container-table {
+  margin-top: 2rem;
+  position: relative;
+}
+
+.done {
+  padding: 4px;
+  font-size: small;
+  border-radius: 5px;
+  color: white;
+  background-color: var(--primary-color);
+
+}
+
+.undone {
+  padding: 4px;
+  font-size: small;
+  border-radius: 5px;
+  color: white;
+  background-color: #ff00008c;
+
+}
+
+table {
+  width: 100%;
+}
+
+.progress-content {
+  position: absolute;
+  top: 0;
+  left: 0rem;
+  z-index: 9999999;
+  background: rgba(0, 0, 0, .06);
+}

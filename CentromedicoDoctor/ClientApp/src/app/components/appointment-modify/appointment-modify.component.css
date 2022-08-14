@@ -18,14 +18,14 @@ mat-selection-list {
 }
 
 
-.btn-container {
+.action-buttons {
   width: 100%;
   display: flex;
   justify-content: center;
   margin-top: 1rem;
 }
 
-.btn-container>button {
+.action-buttons>button {
   margin: 0 0.5rem;
 }
 
@@ -143,6 +143,7 @@ nb-radio {
 
 .identity-wrapper {
 
+  column-gap: 10px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   width: 100%;
@@ -150,6 +151,7 @@ nb-radio {
 }
 
 .name-wrapper {
+  column-gap: 10px;
   flex-direction: column;
   display: grid;
   grid-template-columns: 1fr 1fr;

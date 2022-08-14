@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { CustomError } from '../interfaces/InterfacesDto';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class HorarioMedicoService {
 
     } catch (err) {
       console.log('Ha ocurrido un error al tratar de obtener la lista de horas: ', err);
-      return throwError(err);
+      return throwError(() => new Error(err.message));
 
     }
   }

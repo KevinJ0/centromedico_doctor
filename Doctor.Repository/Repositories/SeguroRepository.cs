@@ -3,6 +3,7 @@ using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
 using Doctor.DTO;
 using Doctor.Repository.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,55 +24,29 @@ namespace Doctor.Repository.Repositories
         }
 
 
-        public List<seguros> getSegurosByServicio(int medicoID, int servicioID)
+        public async Task<seguros> getByIdAsync(int seguroID)
         {
-            try
-            {
+            seguros seguro = await _db.seguros
+                     .Where(x => x.ID == seguroID).FirstOrDefaultAsync();
 
-                var seguroslst = _db.cobertura_medicos
-                       .Where(x => x.medicosID == medicoID && x.serviciosID == servicioID)
-                       .Select(x => x.seguros)
-                       .ToList();
+            return seguro;
 
-                return seguroslst;
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
 
         }
 
-        public async Task<seguros> getByIdAsync(int? segurosID = 1)
+        public async Task<List<segurosDTO>> getAllByDoctorIdAsync(int medicoID)
         {
-            try
-            {
-                seguros seguro = await _db.seguros.FindAsync(segurosID);
-                //seguroDTO r = _mapper.Map<seguroDTO>(seguro);
-
-                return seguro;
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-
-        public List<seguros> getAllByDoctorId(int medicoID)
-        {
-            List<seguros> seguroslst = _db.cobertura_medicos
-                     .Where(x => x.medicosID == medicoID).Select(x => x.seguros).ToList();
+            List<segurosDTO> seguroslst = await _db.cobertura_medicos
+                     .Include(x=> x.seguros)
+                     .Where(x => x.medicosID == medicoID)
+                     .Select(x => new segurosDTO {
+                         ID = x.segurosID,
+                         descrip = x.seguros.descrip,
+                     }).Distinct().ToListAsync();
 
             return seguroslst;
-
-
+ 
         }
-
 
     }
 }

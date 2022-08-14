@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Doctor.DTO;
@@ -7,15 +6,15 @@ using System.Linq;
 using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using CentromedicoDoctor.Exceptions;
 using CentromedicoDoctor.Services.Interfaces;
 using Doctor.Repository.Repositories.Interfaces;
+using CentromedicoDoctor.Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CentromedicoDoctor.Services
 {
@@ -35,6 +34,7 @@ namespace CentromedicoDoctor.Services
         private readonly ISeguroRepository _seguroRepo;
         private readonly IPacienteRepository _pacienteRepo;
         private readonly IHorarioMedicoReservaRepository _horarioMRRepo;
+        private readonly IHubContext<NotificationCitaHub> _hubContext;
 
         public CitaService(
            IHorarioMedicoReservaRepository horarioMRRepo,
@@ -49,10 +49,12 @@ namespace CentromedicoDoctor.Services
             UserManager<MyIdentityUser> userManager,
             ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepo,
-            MyDbContext db, IMapper mapper)
+            MyDbContext db, IMapper mapper,
+            IHubContext<NotificationCitaHub> hubContext)
         {
             _pacienteRepo = pacienteRepo;
             _horarioMedicoRepo = horarioMedicoRepo;
+            _hubContext = hubContext;
             _seguroRepo = seguroRepo;
             _horarioMRRepo = horarioMRRepo;
             _coberturaRepo = coberturaRepo;
@@ -70,15 +72,16 @@ namespace CentromedicoDoctor.Services
         }
 
 
-        public async Task<List<citaDTO>> getCitasListAsync(int? medicoId)
+        public async Task<List<citaDTO>> getCitasListAsync(int medicoId, DateTime? inicio = null, DateTime? fin = null, bool? estado = null, int? servicioId = null, int? seguroId = null)
         {
 
             try
+
             {
 
                 int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
 
-                List<citaDTO> citaslst = await _citaRepo.getCitasListAsync(medicoID);
+                List<citaDTO> citaslst = await _citaRepo.getCitasListAsync(medicoID, inicio, fin, estado, servicioId, seguroId);
 
                 if (!citaslst.Any())
                     throw new NoContentException();
@@ -122,7 +125,7 @@ namespace CentromedicoDoctor.Services
                 citas _cita = _db.citas.FirstOrDefault(x => x.ID == formdata.ID && x.medicosID == medicoID);
 
                 if (_cita == null)
-                    throw new BadHttpRequestException("La cita no se encuentra en la base de datos");
+                    throw new BadHttpRequestException("La cita no se encuentra en la base de datos.");
 
                 Math.Abs(descuento);
 
@@ -132,7 +135,7 @@ namespace CentromedicoDoctor.Services
                 _cita.descuento = descuento;
 
                 _cita.observacion = String.IsNullOrWhiteSpace(formdata.observacion) ? null : formdata.observacion;
-                _cita.estado = true;
+                _cita.estado = false;
 
                 _citaRepo.Update(_cita);
 
@@ -177,7 +180,7 @@ namespace CentromedicoDoctor.Services
         {
 
             int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
-            medicos medico = _medicoRepo.getById(medicoID);
+            medicos medico = _medicoRepo.validateAndGetId(medicoID);
             //Tiene que existir al menos 1 cobertura por defecto que es la privada.
             var coberturaslst = await _coberturaRepo.getAllByDoctorIdAsync(medicoID);
 
@@ -189,7 +192,7 @@ namespace CentromedicoDoctor.Services
             //  if (especialidadeslst == null)
             //        throw  new BadHttpRequestException(new { InvalidEspecialidad = "El doctor(a) seleccionado no tiene ninguna especialidad asignada." });
 
-            var servicioslst = await _servicioRepo.getAllByDoctorIdAsync(medicoID);
+            var servicioslst = await _servicioRepo.getServicio_coberturaByDoctorIdAsync(medicoID);
             var availableDaylst = await _horarioMedicoRepo.getAvailableDayListAsync(medicoID);
 
             if (medico == null)
@@ -226,7 +229,7 @@ namespace CentromedicoDoctor.Services
 
                 int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
 
-                citas cita = await _db.citas.Include(x => x.pacientes).FirstOrDefaultAsync(c=> c.ID == citaId && c.medicosID == medicoID);
+                citas cita = await _db.citas.Include(x => x.pacientes).FirstOrDefaultAsync(c => c.ID == citaId && c.medicosID == medicoID);
 
 
                 if (cita is null)
@@ -250,9 +253,9 @@ namespace CentromedicoDoctor.Services
             pacientes paciente = null;
             citas cita = null;
             horarios_medicos_reservados newHoraMR = null, oldHoraMR = null;
+            bool isSameDateTime = false, horaMRRemoved = false;
             seguros seguro;
             int _appointment_type = 0, nTurn = 0;
-            bool isSameDateTime = false, horaMRRemoved = false;
             string codVer, patientEmail;
             int pacienteID;
             servicios servicio;
@@ -263,7 +266,7 @@ namespace CentromedicoDoctor.Services
                 int medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicosID);
 
                 //Validate incoming data
-                medicos medico = _medicoRepo.getById(medicoID);
+                medicos medico = _medicoRepo.validateAndGetId(medicoID);
                 if (medico == null)
                     throw new EntityNotFoundException("El doctor seleccionado no se encuentra habilitado en estos momentos.");
 
@@ -276,7 +279,7 @@ namespace CentromedicoDoctor.Services
                 if (formdata.segurosID == null)
                     seguro = await _seguroRepo.getByIdAsync(1);//1 by default is None-Insurace
                 else
-                    seguro = await _seguroRepo.getByIdAsync(formdata.segurosID);
+                    seguro = await _seguroRepo.getByIdAsync((int)formdata.segurosID);
 
                 servicio = await _servicioRepo.getByIdAsync(formdata.serviciosID);
                 paciente = _pacienteRepo.get(cita.pacientesID);
@@ -345,7 +348,7 @@ namespace CentromedicoDoctor.Services
                 {
                     medicosID = medico.ID,
                     fecha_hora = formdata.fecha_hora,
-                }; 
+                };
 
                 //vamos a remover el horario reservado y a agregar el nuevo, en caso de lanzar error detenemos la
                 //ejecución y volvemos a insertar el antiguo horario
@@ -355,7 +358,6 @@ namespace CentromedicoDoctor.Services
 
                     _horarioMRRepo.Add(newHoraMR);
                 }
-
 
                 _mapper.Map<citaPacienteDTO, pacientes>(formdata, paciente);
 
@@ -400,7 +402,6 @@ namespace CentromedicoDoctor.Services
                 cita.cobertura = _cobertura;
                 cita.pago = cobertura.pago;
                 cita.diferencia = _diferencia;
-
 
 
                 //Saving entities
@@ -567,6 +568,137 @@ namespace CentromedicoDoctor.Services
             catch (Exception)
             {
                 return -1;
+            }
+        }
+
+        public async Task updateDateTimeAsync(int citaID, citaDateTimeDTO formdata)
+        {
+
+            citas cita = null;
+            horarios_medicos_reservados newHoraMR = null, oldHoraMR = null;
+            bool isSameDateTime = false, horaMRRemoved = false;
+            int nTurn = 0;
+            string patientEmail;
+            int pacienteID;
+            pacientes paciente = null;
+
+            try
+            {
+
+
+
+                int medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicosID);
+
+                //Validate incoming data
+                medicos medico = _medicoRepo.validateAndGetId(medicoID);
+                if (medico == null)
+                    throw new EntityNotFoundException("El doctor seleccionado no se encuentra habilitado en estos momentos.");
+
+
+                cita = _citaRepo.get(citaID, medico.ID);
+                if (cita == null)
+                    throw new BadHttpRequestException("Esta cita no es válida o no pertenece a este médico.");
+
+                paciente = _pacienteRepo.get(cita.pacientesID);
+
+                isSameDateTime = formdata.fecha_hora.Equals(cita.fecha_hora);
+
+                if (!isSameDateTime)
+                {
+                    newHoraMR = await _horarioMedicoRepo.getReservedHourAsync(medico.ID, formdata.fecha_hora);
+                    oldHoraMR = await _horarioMedicoRepo.getReservedHourAsync(medico.ID, cita.fecha_hora);
+                    patientEmail = await _pacienteRepo.getEmailAsync(paciente.ID);
+
+                    nTurn = getTurn(formdata.fecha_hora, medicoID);
+
+                    var availableDateHourlst = getAvailableDateHour(formdata.fecha_hora, medico.ID);
+
+
+
+                    if (newHoraMR != null)
+                        throw new BadHttpRequestException("La fecha y hora para la cita programada está reservada, intente con otra por favor.");
+
+                    if (availableDateHourlst == null)
+                        throw new BadHttpRequestException("Este doctor(a) no labora el día escogido.");
+
+                    if (!availableDateHourlst.Contains(formdata.fecha_hora) && !isSameDateTime)
+                        throw new BadHttpRequestException("La hora provista no se encuentra en el rango de horas disponibles para ser reservada.");
+
+                    if (nTurn == -1)
+                        throw new Exception("Ha ocurrido un error al tratar de generar el turno para la cita.");
+
+
+                    newHoraMR = new horarios_medicos_reservados
+                    {
+                        medicosID = medico.ID,
+                        fecha_hora = formdata.fecha_hora,
+                    };
+
+                    //vamos a remover el horario reservado y a agregar el nuevo, en caso de lanzar error detenemos la
+                    //ejecución y volvemos a insertar el antiguo horario
+                    if (!isSameDateTime)
+                    {
+                        horaMRRemoved = changeHoraMR(oldHoraMR, newHoraMR);
+                        _horarioMRRepo.Add(newHoraMR);
+
+                        cita.fecha_hora = formdata.fecha_hora;
+                        cita.turno = nTurn;
+
+                        _db.SaveChanges();
+                    }
+
+
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(patientEmail))
+                        {
+                            citaResultDTO citaResult = _mapper.Map<citaResultDTO>(cita);
+                            _notificationService.sendTicketMail(citaResult, patientEmail, "Actualización de cita ");
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                        //log
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+
+                if (horaMRRemoved)
+                {
+                    removeHoraMR(oldHoraMR);
+                }
+
+                throw;
+            }
+
+        }
+
+        public void deleteCita(int citaID, int medicoID)
+        {
+
+            try
+            {
+                citas _cita = _citaRepo.get(citaID, medicoID);
+                _citaRepo.Remove(_cita);
+
+                var newHoraMR = new horarios_medicos_reservados
+                {
+                    medicosID = medicoID,
+                    fecha_hora = _cita.fecha_hora,
+                };
+
+                _horarioMRRepo.Remove(newHoraMR);
+
+                _db.SaveChanges();
+
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
 

@@ -3,7 +3,6 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  Validators,
 } from "@angular/forms";
 import {
   MatDialog,
@@ -11,29 +10,30 @@ import {
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
-import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import * as _moment from "moment";
 import { CalendarEvent } from "angular-calendar";
 import {
-  cita,
   citaEntry,
   citaCalendar,
+  CustomError,
 } from "src/app/interfaces/InterfacesDto";
 import { CitaService } from "src/app/services/cita.service";
-import { CalendarComponent } from "../calendar/calendar.component";
+import { SnackBarService } from "src/app/services/snack-bar.service";
 @Component({
   selector: "app-dialog-entry-patient",
   templateUrl: "./dialog-entry-patient.component.html",
   styleUrls: ["./dialog-entry-patient.component.css"],
 })
 export class DialogEntryPatientComponent implements OnInit {
-   data: citaCalendar = this.event.patientData;
+  data: citaCalendar = this.event.patientData;
   totalControl = new FormControl("2");
   mode: ProgressSpinnerMode = "indeterminate";
   loadingC: boolean = false;
   EntryAppntFormGroup: FormGroup;
+  _fechaHora: string;
 
   constructor(
-    private _snackBar: MatSnackBar,
+    private openSnackBar: SnackBarService,
     private _formBuilder: FormBuilder,
     private citaSvc: CitaService,
     public dialog: MatDialog,
@@ -42,7 +42,7 @@ export class DialogEntryPatientComponent implements OnInit {
   ) {
     console.log(this.event)
   }
-  
+
   total: number = 0;
 
   updateTotal(discount: number): void {
@@ -64,6 +64,10 @@ export class DialogEntryPatientComponent implements OnInit {
       observation: [""],
     });
 
+    this._fechaHora = _moment(this.data.fecha_hora)
+      .format("D/M/YYYY - hh:mm a")
+      .toString();
+
     this.EntryAppntFormGroup.get("discount").valueChanges.subscribe({
       next: (v) => {
         let n = Number.parseInt(v);
@@ -72,6 +76,7 @@ export class DialogEntryPatientComponent implements OnInit {
       },
     });
   }
+
   SaveAppointment(): void {
     if (!this.loadingC) {
       this.dialogRef.disableClose = true;
@@ -80,7 +85,7 @@ export class DialogEntryPatientComponent implements OnInit {
       let formdata: citaEntry = {
         id: this.data.id,
         descuento: this.EntryAppntFormGroup.get("discount").value,
-        medicoId: localStorage.getItem("medicoId"),
+        medicoId: sessionStorage.getItem("medicoId"),
         observacion: String(this.EntryAppntFormGroup.get("observation").value)
           .toString()
           .trim(),
@@ -89,44 +94,28 @@ export class DialogEntryPatientComponent implements OnInit {
       this.citaSvc.SaveCita(formdata).subscribe({
         next: (r) => {
           if (r) {
-            this.dialogRef.close({data:this.event});
-            this.openSnackBar(
-              "La entrada del paciente se realizó exitosamente",
-              0
-            );
+
+            this.openSnackBar.open("La entrada del paciente se realizó exitosamente", 0);
+
+            setInterval(() => {
+              this.dialogRef.close({ data: this.event });
+            }, 300);
+
           }
         },
-        error: (err) => {
-          this.openSnackBar(err, 1);
+        error: (err:CustomError) => {
+          this.openSnackBar.open(err.message, 1);
           console.error(err);
           this.loadingC = false;
           this.dialogRef.disableClose = false;
         },
         complete: () => {
-          this.loadingC = false;
           this.dialogRef.disableClose = false;
         },
       });
     }
   }
 
-  openSnackBar(message: string, type?: number) {
-    const config = new MatSnackBarConfig();
-    switch (type) {
-      case 0:
-        config.panelClass = "background-green";
-        break;
-      case 1:
-        config.panelClass = "background-red";
-        break;
-
-      default:
-        break;
-    }
-
-    config.duration = 5000;
-    this._snackBar.open(message, null, config);
-  }
 
   onNoClick(): void {
 

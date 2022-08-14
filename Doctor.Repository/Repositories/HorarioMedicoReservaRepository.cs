@@ -24,9 +24,9 @@ namespace Doctor.Repository.Repositories
         
         }
 
-        public void Remove(horarios_medicos_reservados horaReservacion)
+        public void Remove(horarios_medicos_reservados entity)
         {
-            throw new NotImplementedException();
+            _db.horarios_medicos_reservados.Remove(entity);
         }
     }
 }

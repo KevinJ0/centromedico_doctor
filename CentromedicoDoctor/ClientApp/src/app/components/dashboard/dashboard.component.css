@@ -1,9 +1,23 @@
-main{
-    margin: 2rem .5rem;
+main {
+  margin: 2rem .5rem;
 }
 
 
-.title-container{
-    margin-bottom: 2rem;
+.title-container {
+  margin-bottom: 2rem;
 
-  }
+}
+
+h3 {
+  margin: 0 0 10px;
+}
+
+pre {
+  background-color: #f5f5f5;
+  padding: 15px;
+}
+
+.mat-progress-spinner {
+
+  margin: auto;
+}

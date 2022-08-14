@@ -1,16 +1,8 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-  BehaviorSubject,
-  catchError,
-  map,
-  Observable,
-  of,
-  Subject,
-  throwError,
-} from "rxjs";
-import { servicioCobertura } from "../interfaces/InterfacesDto";
+import { BehaviorSubject, catchError, map, Observable, throwError } from "rxjs";
+import { servicio, servicioCobertura } from "../interfaces/InterfacesDto";
 
 @Injectable({
   providedIn: "root",
@@ -34,11 +26,25 @@ export class ServicioService {
     return this.http
       .get<servicioCobertura[]>(
         this.baseUrl +
-          `api/servicios/getServiciosCoberturas?medicoid=${medicoId}`
+        `api/servicios/getServiciosCoberturas?medicoid=${medicoId}`
       )
       .pipe(
         catchError((error) => throwError(() => error)),
         map((result: servicioCobertura[]) => result)
+      );
+  }
+
+  GetAllServicios(
+    medicoId?: string | number
+  ): Observable<servicio[]> {
+    return this.http
+      .get<servicio[]>(
+        this.baseUrl +
+        `api/servicios/getServicios?medicoid=${medicoId}`
+      )
+      .pipe(
+        catchError((error) => throwError(() => error)),
+        map((result: servicio[]) => result)
       );
   }
 }

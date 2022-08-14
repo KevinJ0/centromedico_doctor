@@ -32,10 +32,9 @@ export class NavbarComponent implements OnInit {
       });
     }
   logOut() {
-    this.accountSvc.logout();
-    console.log("logout")
-      this.router.navigate(['/']);
-  
+    this.accountSvc.logout().then(()=>{
+        this.router.navigate(['login']);
+    });
   }
 
   ngOnDestroy() {

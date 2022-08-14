@@ -18,11 +18,9 @@ namespace CentromedicoDoctor.Controllers
     {
 
         private readonly ICitaService _citaSvc;
-
         public CitasController(ICitaService citaSvc)
         {
             _citaSvc = citaSvc;
-
         }
 
 
@@ -69,12 +67,14 @@ namespace CentromedicoDoctor.Controllers
         /// <response code="204">No hay ninguna cita vículada con este usuario.</response>  
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor, Secretary")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<citaDTO>>> getCitasListAsync(int? medicoId)
-        {
+        public async Task<ActionResult<List<citaDTO>>> getCitasListAsync(int medicoId, DateTime? inicio = null,
+                                                                         DateTime? fin = null, bool? estado = null,
+                                                                         int? servicioId = null, int? seguroId = null)
+            {
 
             try
             {
-                var result = await _citaSvc.getCitasListAsync(medicoId);
+                var result = await _citaSvc.getCitasListAsync(medicoId, inicio, fin, estado, servicioId, seguroId);
                 return Ok(result);
             }
             catch (Exception)
@@ -84,7 +84,7 @@ namespace CentromedicoDoctor.Controllers
         }
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
-        [HttpGet("[action]")]
+        [HttpGet]
         public ActionResult<citaDTO> getCita(int citaId, int? medicoId)
         {
             try
@@ -142,7 +142,7 @@ namespace CentromedicoDoctor.Controllers
             try
             {
 
-                bool result = await _citaSvc.updateCitaAsync(citaID,formdata);
+                bool result = await _citaSvc.updateCitaAsync(citaID, formdata);
                 return result;
             }
             catch (Exception)
@@ -151,7 +151,39 @@ namespace CentromedicoDoctor.Controllers
 
             }
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [HttpPut("[action]/{citaID:int}")]
+        public async Task<ActionResult> updateDateTimeAsync(int citaID, citaDateTimeDTO formdata)
+        {
+            try
+            {
+                _citaSvc.updateDateTimeAsync(citaID, formdata).Wait();
 
+                return Ok();
+
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [HttpDelete("{citaID:int}/{medicoID:int}")]
+        public async Task<ActionResult> deleteCitaAsync(int citaID, int medicoID)
+        {
+            try
+            {
+                _citaSvc.deleteCita(citaID, medicoID);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
     }
 
 }

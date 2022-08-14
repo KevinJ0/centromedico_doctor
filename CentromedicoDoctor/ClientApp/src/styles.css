@@ -1,4 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #1f8fff;
+  --max-width: 1360px;
+  --screen-width: 320px;
+  --screen-height: 560px;
+  --header-bg-color: #25283d;
+  --splash-bg-color: #1f8fff;
+}
 
 /* Provide sufficient contrast against white background */
 a {
@@ -40,10 +47,14 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-main {
+main:not(.app-main, .no-styles) {
   margin: 2rem .5rem;
 }
 
+/* para que los inputs no se superpongan en el formulario de modificacion */
+.appointment-modify .mat-form-field-infix {
+  width: auto !important;
+}
 
 .title-container {
   margin-bottom: 2rem;
@@ -94,4 +105,18 @@ main {
 .progress-content>.mat-progress-spinner {
   margin: auto;
 
+}
+
+.mat-step-header .mat-step-icon {
+  display: none !important;
+}
+/* text with icon in step-header I'm using custom style */
+#dashboard-stepper .mat-step-text-label {
+  display: flex !important;
+  gap: 7px;
+}
+
+/* this is 👁️‍🗨️ icon*/
+table .action .mat-icon {
+  color: #999999;
 }

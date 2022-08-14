@@ -9,7 +9,7 @@ import { Router } from "@angular/router";
 })
 export class PacienteService {
   baseUrl: string;
-  medicoId = localStorage.getItem("medicoId");
+  medicoId = sessionStorage.getItem("medicoId");
 
   constructor(
     private router: Router,

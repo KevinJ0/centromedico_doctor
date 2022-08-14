@@ -23,14 +23,17 @@ namespace CentromedicoDoctor.Services
         private readonly UserManager<MyIdentityUser> _userManager;
         private readonly IMedicoRepository _medicoRepo;
         private readonly ISecretariaRepository _secretaryRepo;
+        private readonly MyDbContext _db;
 
         public ServicioService(
             IMedicoRepository medicoRepo,
             ISecretariaRepository secretaryRepo,
-        UserManager<MyIdentityUser> userManager,
+            MyDbContext db,
+            UserManager<MyIdentityUser> userManager,
             IHttpContextAccessor httpContextAccessor,
             IServicioRepository servicioRepo)
         {
+            _db = db;
             _secretaryRepo = secretaryRepo;
             _medicoRepo = medicoRepo;
             _userManager = userManager;
@@ -38,7 +41,42 @@ namespace CentromedicoDoctor.Services
             _servicioRepo = servicioRepo;
         }
 
-        public async Task<List<servicio_coberturasDTO>> getAllByDoctorIdAsync(int medicoID)
+        public async Task<List<serviciosDTO>> getAllAsync(int medicoID)
+        {
+
+            try
+            {
+                MyIdentityUser user = await _userManager
+                   .FindByNameAsync(_httpContextAccessor.HttpContext.User
+                   .FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                bool isSecretary = _userManager.IsInRoleAsync(user, "Secretary").Result;
+                bool isDoctor = _userManager.IsInRoleAsync(user, "Doctor").Result;
+
+                if (isDoctor)
+                    medicoID = _medicoRepo.get(user).ID;
+                else if (isSecretary)
+                {
+
+                    bool existDoctor = await _secretaryRepo.existDoctorAsync(medicoID);
+
+                    if (!existDoctor)
+                        throw new BadHttpRequestException("Este personal no tiene acceso al listado de servicios del médico solicitado.");
+
+                }
+
+                var result = _servicioRepo.getAllByDoctorIdAsync(medicoID).Result;
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
+        public async Task<List<servicio_coberturasDTO>> getServicio_coberturaByDoctorIdAsync(int medicoID)
         {
 
             try
@@ -58,11 +96,11 @@ namespace CentromedicoDoctor.Services
                     bool existDoctor = await _secretaryRepo.existDoctorAsync(medicoID);
 
                     if(!existDoctor)
-                        throw new BadHttpRequestException("Este personal no tiene acceso al listado de citas del médico solicitado.");
+                        throw new BadHttpRequestException("Este personal no tiene acceso al listado de servicios y coberturas del médico solicitado.");
 
                 }
 
-                var result = _servicioRepo.getAllByDoctorIdAsync(medicoID).Result;
+                var result = _servicioRepo.getServicio_coberturaByDoctorIdAsync(medicoID).Result;
                 return result;
             }
             catch (Exception)
@@ -73,6 +111,6 @@ namespace CentromedicoDoctor.Services
 
         }
 
-
+      
     }
 }

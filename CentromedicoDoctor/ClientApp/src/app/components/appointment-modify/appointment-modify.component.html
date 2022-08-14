@@ -1,4 +1,4 @@
-<main>
+<main class="appointment-modify">
   <div class="title-container">
     <h2 class="title">Cita de paciente</h2>
     <mat-divider></mat-divider>
@@ -9,7 +9,7 @@
 
     <section>
       <h6>¿Quién es el paciente?</h6>
-      <mat-button-toggle-group formControlName="appointmentTypeControl" aria-label="Font Style">
+      <mat-button-toggle-group [disabled]="true" formControlName="appointmentTypeControl" aria-label="Font Style">
         <mat-button-toggle checked style="min-width: 5rem;" value=0>Adulto</mat-button-toggle>
         <mat-button-toggle value=1>Menor de edad</mat-button-toggle>
       </mat-button-toggle-group>
@@ -26,50 +26,48 @@
       <div class="item">
 
         <div class="identity-wrapper">
-        <mat-form-field appearance="fill">
-          <mat-label>Tipo de documento</mat-label>
-          <mat-select formControlName="typeIdentityDocControl" name="tipoDoc" required>
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de documento</mat-label>
+            <mat-select formControlName="typeIdentityDocControl" name="tipoDoc" required>
 
-            <mat-option [value]=0 selected>Cédula</mat-option>
-            <mat-option [value]=1>Pasaporte</mat-option>
-            <mat-option [value]=2>RNC</mat-option>
-          </mat-select>
-        </mat-form-field>
+              <mat-option [value]=0 selected>Cédula</mat-option>
+              <mat-option [value]=1>Pasaporte</mat-option>
+              <mat-option [value]=2>RNC</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-        <mat-form-field appearance="fill">
-          <mat-label>Documento de identidad</mat-label>
-          <mat-icon matSuffix>badge</mat-icon>
-          <input required [mask]="identDocMask" formControlName="identityDocControl"
-            maxlength="15" matInput placeholder="Documento de identidad">
-        </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Documento de identidad</mat-label>
+            <mat-icon matSuffix>badge</mat-icon>
+            <input required [mask]="identDocMask" formControlName="identityDocControl" maxlength="15" matInput
+              placeholder="Documento de identidad">
+          </mat-form-field>
 
-      </div>
+        </div>
 
         <div class="name-wrapper">
-          <mat-form-field class="name" appearance="fill">
+          <mat-form-field class="name" appearance="outline">
             <mat-label>Nombre del paciente</mat-label>
-            <input required formControlName="userNameControl" matInput
-              placeholder="Nombre del paciente">
+            <input required formControlName="userNameControl" matInput placeholder="Nombre del paciente">
           </mat-form-field>
 
-          <mat-form-field class="lastName" appearance="fill">
+          <mat-form-field class="lastName" appearance="outline">
             <mat-label>Apellido(s) del paciente</mat-label>
-            <input required formControlName="userLastNameControl" matInput
-              placeholder="Apellido(s) del paciente">
+            <input required formControlName="userLastNameControl" matInput placeholder="Apellido(s) del paciente">
           </mat-form-field>
-          
+
         </div>
-        
-        <mat-form-field appearance="fill">
+
+        <mat-form-field appearance="outline">
           <mat-label>Fecha de nacimiento</mat-label>
-          <input required formControlName="userBirthDateControl" placeholder="Escoge una fecha" matInput
-            [min]="minDate" [max]="maxDate" [matDatepicker]="DBpicker">
+          <input required formControlName="userBirthDateControl" placeholder="Escoge una fecha" matInput [min]="minDate"
+            [max]="maxDate" [matDatepicker]="DBpicker">
           <mat-datepicker-toggle matSuffix [for]="DBpicker"></mat-datepicker-toggle>
           <mat-datepicker #DBpicker></mat-datepicker>
         </mat-form-field>
-        
-        
-        
+
+
+
         <!--mantiene el width ration del los mat-form-field -->
         <div class="radio-wrapper">
           <label>Sexo: </label>
@@ -90,19 +88,19 @@
           Contactarme vía Whatsapp
         </mat-checkbox>
       </div>
-      
+
 
       <div class="item">
-        <div class="under-age" [style.display]="underAgeShow">    
+        <div class="under-age" [style.display]="underAgeShow">
 
           <div class="name-wrapper">
-            <mat-form-field class="name" appearance="fill">
+            <mat-form-field class="name" appearance="outline">
               <mat-label>Nombre del tutor</mat-label>
               <input [required]="isDependent" formControlName="tutorNameControl" matInput
                 placeholder="Nombre del tutor">
             </mat-form-field>
 
-            <mat-form-field class="lastName" appearance="fill">
+            <mat-form-field class="lastName" appearance="outline">
               <mat-label>Apellido(s) del tutor</mat-label>
               <input [required]="isDependent" formControlName="tutorLastNameControl" matInput
                 placeholder="Apellido(s) del tutor">
@@ -110,14 +108,14 @@
           </div>
         </div>
 
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Teléfono</mat-label>
           <input required formControlName="contactControl" mask="000-000-0000" type="tel" matInput
             placeholder="555-555-1234">
           <mat-icon matSuffix>phone</mat-icon>
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Nota</mat-label>
           <textarea formControlName="noteControl" rows="8" #matInputNote maxlength="200" matInput
             placeholder="Nota para el médico"></textarea>
@@ -134,7 +132,7 @@
     </div>
     <div class="box-container">
       <div class="item">
-        <mat-form-field (click)="picker.open()" appearance="fill">
+        <mat-form-field (click)="picker.open()" appearance="outline">
           <mat-label>Fecha</mat-label>
           <input class="date-appointment" formControlName="dateControl" [matDatepickerFilter]="dateFilter" matInput
             [matDatepicker]="picker" required (click)="picker.open()" [readonly]="true">
@@ -144,7 +142,7 @@
       </div>
 
       <div class="item">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Hora</mat-label>
           <mat-select formControlName="timeControl" name="hora" required [disabled]="loadingDateControl">
             <mat-option *ngFor="let hora of Horas" [value]="hora.id">
@@ -162,7 +160,7 @@
     <div class="box-container">
 
       <div class="item">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Tipo de servicio</mat-label>
           <mat-select formControlName="serviceTypeControl" name="service" required>
             <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
@@ -173,7 +171,7 @@
       </div>
 
       <div class="item">
-        <mat-form-field appearance="fill">
+        <mat-form-field appearance="outline">
           <mat-label>Seguro</mat-label>
           <mat-select required formControlName="insuranceControl">
             <mat-option *ngFor="let seguro of coberturas" [value]="seguro.segurosID">
@@ -194,7 +192,8 @@
       </section>
     </ng-template>
 
-    <div class="btn-container">
+    <div class="action-buttons">
+      <button mat-flat-button color="warn" [disabled]="loading" (click)="back()" type="button">Cancelar</button>
       <button mat-flat-button color="primary" [disabled]="loading" type="submit">Confirmar</button>
     </div>
   </form>

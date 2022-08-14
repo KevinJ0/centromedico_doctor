@@ -10,6 +10,6 @@ namespace Doctor.Repository.Repositories.Interfaces
     public interface IHorarioMedicoReservaRepository
     {
         public void Add(horarios_medicos_reservados entity);
-        void Remove(horarios_medicos_reservados horaReservacion);
+        void Remove(horarios_medicos_reservados entity);
     }
     }

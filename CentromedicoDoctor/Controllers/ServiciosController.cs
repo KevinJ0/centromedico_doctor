@@ -36,7 +36,28 @@ namespace CentromedicoDoctor.Controllers
         {
             try
             {
-                List<servicio_coberturasDTO> result = await _servicioSvc.getAllByDoctorIdAsync(medicoID);
+                List<servicio_coberturasDTO> result = await _servicioSvc.getServicio_coberturaByDoctorIdAsync(medicoID);
+
+                if (!result.Any())
+                    return new NoContentResult();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+
+        }
+
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor, Secretary")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<serviciosDTO>>> getServiciosAsync(int medicoID)
+        {
+            try
+            {
+                List<serviciosDTO> result = await _servicioSvc.getAllAsync(medicoID);
 
                 if (!result.Any())
                     return new NoContentResult();

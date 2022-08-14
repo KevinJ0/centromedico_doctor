@@ -31,7 +31,7 @@ namespace Doctor.Repository.Repositories
             _roleManager = roleManager; _db = db;
         }
 
-        public medicos getById(int medicoId)
+        public medicos validateAndGetId(int medicoId)
         {
             try
             {
