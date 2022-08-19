@@ -36,6 +36,7 @@ import { HubConnectionState } from "@microsoft/signalr";
 import { Router } from "@angular/router";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 import { DialogAppointmentDetailComponent } from "../dialog-appointment-detail/dialog-appointment-detail.component";
+import { DialogPatientDetailsComponent } from "../dialog-patient-details/dialog-patient-details.component";
 
 const colors: any = {
   red: {
@@ -249,7 +250,7 @@ export class DashboardComponent implements OnInit {
   }
 
   openDialogDetails(event: CalendarEvent) {
-    const dialogRef = this.dialog.open(DialogAppointmentDetailComponent, {
+    const dialogRef = this.dialog.open(DialogPatientDetailsComponent, {
       data: event,
     });
 

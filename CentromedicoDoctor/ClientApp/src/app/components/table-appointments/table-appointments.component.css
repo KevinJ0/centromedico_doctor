@@ -1,0 +1,46 @@
+.form-group {
+
+  padding-top: 1rem;
+  display: grid;
+  grid-template-areas:
+    'search search states';
+  gap: .4rem;
+  align-items: start;
+  max-width: 1000px;
+}
+
+.states {
+
+  width: 17rem;
+}
+
+
+.done {
+  padding: 4px;
+  font-size: small;
+  border-radius: 5px;
+  color: white;
+  background-color: var(--primary-color);
+
+}
+
+.undone {
+  padding: 4px;
+  font-size: small;
+  border-radius: 5px;
+  color: white;
+  background-color: #ff00008c;
+
+}
+
+table {
+  width: 100%;
+}
+
+.progress-content {
+  position: absolute;
+  top: 0;
+  left: 0rem;
+  z-index: 9999999;
+  background: rgba(0, 0, 0, .06);
+}

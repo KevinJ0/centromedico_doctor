@@ -8,7 +8,6 @@
 
 .header-info {
   background: white;
-  padding: 10px;
   display: grid;
   align-items: stretch;
   grid-template-columns: 1fr 1fr;

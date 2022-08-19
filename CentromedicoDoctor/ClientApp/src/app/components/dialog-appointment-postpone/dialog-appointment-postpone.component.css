@@ -1,0 +1,25 @@
+
+
+.title {
+    text-align: center;
+  }
+  .form-group{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.action-buttons {
+    display: flex;
+    text-align: center;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  
+  }
+
+  mat-form-field{
+    width: 20rem;
+ 
+  }

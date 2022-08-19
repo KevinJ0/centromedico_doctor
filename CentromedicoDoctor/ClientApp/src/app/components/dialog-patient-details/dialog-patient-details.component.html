@@ -1,99 +1,13 @@
-<h1 mat-dialog-title>Detalles de la cita</h1>
-<mat-dialog-content>
-  <div mat-dialog-content>
+<h1 mat-dialog-title>DETALLES CITA</h1>
 
-    <div class="header">
+<app-mat-dialog-content-appointment [data]="data"></app-mat-dialog-content-appointment>
 
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon>tag</mat-icon>
-        </div>
-        <h6 class="data">{{data.id}}</h6>
-      </div>
-
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon class="material-symbols-outlined">confirmation_number</mat-icon>
-        </div>
-        <h6 class="data">#{{data.turno}}</h6>
-      </div>
-
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon>calendar_month</mat-icon>
-        </div>
-        <h6 class="data">{{data.fecha_hora |  date:'d/MM/YYYY hh:mm:ss a'}}</h6>
-      </div>
-
-
-    </div>
-    <mat-divider></mat-divider>
-
-    <div class="body normal" [ngStyle]="data.paciente_nombre_tutor?  adult : tutor">
-
-      <mat-form-field style="grid-area: name;" class="name" appearance="outline">
-        <mat-label>Nombre y apellido <span *ngIf="data.paciente_nombre_tutor;">dependiente</span></mat-label>
-        <input matInput [value]="data.paciente_nombre+' '+data.paciente_apellido" placeholder="Nombre y apellido"
-          readonly>
-      </mat-form-field>
-
-      <mat-form-field *ngIf="data.paciente_nombre_tutor;" style="grid-area: tutor;" appearance="outline">
-        <mat-label>Nombre y apellido tutor</mat-label>
-        <input [value]="data.paciente_nombre_tutor+' '+data.paciente_apellido_tutor+'nombre de tutor'" matInput
-          placeholder="Nombre y apellido tutor" readonly>
-      </mat-form-field>
-
-      <mat-form-field style="grid-area: document;" appearance="outline">
-        <mat-label>Documento de identidad</mat-label>
-        <mat-icon matSuffix>badge</mat-icon>
-        <input readonly [value]="data.doc_identidad" matInput placeholder="Documento de identidad">
-      </mat-form-field>
-
-      <mat-form-field style="grid-area: service;" appearance="outline">
-        <mat-label>Tipo de servicio</mat-label>
-        <mat-select [value]="data.servicio_descrip" readonly name="service">
-          <mat-option [value]="data.servicio_descrip">
-            {{data.servicio_descrip}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field style="grid-area: insurance;" appearance="outline">
-        <mat-label>Seguro</mat-label>
-        <mat-select [value]="data.seguro_descrip">
-          <mat-option [value]="data.seguro_descrip">
-            {{data.seguro_descrip}}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field style="grid-area: nota;" appearance="outline">
-        <mat-label>Nota</mat-label>
-        <textarea readonly rows="8" matInput placeholder="Nota para el médico">{{data.nota}}</textarea>
-      </mat-form-field>
-
-    </div>
-    
-    <div class="cost-data box-info" >
-      <h4>Costos</h4>
-
-      <mat-divider>
-      </mat-divider>
-
-      <div class="data">
-        <p><b>Pago: </b>RD${{data.pago}}</p>
-        <p><b>Descuento: </b>RD${{data.descuento}}</p>
-        <p ><b>Cobertura: </b>RD${{data.cobertura}}</p>
-        <p ><b>Diferencia: </b>RD${{data.diferencia}}</p>
-      </div>
-    </div>
-    
-  </div>
-
-</mat-dialog-content>
-
-<mat-dialog-actions align="end">
+<mat-dialog-actions align="center">
+  <button color="primary" [disabled]="!isEntryToday" mat-stroked-button (click)="openDialogEntry(event)">Dar
+    entrada</button>
   <button mat-stroked-button (click)="onNoClick()" [routerLink]="['./app/cita/'+data.id]"
     type="button">Modificar</button>
-  <button mat-flat-button (click)="onClick(true)" color="primary">Cerrar</button>
+  <button mat-stroked-button (click)="openDialogAppointmentPostpone(event)">Posponer</button>
+  <button mat-stroked-button (click)="openDeleteDialog()" color="warn">Eliminar</button>
+  <button mat-flat-button (click)="onNoClick()" color="primary">Cerrar</button>
 </mat-dialog-actions>

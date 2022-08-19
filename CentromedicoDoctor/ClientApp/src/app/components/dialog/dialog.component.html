@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>{{data.title}}</h1>
+<mat-dialog-content>
+  <div mat-dialog-content>
+    <p>{{data.msj}}</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="onClick()">Cancelar</button>
+  <button mat-flat-button (click)="onClick(true)" color="primary">Aceptar</button>
+</mat-dialog-actions>

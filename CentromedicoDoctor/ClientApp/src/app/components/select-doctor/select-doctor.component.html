@@ -1,0 +1,20 @@
+<main class="no-styles">
+    <h1>¿Con quién desea trabajar?</h1>
+    <div class="container">
+    <div class="card" (click)="setMedico(medico.id)" *ngFor="let medico of medicos">
+      <div class="content">
+        <div class="imgBx">
+          <img src="{{medico.profilePhoto}}">
+        </div>
+        <div class="contentBx">
+          <h3>{{medico.nombre}}<br><span>{{medico.apellido}}</span></h3>
+        </div>
+      </div>
+      <ul class="sci">
+        <li *ngFor="let item of medico.especialidades | slice:0:3;">
+          <span>{{item}}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>

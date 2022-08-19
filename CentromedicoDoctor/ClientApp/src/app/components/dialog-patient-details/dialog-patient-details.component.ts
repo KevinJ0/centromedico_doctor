@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from "@angular/core";
+import { Component, OnInit, Inject, Input } from "@angular/core";
 
 import { timer } from 'rxjs';
 
@@ -25,17 +25,16 @@ import { DialogAppointmentPostponeComponent } from "../dialog-appointment-postpo
 import { DialogComponent } from "../dialog/dialog.component";
 import { CitaService } from "src/app/services/cita.service";
 import { SnackBarService } from "src/app/services/snack-bar.service";
-import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
 
 @Component({
   selector: "app-dialog-patient-details",
   templateUrl: "./dialog-patient-details.component.html",
   styleUrls: ["./dialog-patient-details.component.css"],
- 
+
 })
 export class DialogPatientDetailsComponent implements OnInit {
   private data: citaCalendar = this.event.patientData;
-
+  isEntryToday: boolean;
   citaDetailFormGroup: FormGroup;
   identDocMask: string = "000-0000000-0";
   seguros: seguro[];
@@ -49,7 +48,6 @@ export class DialogPatientDetailsComponent implements OnInit {
   deleteCita: boolean = false;
   _fechaHora: string;
 
-  
   constructor(
     private _formBuilder: FormBuilder,
     private servicioSvc: ServicioService,
@@ -80,6 +78,9 @@ export class DialogPatientDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.isEntryToday = new Date(this.data.fecha_hora).toDateString() == new Date().toDateString();
+
     this.servicios = this.servicioSvc.serviciosCoberturas$.getValue();
 
     //actualiza los costos por el seguro que se escoja
@@ -134,7 +135,7 @@ export class DialogPatientDetailsComponent implements OnInit {
 
   openDeleteDialog(): void {
     const dialogRef = this.dialog.open(DialogComponent, {
-      data: { title: "Confirmar eliminación", msj: `¿Está seguro que desea eliminar la cita ${this.data.id} del paciente ${this.data.paciente_nombre}? ` },
+      data: { title: "Confirmar eliminación", msj: `¿Está seguro que desea eliminar la cita #${this.data.id} del paciente ${this.data.paciente_nombre + " " + this.data.paciente_apellido}? ` },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -143,7 +144,7 @@ export class DialogPatientDetailsComponent implements OnInit {
         this.citaSvc.DeleteCita(this.data.id).subscribe(
           () => {
             console.log("completado");
-            this.openSnackBar.open("Operación realizada correctamente.", 0);
+            this.openSnackBar.open("Operación realizada correctamente", 0);
             this.dialogRef.close({ data: true });
           },
           (err: CustomError) => {
@@ -184,4 +185,7 @@ export class DialogPatientDetailsComponent implements OnInit {
 
     });
   }
+
+ 
+
 }

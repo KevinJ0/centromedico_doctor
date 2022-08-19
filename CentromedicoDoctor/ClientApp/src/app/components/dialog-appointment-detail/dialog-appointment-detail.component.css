@@ -1,0 +1,111 @@
+.body {
+  display: grid;
+  width: clamp(500px, 53vw, 700px);
+  column-gap: 10px;
+}
+
+.header {
+  display: flex;
+  gap: 1rem;
+}
+
+.header .item {
+
+  display: flex;
+  margin-top: 1rem;
+
+}
+
+.header .item .icon-container {
+
+  border-radius: 7px 0 0 7px;
+  padding: 5px 13px;
+  background-color: var(--primary-color);
+  display: flex;
+  align-items: center;
+}
+
+.header .item .icon-container .mat-icon {
+  font-size: 1.6rem;
+  width: auto;
+  color: white;
+  height: auto;
+}
+
+.header .item .data {
+  background-color: rgb(241, 241, 241);
+  border-right: solid var(--primary-color) 1px;
+  border-top: solid var(--primary-color) 1px;
+  border-bottom: solid var(--primary-color) 1px;
+  border-radius: 0 7px 7px 0;
+  height: 100%;
+  padding: 5px 13px;
+  align-items: center;
+  display: flex;
+}
+
+mat-divider {
+  margin: 1rem 0;
+}
+
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ 
+}
+
+
+.costs-container {
+  background-color: var(--primary-color);
+  border-radius: 5px;
+  padding: 1rem;
+  color: white;
+}
+
+.costs-container .mat-divider {
+  background-color: white;
+}
+
+.costs-container .data {
+  font-size: 13px;
+  display: grid;
+  justify-items: stretch;
+  grid-template-columns: auto auto;
+  justify-content: space-between;
+  row-gap: 1rem;
+
+}
+
+.costs-container .data p {
+  text-align: left;
+  font-weight: 200;
+
+}
+
+.costs-container .data span {
+  text-align: right;
+  font-weight: 500;
+}
+
+@media only screen and (min-width: 1280px) {
+
+  
+.flex-container {
+  display: flex;
+  flex-direction: row;
+  width: clamp(59rem,60vw,82rem);
+
+}
+
+  .costs-container {
+    width: 30%;
+  }
+
+  .body {
+    width: 70%;
+  }
+
+
+}

@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Detalles de la cita</h1>
+
+<app-mat-dialog-content-appointment [data]="data"></app-mat-dialog-content-appointment>
+
+<mat-dialog-actions align="center">
+
+  <button mat-stroked-button (click)="onNoClick()" [routerLink]="['./app/cita/'+data.id]"
+    type="button">Modificar</button>
+  <button mat-flat-button (click)="onClick(true)" color="primary">Cerrar</button>
+</mat-dialog-actions>
