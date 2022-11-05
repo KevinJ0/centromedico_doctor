@@ -1,1 +1,208 @@
-<app-building></app-building>
+<main>
+
+  <div class="title-container">
+    <h2 class="title">Configuración</h2>
+    <mat-divider></mat-divider>
+  </div>
+
+  <div>
+
+
+    <mat-tab-group mat-align-tabs="start">
+      <mat-tab label="Mi Perfil">
+        <ng-template matStepLabel>
+          <mat-icon>manage_accounts</mat-icon>Mi Perfil
+        </ng-template>
+        <form [formGroup]="userFormGroup" class="form-group _row">
+
+          <div class="account-container" style="margin-top:10px">
+
+            <div class="left-side">
+
+
+              <mat-card class="account-info" id="account-info">
+
+
+                <div class="profile-img-container">
+
+                  <img  [src]="croppedImage | noImage " alt="Foto de perfil">
+
+                  <label class="change-photo-btn">
+                    <mat-icon> file_upload </mat-icon>
+                    Subir foto
+                    <input #imageInput type="file" style="display: none;" accept="image/*"
+                      (change)="fileChangeEvent($event)">
+                  </label>
+                </div>
+
+               <app-image-cropper (valueResponse)="getCroppedImg($event)"
+                [imageChangedEvent]="imageChangedEvent"></app-image-cropper>
+
+                <h5>Usuario</h5>
+
+                <div class="user-name">
+                  <img src="https://cdn-icons-png.flaticon.com/512/2102/2102647.png" alt="">
+                  <p>Paolarodriguez</p>
+                </div>
+
+                <div class="user-password">
+                  <img src="https://cdn-icons-png.flaticon.com/512/3585/3585229.png" alt="">
+                  <a href="">Cambiar contraseña</a>
+                </div>
+
+              </mat-card>
+
+
+              <article>
+                <mat-card class="note">
+                  <mat-card-title>Información</mat-card-title>
+                  <mat-card-content>
+                    <p>En este aparatado se suministrarán los datos que serán mostrados en el directorio médico a los
+                      pacientes.</p>
+                  </mat-card-content>
+                </mat-card>
+
+              </article>
+            </div>
+
+
+
+            <div class="right-side">
+              <mat-card class="my-info">
+                <mat-card-title>Mi información</mat-card-title>
+                <mat-card-content>
+
+                  <mat-form-field class="name" appearance="outline">
+                    <mat-label>Nombre(s)</mat-label>
+                    <input ([value])="_medico.nombre" formControlName="nameControl" matInput placeholder="Nombre(s)">
+                  </mat-form-field>
+
+                  <mat-form-field class="lastName" appearance="outline">
+                    <mat-label>Apellido(s)</mat-label>
+                    <input formControlName="lastNameControl" matInput placeholder="Apellido(s)">
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="telefono1">
+                    <mat-label>Teléfono 1</mat-label>
+                    <input required formControlName="telefono1Control" mask="000-000-0000" type="tel" matInput
+                      placeholder="555-555-1234">
+                    <mat-icon matSuffix>phone</mat-icon>
+                  </mat-form-field>
+
+                  <mat-checkbox class="reach1" formControlName="telefono1ReachControl">
+                    Whatsapp
+                  </mat-checkbox>
+                  <mat-checkbox class="reach2" formControlName="telefono2ReachControl">
+                    Teléfono
+                  </mat-checkbox>
+
+
+
+                  <mat-form-field appearance="outline" class="telefono2">
+                    <mat-label>Teléfono 2</mat-label>
+                    <input required formControlName="telefono2Control" mask="000-000-0000" type="tel" matInput
+                      placeholder="555-555-1234">
+                    <mat-icon matSuffix>phone</mat-icon>
+                  </mat-form-field>
+
+                  <mat-checkbox class="telefono3Reach" class="reach3" formControlName="telefono3ReachControl">
+                    Whatsapp
+                  </mat-checkbox>
+                  <mat-checkbox class="telefono4Reach" class="reach4" formControlName="telefono4ReachControl">
+                    Teléfono
+                  </mat-checkbox>
+
+
+
+                  <mat-form-field appearance="outline" class="hospital-contact">
+                    <mat-label>Teléfono Centro Médico</mat-label>
+                    <input readonly type="tel" matInput placeholder="555-555-1234" value="809-550-8899">
+                    <mat-icon matSuffix>phone</mat-icon>
+                  </mat-form-field>
+
+
+                  <div class="extensions">
+
+                    <mat-form-field class="ext1" appearance="outline">
+                      <mat-label>Ext1</mat-label>
+                      <input mask="0000" formControlName="ext1Control" matInput placeholder="Extensión 1">
+                    </mat-form-field>
+
+                    <mat-form-field class="ext2" appearance="outline">
+                      <mat-label>Ext2</mat-label>
+                      <input mask="0000" formControlName="ext2Control" matInput placeholder="Extensión 2">
+                    </mat-form-field>
+
+                    <mat-form-field class="ext3" appearance="outline">
+                      <mat-label>Ext3</mat-label>
+                      <input mask="0000" formControlName="ext3Control" matInput placeholder="Extensión 3">
+                    </mat-form-field>
+
+                  </div>
+
+
+                  <mat-form-field floatLabel="always" appearance="outline" class="email">
+                    <mat-label>Correo</mat-label>
+                    <input readonly type="email" matInput formControlName="emailControl" [errorStateMatcher]="matcher">
+                    <mat-error
+                      *ngIf="userFormGroup.get('emailControl').hasError('email') && !userFormGroup.get('emailControl').hasError('required')">
+                      Por favor ingrese un correo válido
+                    </mat-error>
+                    <mat-error *ngIf="userFormGroup.get('emailControl').hasError('required')">
+                      Correo <strong>requerido</strong>
+                    </mat-error>
+                  </mat-form-field>
+
+
+                  <mat-form-field class="consult" appearance="outline">
+                    <mat-label>Consultorio</mat-label>
+                    <input mask="0000" min="0" formControlName="consultingRoomControl" matInput
+                      placeholder="Consultorio">
+                  </mat-form-field>
+
+                  <mat-form-field class="urlF" appearance="outline">
+                    <mat-label>URL Facebook</mat-label>
+                    <input formControlName="urlFacebookControl" type="url" matInput placeholder="URL">
+                  </mat-form-field>
+
+                  <mat-form-field class="urlT" appearance="outline">
+                    <mat-label>URL Twitter</mat-label>
+                    <input formControlName="urlTwitterControl" type="url" matInput placeholder="URL">
+                  </mat-form-field>
+
+                  <mat-form-field class="urlI" appearance="outline">
+                    <mat-label>URL Instagram</mat-label>
+                    <input formControlName="urlInstagramControl" type="url" matInput placeholder="URL">
+                  </mat-form-field>
+
+                </mat-card-content>
+                <mat-card-actions align="center">
+                  <button (click)="Submit()" mat-flat-button color="primary">Actualizar</button>
+                </mat-card-actions>
+              </mat-card>
+            </div>
+          </div>
+        </form>
+
+      </mat-tab>
+
+      <mat-tab label="Balance Inicial">
+        <ng-template matStepLabel>
+          <mat-icon>monetization_on</mat-icon>
+        </ng-template>
+        Content 2
+      </mat-tab>
+
+      <mat-tab label="Especialidades">
+        <ng-template matStepLabel>
+          <mat-icon>local_hospital</mat-icon>
+        </ng-template>
+        Content 3
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+
+
+
+</main>

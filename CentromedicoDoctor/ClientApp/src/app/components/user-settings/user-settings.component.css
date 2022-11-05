@@ -1,0 +1,202 @@
+.profile-img-container {
+  background: rgb(179 221 255);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 35px;
+  /* padding: 2rem 2rem 3rem 2rem; */
+
+
+  justify-content: space-between;
+
+}
+
+
+
+
+.account-container {
+  width: 100%;
+  display: grid;
+  margin-bottom: 1rem;
+  grid-template-columns: 30% 70%;
+}
+
+
+.account-info {
+  width: 100%;
+  display: flex !important;
+  flex-wrap: nowrap;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.account-info h5 {
+  margin: 1rem 0;
+}
+
+.user-name,
+.user-password {
+  width: 100%;
+  height: 4rem;
+  padding: 12px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  font-size: 14px;
+}
+
+.profile-img-container img {
+  border-radius: 35px;
+  min-height: 200px;
+  min-width: 200px;
+  position: relative;
+  top: 50%;
+  background-color: rgba(3, 3, 3, 0.164);
+  transform: translateY(-50%);
+  height: -webkit-fill-available;
+  width: 10rem;
+  align-self: center;
+  object-fit: cover;
+
+}
+
+.user-name img,
+.user-password img {
+  height: -webkit-fill-available;
+  width: 40px;
+}
+
+.change-photo-btn {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #12121291;
+  color: white;
+  height: 2.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+  border-radius: 0 0 35px 35px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.user-name {
+  background-color: rgba(0, 0, 0, 0.068);
+}
+
+.user-password a {
+  color: rgb(39, 39, 39)
+}
+
+
+article {
+  width: 100%;
+}
+
+article .note {
+  border-top: #0d6efd 5px solid;
+}
+
+.left-side {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-right: 1rem;
+}
+
+.right-side {
+  max-width: 47rem;
+}
+
+.right-side .user-info {
+  width: 100%;
+}
+
+
+.right-side .mat-card-content {
+  display: grid;
+  grid-template-areas: "name name lastName lastName"
+    "telefono1 telefono1 reach1 reach2"
+    "telefono2 telefono2 reach3 reach4"
+    "hospital-contact hospital-contact hospital-contact hospital-contact"
+    "extensions extensions extensions extensions"
+    "email email email email"
+    "consult consult consult consult"
+    "urlF urlF urlF urlF"
+    "urlT urlT urlT urlT"
+    "urlI urlI urlI urlI";
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 10px;
+
+}
+
+.name {
+  grid-area: name;
+}
+
+.lastName {
+  grid-area: lastName;
+}
+
+.telefono1 {
+  grid-area: telefono1;
+}
+
+.reach1 {
+  grid-area: reach1;
+}
+
+.reach2 {
+  grid-area: reach2;
+}
+
+.telefono2 {
+  grid-area: telefono2;
+}
+
+.reach3 {
+  grid-area: reach3;
+}
+
+.reach4 {
+  grid-area: reach4;
+}
+
+
+.hospital-contact {
+  grid-area: hospital-contact;
+}
+
+.extensions {
+  grid-area: extensions;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 10px;
+
+}
+
+.email {
+  grid-area: email;
+}
+
+.consult {
+  grid-area: consult;
+}
+
+.urlF {
+  grid-area: urlF;
+}
+
+.urlT {
+  grid-area: urlT;
+}
+
+.urlI {
+  grid-area: urlI;
+}

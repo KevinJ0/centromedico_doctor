@@ -45,9 +45,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     private servicioSvc: ServicioService,
     private seguroSvc: SeguroService
   ) {
-    console.log(this.sort)
-
-    
+   
   }
 
   
@@ -109,7 +107,6 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
       this.setTotals();
-      console.log();
       this.loading = false;
 
     })

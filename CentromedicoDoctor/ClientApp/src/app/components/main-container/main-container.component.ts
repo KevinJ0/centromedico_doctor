@@ -1,6 +1,5 @@
 import { Component, OnInit } from "@angular/core";
 import { ServicioService } from "src/app/services/servicio.service";
-import { SignalrCustomService } from "src/app/services/signalr-custom.service";
 
 @Component({
   selector: "app-main-container",
@@ -11,7 +10,6 @@ export class MainContainerComponent implements OnInit {
   medicoId: any; // para la secretaria solamente
 
   constructor(
-    private signalR: SignalrCustomService,
     private servicioSvc: ServicioService) {
   }
 

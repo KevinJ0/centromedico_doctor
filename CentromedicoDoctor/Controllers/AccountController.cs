@@ -46,78 +46,76 @@ namespace CentromedicoDoctor.Controllers
 
         }
 
+
+
         /// <summary>
-        /// Método que almacena los datos personales del usuario/paciente en la base de datos, que será más tarde utilizados para futuras acciones.
+        /// Método guarda los datos personales del médico.
         /// </summary>
         /// <remarks>
-        /// Sample request:
+        /// Sample response:
         ///
-        ///     POST /Account/setUserInfo
+        ///     Post /Account/saveUserInfo
         ///      {
-        ///         nombre = "Kevin",
-        ///         email = "Rosario",
-        ///         contacto = "8095509090",
-        ///         doc_identidad = "402999413213",
-        ///         sexo = "f" | "m",
-        ///         fecha_nacimiento = "1/1/1998"
+        ///        
         ///      }
         /// </remarks>
         /// <param name="formuser"></param>
         /// <returns>ActionResult</returns>
-        /// <response code="400">La fecha suministrada no es válida.</response>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        /// <response code="400">Este usuario no existe en la base de datos.</response>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         [HttpPost("[action]")]
-        public async Task<ActionResult> setUserInfoAsync(UserInfo formuser)
+        public async Task<ActionResult<medicoDTO>> saveUserInfoAsync(medicoDTO formuser)
         {
+            try
+            {
 
-            bool result = await _accountSvc.saveUserInfoAsync(formuser);
+               bool result = await _accountSvc.saveUserInfoAsync(formuser);
 
-            if (!result)
-                return BadRequest("La fecha de nacimiento no es valida, debe ser mayor de edad.");
-            else
+                if (!result)
+                    return BadRequest();
+
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Ha ocurrido un error al tratar de hacer la solicitud: " + e.Message);
+               
+            }
         }
 
 
-
-
-
         /// <summary>
-        /// Método que devuelve los datos personales del usuario/paciente.
+        /// Método que devuelve los datos personales del médico.
         /// </summary>
         /// <remarks>
         /// Sample response:
         ///
         ///     Get /Account/getUserInfo
         ///      {
-        ///         nombre = "Pedro",
-        ///         email = "Roland",
-        ///         contacto = "8095559988",
-        ///         doc_identidad = "RD2288354523",
-        ///         sexo = "m",
-        ///         fecha_nacimiento = "1/1/1998",
-        ///         confirm_doc_identidad = "false"
+        ///        
         ///      }
         /// </remarks>
         /// <returns>UserInfo</returns>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
         [HttpGet("[action]")]
-        public async Task<ActionResult<UserInfo>> getUserInfoAsync()
+        public async Task<ActionResult<medicoDTO>> getUserInfoAsync()
         {
             try
             {
+
                 string userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 MyIdentityUser user = await _userManager.FindByNameAsync(userName);
-                if (user.doc_identidad == null)
-                {
-                    return NotFound();
-                }
-                UserInfo userInfo = _mapper.Map<UserInfo>(user);
+
+                if (user.UserName == null)
+                    return BadRequest("Este usuario no existe en la base de datos.");
+
+
+                medicoDTO userInfo = await _accountSvc.getUserInfoAsync(user);
                 return userInfo;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw new Exception("Ha ocurrido un error al tratar de hacer la solicitud: " + e.Message);
             }
         }
 

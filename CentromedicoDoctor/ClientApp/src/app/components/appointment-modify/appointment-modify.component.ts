@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { catchError, of } from "rxjs";
-import { citaForm, citaPaciente, cobertura, CustomError, hora, seguro, servicioCobertura, UserInfo, } from "src/app/interfaces/InterfacesDto";
+import { citaForm, citaPaciente, cobertura, CustomError, hora, seguro, servicioCobertura } from "src/app/interfaces/InterfacesDto";
 import { CitaService } from "src/app/services/cita.service";
 import { HorarioMedicoService } from "src/app/services/horario-medico-service.service";
 import * as _moment from "moment";
@@ -273,9 +273,8 @@ export class AppointmentModifyComponent implements OnInit {
         this.loading = true;
 
         let formdata = Object.assign(this.citaFormGroup.value);
-        let citaP: citaPaciente;
+        let cita_paciente: citaPaciente;
         let fecha_hora: string = formdata["timeControl"];
-        let contacto = formdata["contactControl"];
         let nombre = formdata["userNameControl"];
         let apellido = formdata["userLastNameControl"];
         let nombre_tutor = formdata["tutorNameControl"];
@@ -286,17 +285,10 @@ export class AppointmentModifyComponent implements OnInit {
           formdata["userBirthDateControl"]
         ).toISOString();
 
-        let userInfo: UserInfo = {
-          doc_identidad: formdata["identityDocControl"],
-          nombre: formdata["userNameControl"],
-          apellido: formdata["userLastNameControl"],
-          fecha_nacimiento: _moment(formdata["userBirthDateControl"]).toDate(),
-          sexo: formdata["userSexControl"],
-          contacto: contacto,
-        };
+      
 
 
-        citaP = {
+        cita_paciente = {
           paciente_nombre: nombre,
           paciente_apellido: apellido,
           paciente_apellido_tutor: apellido_tutor,
@@ -313,9 +305,9 @@ export class AppointmentModifyComponent implements OnInit {
           nota: formdata["noteControl"],
         };
 
-        console.log(citaP);
+        console.log(cita_paciente);
 
-        this.citaSvc.UpdateCita(this.citaId, citaP).subscribe(
+        this.citaSvc.UpdateCita(this.citaId, cita_paciente).subscribe(
           () => {
             console.log("completado");
             this.openSnackBar.open("Actualizado", 0);

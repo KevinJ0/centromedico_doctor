@@ -81,6 +81,33 @@ namespace CentromedicoDoctor.Profiles
                 .ForMember(dest => dest.correo, opt => opt.MapFrom(src => src.pacientes.MyIdentityUsers.Email))
                 .ForMember(dest => dest.turno, opt => opt.MapFrom(src => src.turno));
 
+            CreateMap<medicoDTO, medicos>().ForMember(x => x.nombre, opt => opt.MapFrom(src => src.nombre))
+                .ForMember(x => x.apellido, opt => opt.MapFrom(src => src.apellido))
+                .ForMember(x => x.telefono1, opt => opt.MapFrom(src => src.telefono1))
+                .ForMember(x => x.telefono2, opt => opt.MapFrom(src => src.telefono2))
+                .ForMember(x => x.telefono1_contact, opt => opt.MapFrom(src => src.telefono1_contact))
+                .ForMember(x => x.telefono2_contact, opt => opt.MapFrom(src => src.telefono2_contact))
+                .ForMember(x => x.ProfilePhoto, opt => opt.MapFrom(src => src.ProfilePhoto))
+                .ForMember(x => x.consultorio, opt => opt.MapFrom(src => src.consultorio))
+                .ForMember(x => x.url_facebook, opt => opt.MapFrom(src => src.url_facebook))
+                .ForMember(x => x.url_twitter, opt => opt.MapFrom(src => src.url_twitter))
+                .ForMember(x => x.url_instagram, opt => opt.MapFrom(src => src.url_instagram))
+                .ForMember(x => x.extensiones_telefonicas, opt => opt.MapFrom(x => x.extensiones_telefonicas
+                .Select(et => new extensiones_telefonicas()
+                {
+                    ID = et,
+                    medicosID = x.ID
+                }).AsEnumerable()))
+                .ForAllOtherMembers(opt => opt.Ignore());
+
+            CreateMap<medicos, medicoDTO>().ForMember(dest => dest.especialidades, 
+                opt => opt.MapFrom(src =>src.especialidades_medicos.Select(x => x.especialidades.descrip).ToList()))
+             .ForMember(x => x.correo, opt => opt.MapFrom(src => src.MyIdentityUsers.Email))
+             .ForMember(dest => dest.seguros, opt => opt.MapFrom(src =>src.cobertura_medicos.Select(x => x.seguros.descrip).ToList()))
+             .ForMember(dest => dest.servicios, opt => opt.MapFrom(src =>src.servicios_medicos.Where(x => x.medicos.ID == src.ID).Select(x => x.servicios.descrip).ToList()))
+             .ForMember(dest => dest.extensiones_telefonicas, opt => opt.MapFrom(src =>src.extensiones_telefonicas.Select(x => x.ID).ToList()));
+
+
         }
     }
 }

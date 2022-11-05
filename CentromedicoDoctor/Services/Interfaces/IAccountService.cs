@@ -1,4 +1,5 @@
-﻿using Doctor.DTO;
+﻿using Centromedico.Database.DbModels;
+using Doctor.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace CentromedicoDoctor.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<bool> saveUserInfoAsync(UserInfo formuser);
+        Task<bool> saveUserInfoAsync(medicoDTO formuser);
+        Task<medicoDTO> getUserInfoAsync(MyIdentityUser user);
     }
 }

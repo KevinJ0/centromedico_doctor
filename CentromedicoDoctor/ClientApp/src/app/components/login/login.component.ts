@@ -1,18 +1,13 @@
-import { StepperOrientation } from '@angular/cdk/stepper';
 import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Observable, BehaviorSubject, Subject, of } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
-import { map, startWith, debounceTime, switchMap, catchError, finalize } from 'rxjs/operators';
 import * as _moment from 'moment';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { AccountService } from 'src/app/services/account.service';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AutoUnsubscribe } from "ngx-auto-unsubscribe";
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogContentComponent } from '../dialog-content/dialog-content.component';
-import { CustomError } from 'src/app/interfaces/InterfacesDto';
 
 @AutoUnsubscribe()
 @Component({
@@ -41,7 +36,7 @@ import { CustomError } from 'src/app/interfaces/InterfacesDto';
         )
       ]
     )
-  ] 
+  ]
 })
 export class LoginComponent implements OnInit {
 
@@ -57,11 +52,10 @@ export class LoginComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private router: Router,
-    private rutaActiva: ActivatedRoute,
     private accountSvc: AccountService,
     private _formBuilder: FormBuilder) {
     //go back user is already logged in
-    if (this.accountSvc.checkLoginStatus())
+    if (this.accountSvc.CheckLoginStatus())
       this.router.navigate(['app']);
   }
 
@@ -90,29 +84,40 @@ export class LoginComponent implements OnInit {
     if (this.loginFormGroup.valid) {
       if (!this.loading) {
         this.loading = true;
-         let userLogin = this.loginFormGroup.value;
+        let userLogin = this.loginFormGroup.value;
 
         this.accountSvc
           .Login(userLogin.loginEmailControl, userLogin.loginPasswordControl)
-          .subscribe(   
-            
+          .subscribe(
+
             result => {
- 
+
               this.loading = false;
 
               console.log("User Logged In Successfully");
               this.invalidLogin = false;
-              this.router.navigate(['select-doctor'], { state: { medicos: result.medicos }, 
-              skipLocationChange:true});
 
-          },
-          (err) => {
+              if (result.roles.includes("Doctor")) {
+                this.accountSvc.SetMedico(Number.parseInt(result.medicos.toString()));
+                this.router.navigate(['app/dashboard']);
+
+              } else {
+                //otherwise secretary
+                this.router.navigate(['select-doctor'], {
+                  state: { medicos: result.medicos },
+                  skipLocationChange: true
+                });
+
+              }
+
+            },
+            (err) => {
 
               this.invalidLogin = true;
               this.loading = false;
               this.ErrorMessage = "Ha ocurrido un error al tratar de entrar al sistema."
               this.ErrorMessage = err.message;
-              this.showError({ type: 1, message: this.ErrorMessage});
+              this.showError({ type: 1, message: this.ErrorMessage });
             }
           )
       }

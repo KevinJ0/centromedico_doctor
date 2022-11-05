@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { group } from 'src/app/interfaces/InterfacesDto';
+import { AccountService } from 'src/app/services/account.service';
 import { GrupoService } from 'src/app/services/grupo.service';
 
 @Component({
@@ -13,15 +14,10 @@ export class SelectDoctorComponent implements OnInit {
 
   constructor(
     private gruposSvc: GrupoService,
-    private router: Router) {
+    private router: Router,
+    private accountSvc: AccountService) {
 
-      
-    // this.medicos = [{
-    //   profilePhoto: "https://centromedico-assets.s3.us-east-2.amazonaws.com/paola.jpg",
-    //   id: 1, nombre: "Paola Carolina", apellido: "Spear Petterson", especialidades: ["Alergeologo", "Ginecologo", "Cardiologo"]
-    // }];
-
-
+       
     this.medicos = this.router.getCurrentNavigation().extras?.state?.medicos; // debe de tener algo
     if (!this.medicos)
       this.router.navigate(['login']);
@@ -30,16 +26,5 @@ export class SelectDoctorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  setMedico(id: number): void {
-
-    sessionStorage.setItem("medicoId", String(id));
-
-    this.gruposSvc.GetGrupoList(id).subscribe((r: group[]) => {
-
-      sessionStorage.setItem('groups', JSON.stringify(r)); // guardo la lista de los grupos para las notificaciones con signalr
-
-      this.router.navigate(['app/dashboard']);
-
-    });
-  }
+  
 }

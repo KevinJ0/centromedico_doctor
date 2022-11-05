@@ -110,13 +110,23 @@ main:not(.app-main, .no-styles) {
 .mat-step-header .mat-step-icon {
   display: none !important;
 }
+
 /* text with icon in step-header I'm using custom style */
-#dashboard-stepper .mat-step-text-label {
+#dashboard-stepper .mat-step-text-label,
+#config-stepper .mat-step-text-label {
+
   display: flex !important;
   gap: 7px;
+}
+
+#config-stepper .mat-stepper-horizontal-line {
+  flex: none !important;
+  width: 50px;
 }
 
 /* this is 👁️‍🗨️ icon*/
 table .action .mat-icon {
   color: #999999;
 }
+
+

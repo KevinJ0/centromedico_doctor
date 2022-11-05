@@ -11,6 +11,7 @@ export interface UserInfo {
   contacto: string;
   fecha_nacimiento: Date;
   sexo: string;
+
 }
 export interface especialidad {
   id: number | string;
@@ -122,15 +123,34 @@ export interface medico {
   url_facebook: string;
   url_instagram: string;
   telefono1: string;
+  telefono1_contact: string;
   telefono2: string;
+  telefono2_contact: string;
   consultorio: number;
   estado: Boolean;
   profilePhoto: string;
   especialidades: string[];
   seguros: string[];
   servicios: string[];
+  extensiones_telefonicas: string[];
   horarios: Object;
 }
+
+export interface MedicoUserForm{
+    nombre: string;
+    apellido: string;
+    telefono1: string;
+    telefono2: string;
+    telefono1_contact: string;
+    telefono2_contact: string;
+    extensiones_telefonicas: any[];
+    consultorio: number;
+    url_facebook: string;
+    url_twitter: string;
+    url_instagram: string;
+    profilePhoto: string | File;
+}
+
 
 export interface doctorCard {
   id: number | string;

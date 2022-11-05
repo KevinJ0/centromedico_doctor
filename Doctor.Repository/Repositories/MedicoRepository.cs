@@ -47,6 +47,26 @@ namespace Doctor.Repository.Repositories
             }
         }
 
+        public medicos getMedicoWithServicesInsurancesEspecs(int medicoID)
+        {
+            try
+            {
+                medicos medico = _db.medicos
+                    .Include(m => m.extensiones_telefonicas)
+                    .Include(m => m.especialidades_medicos).ThenInclude(es => es.especialidades)
+                    .Include(m => m.cobertura_medicos).ThenInclude(cober => cober.seguros)
+                    .Include(m => m.servicios_medicos).ThenInclude(serv => serv.servicios)
+                    .FirstOrDefault(x => x.ID == medicoID);
+
+                return medico;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public async Task<int> getMedicoIdAsync(int? medicoID)
         {
             try

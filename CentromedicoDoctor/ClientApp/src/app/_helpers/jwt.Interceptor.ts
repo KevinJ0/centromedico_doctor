@@ -50,7 +50,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
             console.log("TokenRefresh has expired");
             this.router.navigate(['login']);
-            this.acct.logout();
+            this.acct.Logout();
             return throwError(err);
 
           } else {
@@ -126,16 +126,15 @@ export class JwtInterceptor implements HttpInterceptor {
       this.tokenSubject.next(null);
 
       /// call the API to refresh the token
-      return this.acct.getNewRefreshToken().pipe(
+      return this.acct.GetNewRefreshToken().pipe(
         switchMap((tokenresponse: any) => {
           if (tokenresponse) {
 
             this.tokenSubject.next(tokenresponse.authToken.token);
-            //this.acct.setUserResult(tokenresponse);
-
+          
             return next.handle(this.attachTokenToRequest(request));
           }
-          return <any>this.acct.logout();
+          return <any>this.acct.Logout();
         }),
         catchError(err => {
           return this.handleError(err);

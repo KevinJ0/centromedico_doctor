@@ -31,8 +31,8 @@ export class NavbarComponent implements OnInit {
         this.userRole = r; 
       });
     }
-  logOut() {
-    this.accountSvc.logout().then(()=>{
+  LogOut() {
+    this.accountSvc.Logout().then(()=>{
         this.router.navigate(['login']);
     });
   }

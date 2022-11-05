@@ -75,6 +75,7 @@ export class DialogPatientDetailsComponent implements OnInit {
     this._fechaHora = _moment(this.data.fecha_hora)
       .format("D/M/YYYY - hh:mm a")
       .toString();
+      
   }
 
   ngOnInit(): void {

@@ -24,6 +24,7 @@ export class CitaService {
   // Url to access our Web API’s
   errorMsg: string;
   medicoId: string;
+  _citasDataRepo: citaCalendar[];
 
   constructor(
     private router: Router,

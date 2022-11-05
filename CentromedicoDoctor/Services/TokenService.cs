@@ -100,13 +100,15 @@ namespace CentromedicoDoctor.Services
 
                         return new OkObjectResult(accessToken);
                     }
+                    else
+                        throw new BadHttpRequestException("El usuario no tiene un rol definido.");
+
                 }
-                throw new BadHttpRequestException("El usuario o ontraseña son invalidos, por favor verifique sus credenciales.");
+                throw new BadHttpRequestException("El usuario o contraseña son invalidos, por favor verifique sus credenciales.");
 
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
@@ -152,18 +154,19 @@ namespace CentromedicoDoctor.Services
                 roles = roles.FirstOrDefault(),
                 username = user.UserName,
 
-                medicos = _db.medicos.Include(sm => sm.secretarias_medicos)
+                medicos = roles.FirstOrDefault() == "Secretary" ? _db.medicos.Include(sm => sm.secretarias_medicos)
                 .ThenInclude(m => m.secretarias.MyIdentityUsers)
                 .SelectMany(x => x.secretarias_medicos.Where(sm => sm.secretarias.MyIdentityUsers == user))
-                .Select(m => new { 
+                .Select(m => new
+                {
                     id = m.medicos.ID,
                     nombre = m.medicos.nombre,
                     apellido = m.medicos.apellido,
                     profilePhoto = m.medicos.ProfilePhoto,
-                    especialidades = m.medicos.especialidades_medicos.ToList().Select(x=>x.especialidades.descrip),
-                }).ToList(),
+                    especialidades = m.medicos.especialidades_medicos.ToList().Select(x => x.especialidades.descrip),
+                }).ToList() : _db.medicos.FirstOrDefault(x => x.MyIdentityUsers == user).ID,
 
-              
+
             };
         }
 

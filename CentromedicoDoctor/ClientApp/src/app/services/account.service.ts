@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { UserInfo, group, TokenResponse, CustomError } from '../interfaces/InterfacesDto';
+import { UserInfo, group, TokenResponse, CustomError, medico, MedicoUserForm } from '../interfaces/InterfacesDto';
 import { BehaviorSubject, throwError, of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SignalrCustomService } from './signalr-custom.service';
+import { GrupoService } from './grupo.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class AccountService {
   private baseUrlToken: string = "api/token/auth";
 
   // User related properties
-  private loginStatus = new BehaviorSubject<boolean>(this.checkLoginStatus());
+  private loginStatus = new BehaviorSubject<boolean>(this.CheckLoginStatus());
   private UserName = new BehaviorSubject<string>(sessionStorage.getItem('userName'));
   private UserRole = new BehaviorSubject<string>(sessionStorage.getItem('userRole'));
   public groups: group[] = [];
@@ -25,11 +26,26 @@ export class AccountService {
 
   constructor(
     private signalR: SignalrCustomService,
+    private gruposSvc: GrupoService,
     private router: Router, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
-  getNewRefreshToken(): Observable<TokenResponse> {
+
+  SetMedico(id: number): void {
+
+    sessionStorage.setItem("medicoId", String(id));
+
+    this.gruposSvc.GetGrupoList(id).subscribe((r: group[]) => {
+
+      sessionStorage.setItem('groups', JSON.stringify(r)); // guardo la lista de los grupos para las notificaciones con signalr
+
+      this.router.navigate(['app/dashboard']);
+
+    });
+  }
+
+  GetNewRefreshToken(): Observable<TokenResponse> {
 
     let userCredential = sessionStorage.getItem('userName');
     let refreshToken = sessionStorage.getItem('refreshToken');
@@ -41,7 +57,7 @@ export class AccountService {
         console.log(result)
 
         if (result && result.token) {
-          this.setUserResult(result)
+          this.SetUserResult(result)
         }
 
         return <TokenResponse>result;
@@ -65,7 +81,7 @@ export class AccountService {
           // login successful if there's a jwt token in the response
           if (result && result.token) {
             // store user details and jwt token in local storage to keep user logged in between page refreshes
-            this.setUserResult(result);
+            this.SetUserResult(result);
             return result;
 
           } else {
@@ -80,7 +96,7 @@ export class AccountService {
   }
 
 
-  setUserResult(result: TokenResponse): void {
+  SetUserResult(result: TokenResponse): void {
     this.loginStatus.next(true);
 
 
@@ -96,7 +112,7 @@ export class AccountService {
 
   }
 
-  checkLoginStatus(): boolean {
+  CheckLoginStatus(): boolean {
 
     var loginCookie = sessionStorage.getItem("loginStatus");
 
@@ -117,18 +133,38 @@ export class AccountService {
       }));
   }
 
-  getUserInfo(): Observable<UserInfo> {
-    return this.http.get<UserInfo>(this.baseUrl + "api/account/getUserInfo")
-      .pipe(map((data: UserInfo) => data),
+  GetUserInfo(): Observable<medico> {
+
+    try {
+
+      return this.http.get<medico>(this.baseUrl +
+        `api/account/getUserInfo`)
+        .pipe(map(result => {
+          console.log(result)
+          return result;
+        }), catchError(err => {
+          console.log('Ha ocurrido un error al tratar de obtener los datos del médico', err);
+          return of();
+        }));
+
+    } catch (error) {
+      console.log('Ha ocurrido un error al tratar de obtener los datos del médico', error);
+      return of();
+    }
+
+  }
+
+  SaveUserInfo(userInfo: MedicoUserForm): Observable<boolean> {
+    return this.http.post<boolean>(this.baseUrl + "api/account/saveUserInfo", userInfo)
+      .pipe(
+        map(() => true),
         catchError(err => {
           return throwError(() => new Error(err));
         })
       );
-
   }
 
-
-  setUserInfo(userInfo: UserInfo): Observable<boolean> {
+  SetUserInfo(userInfo: UserInfo): Observable<boolean> {
     return this.http.post<boolean>(this.baseUrl + "api/account/setUserInfo", userInfo)
       .pipe(
         map(() => true),
@@ -139,10 +175,10 @@ export class AccountService {
   }
 
 
-  async logout(): Promise<void> {
+  async Logout(): Promise<void> {
     // Set Loginstatus to false and delete saved jwt cookie
-    await this.signalR.Disconnect().then(async() => {
-   //   this.signalR.hubConnection;
+    await this.signalR.Disconnect().then(async () => {
+      //   this.signalR.hubConnection;
       this.loginStatus.next(false);
       this.UserName.next(null);
       this.UserRole.next(null);

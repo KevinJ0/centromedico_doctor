@@ -1,7 +1,7 @@
 <main class="no-styles">
-    <h1>¿Con quién desea trabajar?</h1>
+    <h1 class="title">Seleccione a un doctor</h1>
     <div class="container">
-    <div class="card" (click)="setMedico(medico.id)" *ngFor="let medico of medicos">
+    <div class="card" (click)="accountSvc.SetMedico(medico.id)" *ngFor="let medico of medicos">
       <div class="content">
         <div class="imgBx">
           <img src="{{medico.profilePhoto}}">

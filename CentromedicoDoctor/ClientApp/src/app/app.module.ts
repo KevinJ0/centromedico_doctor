@@ -1,5 +1,5 @@
 import { BrowserModule } from "@angular/platform-browser";
-import { NgModule, NgModuleFactoryLoader } from "@angular/core";
+import { LOCALE_ID, NgModule, NgModuleFactoryLoader } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { HttpClientModule, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
@@ -82,13 +82,19 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { DialogAppointmentDetailComponent } from './components/dialog-appointment-detail/dialog-appointment-detail.component';
 import { TableAppointmentsComponent } from './components/table-appointments/table-appointments.component';
 import { MatSortModule } from "@angular/material/sort";
+import { MatDialogContentAppointmentComponent } from './components/mat-dialog-content-appointment/mat-dialog-content-appointment.component';
+import { AppointmentRepoComponent } from './components/reports/appointment-repo/appointment-repo.component';
+import {NgxPrintModule} from 'ngx-print';
+import { ImageCropperModule } from 'ngx-image-cropper';
+import { NoImagePipe } from "./Pipes/noImage";
+import { ImageCropperComponent } from './components/image-cropper/image-cropper.component';
 
 export function tokenGetter() {
   //return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb3NlQGdtYWlsLmNvbSIsImp0aSI6IjdjOGY5ZGIyLTAyNzYtNDJkMS1iNTc3LTUyNTg1NjhjMTdlZSIsIm5hbWVpZCI6IjAxZTNhMjJiLTI2MjctNDgyMS05ZTBlLTE0NzE1MTNhOWY5NCIsInJvbGUiOiJQYXRpZW50IiwiTG9nZ2VkT24iOiI1LzI0LzIwMjEgMTA6Mjk6NTggUE0iLCJuYmYiOjE2MjE5MDk3OTgsImV4cCI6MTcxNDYyMzcxOCwiaWF0IjoxNjIxOTA5Nzk4LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMzNyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzM3In0.Auc5Om1B4G5M5BJ31EEEtElCsBTug4WMO1ugChYdcEE";
   return sessionStorage.getItem("jwt");
 }
 
-registerLocaleData(localeEs);
+registerLocaleData(localeEs,'es');
 
 export const MY_FORMATS = {
   // parse: {
@@ -124,8 +130,13 @@ export const MY_FORMATS = {
     SnackbarUpdateComponent,
     DialogAppointmentDetailComponent,
     TableAppointmentsComponent,
+    MatDialogContentAppointmentComponent,
+    AppointmentRepoComponent,
+    NoImagePipe,
+    ImageCropperComponent, 
   ],
   imports: [
+    ImageCropperModule,
     BrowserModule.withServerTransition({ appId: "ng-cli-universal" }),
     ReactiveFormsModule,
     HttpClientModule,
@@ -163,6 +174,7 @@ export const MY_FORMATS = {
     FormsModule,
     MatSidenavModule,
     MatInputModule,
+    NgxPrintModule,
     AngularSvgIconModule.forRoot(),
     JwtModule.forRoot({
       config: {
@@ -176,8 +188,8 @@ export const MY_FORMATS = {
     }),
     RouterModule.forRoot([
       { path: "login", component: LoginComponent, pathMatch: "full" },
-      { path: "select-doctor", component: SelectDoctorComponent, pathMatch: "full",canActivate: [AuthGuardService]},
-      { path: "", component: LoginComponent, pathMatch: "full"},
+      { path: "select-doctor", component: SelectDoctorComponent, pathMatch: "full", canActivate: [AuthGuardService] },
+      { path: "", component: LoginComponent, pathMatch: "full" },
       {
         path: "app",
         component: MainContainerComponent,
@@ -201,6 +213,10 @@ export const MY_FORMATS = {
           {
             path: "reportes",
             component: ReportsComponent,
+            children: [{
+              path: "reporte-citas",
+              component: AppointmentRepoComponent,
+            }],
             canActivate: [AuthGuardService],
           },
           {
@@ -219,6 +235,7 @@ export const MY_FORMATS = {
     //{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    {provide: LOCALE_ID, useValue: 'es'},
     AccountService,
     ServicioService,
     HorarioMedicoService,

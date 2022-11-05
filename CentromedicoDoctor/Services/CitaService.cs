@@ -385,7 +385,7 @@ namespace CentromedicoDoctor.Services
 
 
 
-                //calculate costs
+                //calculating costs
                 decimal coberturaPorciento = (Decimal.Divide((cobertura.porciento), 100));
                 decimal _cobertura = cobertura.pago * coberturaPorciento;
                 decimal _diferencia = cobertura.pago - _cobertura;
@@ -584,7 +584,6 @@ namespace CentromedicoDoctor.Services
 
             try
             {
-
 
 
                 int medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicosID);
