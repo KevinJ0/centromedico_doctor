@@ -1,0 +1,25 @@
+ <!-- recorte -->
+ <button (click)="rotateLeft()">Rotate left</button>
+ <button (click)="rotateRight()">Rotate right</button>
+ <button (click)="flipHorizontal()">Flip horizontal</button>
+ <button (click)="flipVertical()">Flip vertical</button>
+ <br />
+ <br />
+ <button (click)="toggleContainWithinAspectRatio()">
+   {{containWithinAspectRatio?'Fill Aspect Ratio':'Contain Within Aspect Ratio'}}</button>
+ <button (click)="resetImage()">Reset image</button>
+ <br />
+ <br />
+ 
+ <button (click)="zoomOut()">Zoom -</button> <button (click)="zoomIn()">Zoom +</button>
+
+ <div>
+   <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
+     [containWithinAspectRatio]="containWithinAspectRatio"  [resizeToWidth]="200"
+     [cropperMinWidth]="200" [onlyScaleDown]="true" [roundCropper]="false"
+     [canvasRotation]="canvasRotation" [(transform)]="transform" [alignImage]="'left'"
+     [style.display]="showCropper ? null : 'none'" format="png" (imageCropped)="imageCropped($event)"
+     (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady($event)"
+     (loadImageFailed)="loadImageFailed()"></image-cropper>
+ </div>
+ <!-- ------------------------- -->

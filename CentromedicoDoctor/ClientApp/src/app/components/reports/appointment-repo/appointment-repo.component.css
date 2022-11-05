@@ -1,0 +1,25 @@
+table {
+  width: 100%;
+}
+
+.print-buttons {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin: 13vh 1rem 0 0rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+
+@media print {
+
+  .print-buttons {
+    display: none;
+  }
+
+  td {
+    font-size: 12px;
+  }
+
+}
