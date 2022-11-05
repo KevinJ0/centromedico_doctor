@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { medico, MedicoUserForm } from 'src/app/interfaces/InterfacesDto';
 import { AccountService } from 'src/app/services/account.service';
-import { NoImagePipe } from 'src/app/Pipes/noImage';
 import { base64ToFile, Dimensions, ImageCroppedEvent, ImageTransform, LoadedImage } from 'ngx-image-cropper';
 
 class ImageSnippet {
