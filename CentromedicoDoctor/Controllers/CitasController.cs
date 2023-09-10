@@ -102,7 +102,7 @@ namespace CentromedicoDoctor.Controllers
 
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
         [HttpGet("[action]")]
-        public async Task<ActionResult> getCitaFormAsync(int citaId, int medicoId)
+        public async Task<ActionResult<citaFormDTO>> getCitaFormAsync(int citaId, int medicoId)
         {
             try
             {

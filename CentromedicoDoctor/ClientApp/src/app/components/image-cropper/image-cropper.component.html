@@ -1,25 +1,39 @@
- <!-- recorte -->
- <button (click)="rotateLeft()">Rotate left</button>
- <button (click)="rotateRight()">Rotate right</button>
- <button (click)="flipHorizontal()">Flip horizontal</button>
- <button (click)="flipVertical()">Flip vertical</button>
- <br />
- <br />
- <button (click)="toggleContainWithinAspectRatio()">
-   {{containWithinAspectRatio?'Fill Aspect Ratio':'Contain Within Aspect Ratio'}}</button>
- <button (click)="resetImage()">Reset image</button>
- <br />
- <br />
- 
- <button (click)="zoomOut()">Zoom -</button> <button (click)="zoomIn()">Zoom +</button>
+ <h2 mat-dialog-title>Recorte de foto</h2>
 
- <div>
-   <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true"
-     [containWithinAspectRatio]="containWithinAspectRatio"  [resizeToWidth]="200"
-     [cropperMinWidth]="200" [onlyScaleDown]="true" [roundCropper]="false"
-     [canvasRotation]="canvasRotation" [(transform)]="transform" [alignImage]="'left'"
-     [style.display]="showCropper ? null : 'none'" format="png" (imageCropped)="imageCropped($event)"
-     (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady($event)"
-     (loadImageFailed)="loadImageFailed()"></image-cropper>
- </div>
+ <mat-dialog-content class="mat-typography">
+   <div class="image-cropper-container">
+     <image-cropper [imageChangedEvent]="_imageChangedEvent" [maintainAspectRatio]="true"
+       [containWithinAspectRatio]="containWithinAspectRatio" [resizeToWidth]="200" [cropperMinWidth]="200"
+       [onlyScaleDown]="true" [roundCropper]="false" [canvasRotation]="canvasRotation" [(transform)]="transform"
+       [alignImage]="'left'" [style.display]="showCropper ? null : 'none'" format="png"
+       (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()" (cropperReady)="cropperReady($event)"
+       (loadImageFailed)="loadImageFailed()"></image-cropper>
+   </div>
+
+ </mat-dialog-content>
+
  <!-- ------------------------- -->
+
+ <mat-dialog-actions>
+
+   <button mat-stroked-button (click)="rotateLeft()">Rotate left</button>
+   <button mat-stroked-button (click)="rotateRight()">Rotate right</button>
+   <button mat-stroked-button (click)="flipHorizontal()">Flip horizontal</button>
+   <button mat-stroked-button (click)="flipVertical()">Flip vertical</button>
+   <br />
+   <br />
+   <button mat-stroked-button (click)="toggleContainWithinAspectRatio()">
+     {{containWithinAspectRatio?'Fill Aspect Ratio':'Contain Within Aspect Ratio'}}</button>
+   <button mat-stroked-button (click)="resetImage()">Reset image</button>
+   <br />
+   <br />
+
+   <button mat-stroked-button (click)="zoomOut()">Zoom -</button>
+   <button mat-stroked-button (click)="zoomIn()">Zoom +</button>
+
+ </mat-dialog-actions>
+
+ <mat-dialog-actions align="end">
+   <button mat-stroked-button mat-dialog-close cdkFocusInitial>Cerrar</button>
+   <button mat-flat-button (click)="save()" color="primary" >Guardar</button>
+ </mat-dialog-actions>

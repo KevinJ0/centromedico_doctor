@@ -12,6 +12,6 @@ namespace Doctor.Repository.Repositories.Interfaces
         public void Add(pacientes entity);
         public void Update(pacientes entity);
         pacientes get(int pacienteId);
-         Task<string> getEmailAsync(int pacienteId);
+        Task<string> getEmailAsync(int pacienteId);
     }
 }

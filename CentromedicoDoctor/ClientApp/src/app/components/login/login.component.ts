@@ -98,13 +98,16 @@ export class LoginComponent implements OnInit {
               this.invalidLogin = false;
 
               if (result.roles.includes("Doctor")) {
-                this.accountSvc.SetMedico(Number.parseInt(result.medicos.toString()));
+                this.accountSvc.SetMedico(Number.parseInt(result.medicosOrMedicoId.toString()));
                 this.router.navigate(['app/dashboard']);
 
               } else {
                 //otherwise secretary
+
+                sessionStorage.setItem("secretariaId", (result.secretariaId));
+
                 this.router.navigate(['select-doctor'], {
-                  state: { medicos: result.medicos },
+                  state: { medicos: result.medicosOrMedicoId },
                   skipLocationChange: true
                 });
 

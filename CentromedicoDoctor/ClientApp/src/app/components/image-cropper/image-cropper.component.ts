@@ -1,40 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { base64ToFile, Dimensions, ImageCroppedEvent, ImageTransform, LoadedImage } from 'ngx-image-cropper';
-import { Output, Input, EventEmitter } from '@angular/core';
+import { Component, Inject } from '@angular/core';
+import { Dimensions, ImageCroppedEvent, ImageTransform, } from 'ngx-image-cropper';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-image-cropper',
   templateUrl: './image-cropper.component.html',
   styleUrls: ['./image-cropper.component.css']
 })
-export class ImageCropperComponent implements OnInit {
+export class ImageCropperComponent {
 
-  constructor() { }
-
-  ngOnInit(): void {
+  constructor(
+    public dialogRef: MatDialogRef<ImageCropperComponent>,
+    @Inject(MAT_DIALOG_DATA) public imageChangedEvent: any
+  ) {
+    this._imageChangedEvent = imageChangedEvent;
   }
 
-  @Output() newItemEvent = new EventEmitter<any>();
-
+  _imageChangedEvent: any;
   croppedImage: any;
-
-  @Input() imageChangedEvent: any = '';
   canvasRotation = 0;
   rotation = 0;
   scale = 1;
   showCropper = false;
   containWithinAspectRatio = false;
   transform: ImageTransform = {};
-  @Output() valueResponse: EventEmitter<any> = new EventEmitter();
 
-  fileChangeEvent(event: any): void {
-    this.imageChangedEvent = event;
-  }
+
 
   imageCropped(event: ImageCroppedEvent) {
     this.croppedImage = event.base64;
-    this.valueResponse.emit(this.croppedImage);
+}
 
+
+
+  save(): void {
+    this.dialogRef.close({ data: this.croppedImage });
   }
 
   imageLoaded() {

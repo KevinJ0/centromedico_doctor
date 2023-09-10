@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using Amazon.S3.Transfer;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
 using CentromedicoDoctor.Exceptions;
@@ -14,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace CentromedicoDoctor.Services
@@ -25,54 +30,144 @@ namespace CentromedicoDoctor.Services
         private readonly MyDbContext _db;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
+        private readonly IBalanceRepository _balanceRepo;
         private readonly IAccountRepository _accountRepo;
         private readonly IMedicoRepository _medicoRepos;
+        private readonly ISecretariaRepository _secretaryRepo;
+        private readonly IAmazonS3 _amazons3;
 
         public AccountService(RoleManager<IdentityRole> roleManager,
             IHttpContextAccessor httpContextAccessor,
-          UserManager<MyIdentityUser> userManager,
+            UserManager<MyIdentityUser> userManager,
+            IBalanceRepository balanceRepo,
             MyDbContext db,
             IMapper mapper,
+            ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepos,
+            IAmazonS3 amazonS3,
             IAccountRepository accountRepo)
         {
+            _secretaryRepo = secretaryRepo;
+            _balanceRepo = balanceRepo;
             _accountRepo = accountRepo;
             _medicoRepos = medicoRepos;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;
             _userManager = userManager;
             _db = db;
+            _amazons3 = amazonS3;
             _mapper = mapper;
+
         }
 
 
-        public async Task<bool> saveUserInfoAsync(medicoDTO formuser)
+
+        public async Task<bool> changePassword(ResetPasswordDTO resetPassDto)
+        {
+            if (resetPassDto.Password != resetPassDto.ConfirmPassword)
+                throw new IdentityPwException("Las contraseñas no coinciden");
+
+            MyIdentityUser user = await getCurrentUser();
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var result = await _userManager.ResetPasswordAsync(user, token, resetPassDto.Password);
+
+            if (result.Succeeded)
+                return true;
+
+            var identErr = result.Errors.FirstOrDefault();
+
+            throw new IdentityPwException(" (" + identErr.Code + ") " + identErr.Description);
+
+        }
+
+
+
+        public async Task<bool> saveUserInfoAsync(userMedicoDto formuser)
         {
             try
             {
-                MyIdentityUser user = await _userManager
-                 .FindByNameAsync(_httpContextAccessor.HttpContext.User
-                 .FindFirst(ClaimTypes.NameIdentifier)?.Value);
-
-                if (user.UserName == null)
-                    throw new BadHttpRequestException("Este usuario no existe en la base de datos.");
+                MyIdentityUser user = await getCurrentUser();
 
 
                 user.nombre = formuser.nombre;
                 user.apellido = formuser.apellido;
                 user.contacto = formuser.telefono1;
 
-                medicos _medico = _db.medicos.First(x => x.MyIdentityUsers == user);
-                _mapper.Map<medicoDTO, medicos>(formuser, _medico);
-                var medis = (from m in _db.extensiones_telefonicas
-                             where m.medicosID == user.medicos.First().ID
-                             select m).ToList();
 
-                /*       .Select(x => new extensiones_telefonicas()
-                       { ID = x.ID, medicosID = x.medicosID });
-                */
-                _db.extensiones_telefonicas.RemoveRange(medis);
-               // _db.extensiones_telefonicas.AddRange(_medico.extensiones_telefonicas);
+                medicos _medico = _db.medicos.First(x => x.MyIdentityUsers == user);
+                _mapper.Map<userMedicoDto, medicos>(formuser, _medico);
+
+                if (!String.IsNullOrEmpty(formuser.exten_tel_arrstr))
+                {
+                    var ext_new = formuser.exten_tel_arrstr.Split(',')
+                        .Where(ext => !String.IsNullOrEmpty(ext))
+                        .Select(ext =>
+                        new extensiones_telefonicas()
+                        {
+                            medicosID = _medico.ID,
+                            ID = ext
+                        }).ToList();
+
+                    //remueve las anteriores
+                    List<extensiones_telefonicas> extensionesTel = (from m in _db.extensiones_telefonicas
+                                                                    where m.medicosID == user.medicos.First().ID
+                                                                    select m).ToList();
+
+                    _db.extensiones_telefonicas.RemoveRange(extensionesTel);
+
+                    //agrega las nuevas
+                    _db.extensiones_telefonicas.AddRange(ext_new);
+
+                }
+
+                string BucketName = "centromedico-assets";
+                IFormFile profilePhoto = formuser.ProfilePhoto;
+                if (profilePhoto != null)
+                {
+                    String realFileName = "D" + _medico.ID + System.IO.Path.GetExtension(profilePhoto.FileName);
+
+                    try
+                    {
+                        var transferUtility = new TransferUtility(_amazons3);
+                        var putRequest = new PutObjectRequest()
+                        {
+                            BucketName = BucketName,
+                            Key = realFileName,
+                            InputStream = profilePhoto.OpenReadStream(),
+                            ContentType = profilePhoto.ContentType,
+                            CannedACL = S3CannedACL.PublicRead,
+
+                        };
+
+                        // Create a CopyObject request
+                        GetPreSignedUrlRequest request = new GetPreSignedUrlRequest
+                        {
+                            BucketName = "centromedico-assets",
+                            Key = realFileName,
+                        };
+
+                        // Get path for request
+                        var result = await _amazons3.PutObjectAsync(putRequest);
+                        var url = "https://" + BucketName + ".s3." + _amazons3.Config.RegionEndpoint.SystemName + ".amazonaws.com/" + realFileName;
+
+                        _medico.ProfilePhoto = url;
+
+                    }
+                    catch (AmazonS3Exception amazonS3Exception)
+                    {
+                        if (amazonS3Exception.ErrorCode != null &&
+                        (amazonS3Exception.ErrorCode.Equals("InvalidAccessKeyId")
+                        ||
+                        amazonS3Exception.ErrorCode.Equals("InvalidSecurity")))
+                        {
+                            throw new Exception("Check the provided AWS Credentials.");
+                        }
+
+                        throw amazonS3Exception;
+                    }
+                }
+
                 _db.medicos.Update(_medico);
 
                 _db.SaveChanges();
@@ -266,7 +361,121 @@ namespace CentromedicoDoctor.Services
             return hourslst;
         }
 
+        private static Random random = new Random();
+
+        public static string RandomString(int length)
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+        public async Task<MyIdentityUser> getCurrentUser()
+        {
+            try
+            {
+                MyIdentityUser user = await _userManager
+                    .FindByNameAsync(_httpContextAccessor.HttpContext.User
+                    .FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+                if (user.UserName == null)
+                    throw new BadHttpRequestException("Este usuario no existe en la base de datos.");
+
+                return user;
+
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+        }
+
+        public async Task addOrUpdateBalanceStartingAsync(balance_cajaDTO dto)
+        {
+            MyIdentityUser user = await getCurrentUser();
+
+            medicos _medico = _medicoRepos.get(user);
+
+            secretarias _secretaria = _secretaryRepo.getById(dto.secretariasID);
+
+            if (_secretaria == null)
+                throw new EntityNotFoundException("Esta secretaria no trabaja con este médico.");
+
+            balance_caja balance = _db.balance_caja.FirstOrDefault(x => x.medicosID == _medico.ID
+                                                            && x.fecha.Date == DateTime.Now.Date
+                                                            && x.secretariasID == dto.secretariasID);
+
+            if (!String.IsNullOrEmpty(balance?.secretaria_nombre?.Trim()))
+                throw new ArgumentException("Ya se ha confirmado el balance inicial del día de hoy.");
 
 
+            if (balance != null)
+                balance.balance_inicial = dto.balance_inicial;
+            else
+            {
+
+                balance = new balance_caja()
+                {
+                    medicosID = _medico.ID,
+                    medicos = _medico,
+                    secretarias = _secretaria,
+                    balance_inicial = Math.Abs(dto.balance_inicial),
+                    fecha = DateTime.Now.Date,
+                    secretariasID = _secretaria.ID,
+                };
+
+                _balanceRepo.add(balance);
+
+            }
+
+            _db.SaveChanges();
+
+
+        }
+
+
+
+        public async Task confirmBalanceStartingAsync(int medicoId)
+        {
+
+            MyIdentityUser user = await getCurrentUser();
+
+            secretarias _secretaria = _secretaryRepo.get(user);
+
+            bool existDoctor = await _secretaryRepo.existDoctorAsync(medicoId);
+
+            if (!existDoctor)
+                throw new EntityNotFoundException("Esta secretaria no tiene relación con este médico.");
+
+            var balance = _db.balance_caja.FirstOrDefault(x => x.medicosID == medicoId
+                                                            && x.fecha.Date == DateTime.Now.Date
+                                                            && x.secretariasID == _secretaria.ID);
+
+            if (balance == null)
+                throw new ArgumentException("No se ha establecido ningún balance inicial para el día de hoy " + DateTime.Now.ToString("dd-MM-yyyy"));
+
+
+            if (!String.IsNullOrEmpty(balance.secretaria_nombre?.Trim()))
+                throw new ArgumentException("Ya se ha confirmado el balance inicial del día de hoy.");
+
+            balance.secretaria_nombre = _secretaria.nombre;
+
+            _balanceRepo.update(balance);
+
+            _db.SaveChanges();
+
+        }
+
+        public MyIdentityUserDto getUserInfo(string docIdentidad)
+        {
+            var userPacienteDto = _db.MyIdentityUsers
+                        .ProjectTo<MyIdentityUserDto>(_mapper.ConfigurationProvider)
+                        .FirstOrDefault(x => x.doc_identidad == docIdentidad &&
+                                             x.confirm_doc_identidad == true);
+
+            return userPacienteDto;
+
+
+        }
     }
 }

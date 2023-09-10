@@ -79,7 +79,7 @@
             <mat-radio-button class="insurance-radio-button" value="f">
               Femenino
             </mat-radio-button>
-            <mat-error *ngIf="citaFormGroup.get('userSexControl').invalid && loading">
+            <mat-error *ngIf="citaFormGroup.get('userSexControl')?.invalid && loading">
               {{getSexErrorMessage()}}
             </mat-error>
           </mat-radio-group>

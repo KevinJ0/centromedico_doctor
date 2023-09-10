@@ -21,6 +21,7 @@ export class SnackBarService {
       default:
         break;
     }
+
     if(autoClose)
       config.duration = 3000;
 

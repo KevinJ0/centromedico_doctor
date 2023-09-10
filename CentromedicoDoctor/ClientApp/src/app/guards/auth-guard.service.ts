@@ -51,7 +51,7 @@ export class AuthGuardService implements CanActivate {
         return true;
       else if (destination.includes('configuracion') && sessionStorage.getItem("userRole") === "Secretary" || sessionStorage.getItem("userRole") === "Doctor")
         return true;
-      else
+  
         return false;
     }));
   }

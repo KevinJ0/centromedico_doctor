@@ -12,7 +12,8 @@ namespace Doctor.DTO
         public string refresh_token { get; set; } // refresh token
         public string roles { get; set; } // user role
         public string username { get; set; } 
-        public object medicos { get; set; } 
+        public int? secretariaId { get; set; }
+        public object medicosOrMedicoId { get; set; } 
 
     }
 }

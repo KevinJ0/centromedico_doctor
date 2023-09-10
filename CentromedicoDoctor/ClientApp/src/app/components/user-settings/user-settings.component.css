@@ -47,6 +47,7 @@
   font-size: 14px;
 }
 
+
 .profile-img-container img {
   border-radius: 35px;
   min-height: 200px;
@@ -92,6 +93,17 @@
 .user-password a {
   color: rgb(39, 39, 39)
 }
+
+.user-password-link {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.user-password a:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
 
 
 article {
@@ -175,6 +187,10 @@ article .note {
 
 .extensions {
   grid-area: extensions;
+}
+
+.extensions-items {
+  grid-area: extensions;
   display: flex;
   justify-content: space-between;
   column-gap: 10px;
@@ -199,4 +215,23 @@ article .note {
 
 .urlI {
   grid-area: urlI;
+}
+
+@media only screen and (max-width: 1100px) {
+  .right-side .mat-card-content {
+    grid-template-areas: "name lastName"
+      "telefono1 telefono1" 
+      "reach1 reach2"
+      "telefono2 telefono2" 
+      "reach3 reach4"
+      "hospital-contact hospital-contact"
+      "extensions extensions"
+      "email email"
+      "consult consult"
+      " urlF urlF"
+      "urlT urlT"
+      "urlI urlI";
+   
+
+  }
 }

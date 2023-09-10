@@ -73,6 +73,10 @@ main:not(.app-main, .no-styles) {
   color: white;
 }
 
+.background-red span.mat-button-wrapper {
+  color: white !important;
+}
+
 .background-green {
   background-color: var(--bs-success);
   color: white;
@@ -129,4 +133,19 @@ table .action .mat-icon {
   color: #999999;
 }
 
+/*this is speciality component*/
+.add-form mat-form-field div.mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin-bottom: 0;
+}
 
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}

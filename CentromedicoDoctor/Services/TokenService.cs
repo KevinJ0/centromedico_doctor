@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
 using CentromedicoDoctor.Exceptions;
@@ -27,17 +28,21 @@ namespace CentromedicoDoctor.Services
         private readonly MyDbContext _db;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IMapper _mapper;
 
         public TokenService(
             ITokenRepository tokenRepo,
             RoleManager<IdentityRole> roleManager,
             IConfiguration configuration,
             UserManager<MyIdentityUser> userManager,
-            MyDbContext db)
+            MyDbContext db,
+            IMapper mapper
+            )
         {
             _roleManager = roleManager;
             _userManager = userManager;
             _db = db;
+            _mapper = mapper;
             _configuration = configuration;
             _tokenRepo = tokenRepo;
         }
@@ -83,14 +88,14 @@ namespace CentromedicoDoctor.Services
                         token newRtoken = CreateRefreshToken(_configuration["Authorization:ClientId"], user.Id, mobile);
 
                         IQueryable oldrtoken = _tokenRepo.getAllByUserId(user.Id);
-
+                        /*
                         if (oldrtoken != null)
                         {
                             foreach (var oldrt in oldrtoken)
                             {
                                 _tokenRepo.Remove((token)oldrt);
                             }
-                        }
+                        }*/
 
                         _tokenRepo.Add(newRtoken);
 
@@ -153,19 +158,13 @@ namespace CentromedicoDoctor.Services
                 refresh_token = refreshToken,
                 roles = roles.FirstOrDefault(),
                 username = user.UserName,
-
-                medicos = roles.FirstOrDefault() == "Secretary" ? _db.medicos.Include(sm => sm.secretarias_medicos)
-                .ThenInclude(m => m.secretarias.MyIdentityUsers)
-                .SelectMany(x => x.secretarias_medicos.Where(sm => sm.secretarias.MyIdentityUsers == user))
-                .Select(m => new
-                {
-                    id = m.medicos.ID,
-                    nombre = m.medicos.nombre,
-                    apellido = m.medicos.apellido,
-                    profilePhoto = m.medicos.ProfilePhoto,
-                    especialidades = m.medicos.especialidades_medicos.ToList().Select(x => x.especialidades.descrip),
-                }).ToList() : _db.medicos.FirstOrDefault(x => x.MyIdentityUsers == user).ID,
-
+                secretariaId = _db.secretarias.FirstOrDefault(x => x.MyIdentityUsers == user)?.ID,
+                medicosOrMedicoId = roles.FirstOrDefault() == "Secretary" ? _db.medicos.Include("secretarias_medicos")
+                                                                                    .Where(x => x.secretarias_medicos
+                                                                                                .Any(s => s.secretarias.MyIdentityUsers == user))
+                                                                                    .ProjectTo<medicoDTO>(_mapper.ConfigurationProvider).ToList() 
+                                                                          : _db.medicos.FirstOrDefault(x => x.MyIdentityUsers == user).ID,
+                                                                   
 
             };
         }

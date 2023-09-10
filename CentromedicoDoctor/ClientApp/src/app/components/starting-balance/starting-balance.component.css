@@ -1,0 +1,28 @@
+.content {
+  padding: 1rem 0px 1rem 3px;
+}
+
+.balance-form {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  width: clamp(200px, 30vw, 350px);
+}
+
+.example-container mat-form-field + mat-form-field {
+  margin-left: 8px;
+}
+
+.example-right-align {
+  text-align: right;
+  vertical-align: sub;
+}
+
+input.example-right-align::-webkit-outer-spin-button,
+input.example-right-align::-webkit-inner-spin-button {
+  display: none;
+}
+
+input.example-right-align {
+  appearance: textfield;
+}

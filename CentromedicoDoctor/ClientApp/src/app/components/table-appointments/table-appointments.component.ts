@@ -1,16 +1,13 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
+import { FormGroup,  FormBuilder } from '@angular/forms';
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
 import * as _moment from 'moment';
-import { ServicioService } from 'src/app/services/servicio.service';
-import { SeguroService } from 'src/app/services/seguro.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { CitaService } from 'src/app/services/cita.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAppointmentDetailComponent } from '../dialog-appointment-detail/dialog-appointment-detail.component';
-import { Observable } from 'rxjs';
 
 const moment = _moment;
 
@@ -43,9 +40,7 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
   constructor(
     public dialog: MatDialog,
     private _formBuilder: FormBuilder,
-    private citaSvc: CitaService,
-    private servicioSvc: ServicioService,
-    private seguroSvc: SeguroService
+    private citaSvc: CitaService
   ) {
 
   }
@@ -82,10 +77,10 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
 
 
     this.filterFormGroup.get("statusControl").valueChanges.subscribe((v) => this.getCitas());
-    
+
     this.dataSource.filterPredicate = (data, filter) => {
 
-      console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
+    //  console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
 
       if (data.id.toString().toLowerCase().indexOf(filter) !== -1 ||
         data.turno.toString().toLowerCase().indexOf(filter) !== -1 ||
@@ -138,6 +133,7 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
         if (v.id == citaId) {
           return v;
         }
+        return null;
 
       })
     });

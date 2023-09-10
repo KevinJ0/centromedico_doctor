@@ -78,7 +78,7 @@ namespace CentromedicoDoctor.Controllers
         public async Task<ActionResult> setUserInfoAsync(UserInfo formuser)
         {
 
-            bool result = await _pacienteSvc.updateAsync(formuser);
+            bool result = await _pacienteSvc.saveUserInfoAsync(formuser);
 
             if (!result)
                 return BadRequest("La fecha de nacimiento no es valida, debe ser mayor de edad.");

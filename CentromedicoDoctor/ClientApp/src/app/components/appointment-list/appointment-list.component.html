@@ -107,10 +107,10 @@
             <mat-option value=''>
               Todos
             </mat-option>
-            <mat-option value="true">
+            <mat-option value="false">
               Realizadas
             </mat-option>
-            <mat-option value="false">
+            <mat-option value="true">
               No Realizadas
             </mat-option>
           </mat-select>
@@ -147,8 +147,12 @@
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Estado </th>
         <td mat-cell *matCellDef="let row">
-          <div *ngIf="row.estado == true; else elseBlock"><span class="done">Realizada</span></div>
-          <ng-template #elseBlock><span class="undone">No Realizada</span></ng-template>
+          <div *ngIf="row.estado; else elseBlock">
+            <span class="undone">No Realizada</span>
+          </div>
+          <ng-template #elseBlock>
+            <span class="done">Realizada</span>
+          </ng-template>
         </td>
       </ng-container>
 

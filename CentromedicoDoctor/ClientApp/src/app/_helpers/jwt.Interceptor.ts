@@ -4,7 +4,7 @@ import { AccountService } from '../services/account.service';
 import { Observable, BehaviorSubject, pipe, throwError } from 'rxjs';
 import { tap, catchError, switchMap, finalize, filter, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { ClassGetter } from '@angular/compiler/src/output/output_ast';
+//import { ClassGetter } from '@angular/compiler/src/output/output_ast';
 import { CustomError } from '../interfaces/InterfacesDto';
 
 
@@ -24,13 +24,19 @@ export class JwtInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Check if the user is logging in for the first time
     var token = sessionStorage.getItem('jwt');
+
     var authReq = request.clone({
       setHeaders: {
+        // }
         Accept: "application/json",
-        "Content-Type": "application/json",
+        //'Accept': '*/*',
+        //  "Content-Type": "application/json",
+        //  "Origin":,
+        //"Referer":,
         Authorization: "Bearer " + token
       }
     });
+
     return next.handle(authReq).pipe(
       tap((event: HttpEvent<any>) => {
         if (event instanceof HttpResponse) {
@@ -78,7 +84,7 @@ export class JwtInterceptor implements HttpInterceptor {
   // Global error handler method 
   private handleError(errorResponse: HttpErrorResponse) {
 
-    let myError: CustomError = {status:0, message:''};
+    let myError: CustomError = { status: 0, message: '' };
     console.error(errorResponse)
 
     try {
@@ -106,7 +112,7 @@ export class JwtInterceptor implements HttpInterceptor {
     } catch (e) {
       console.error(e)
       myError.message = `No se ha podido procesar el error.`;
-    }finally{
+    } finally {
 
       return throwError(myError);
     }
@@ -131,7 +137,7 @@ export class JwtInterceptor implements HttpInterceptor {
           if (tokenresponse) {
 
             this.tokenSubject.next(tokenresponse.authToken.token);
-          
+
             return next.handle(this.attachTokenToRequest(request));
           }
           return <any>this.acct.Logout();

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Centromedico.Database;
 using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
 using CentromedicoDoctor.Exceptions;
@@ -44,24 +45,52 @@ namespace CentromedicoDoctor.Services
         {
             try
             {
-                MyIdentityUser user = await _userManager
-                 .FindByNameAsync(_httpContextAccessor.HttpContext.User
-                 .FindFirst(ClaimTypes.NameIdentifier)?.Value);
-                    
-                    
-                 
-                    var validateB = validateBirth(formuser.fecha_nacimiento);
+                var user = _db.MyIdentityUsers.FirstOrDefault(x => x.doc_identidad == formuser.doc_identidad);
+                bool isUserNew = false;
+                var validateB = validateBirth(formuser.fecha_nacimiento);
 
-                    if (!validateB)
-                        throw new ArgumentException("Es necesario que el usuario sea mayor de edad.");
+                if (!validateB)
+                    throw new ArgumentException("Es necesario que el usuario sea mayor de edad.");
 
+                if (user == null)
+                {
+                    user_info userInfo = _db.user_info.FirstOrDefault(x =>
+                                                            x.doc_identidad == formuser.doc_identidad);
+
+                    if (userInfo == null)
+                    {
+                        userInfo = new user_info();
+                        isUserNew = true;
+                    }
+                    userInfo.nombre = formuser.nombre;
+                    userInfo.apellido = formuser.apellido;
+                    userInfo.sexo = formuser.sexo;
+                    userInfo.contacto = formuser.contacto;
+                    userInfo.doc_identidad = formuser.doc_identidad;
+                    userInfo.fecha_nacimiento = formuser.fecha_nacimiento == null ? userInfo.fecha_nacimiento
+                                                                                  : formuser.fecha_nacimiento;
+                    if (isUserNew)
+                    {
+                        _db.user_info.Add(userInfo);
+                        _db.SaveChanges();
+                    }
+                    else 
+                        _db.SaveChanges();
+
+
+                }
+                else
+                {
                     user.nombre = formuser.nombre;
                     user.apellido = formuser.apellido;
                     user.sexo = formuser.sexo;
                     user.contacto = formuser.contacto;
                     user.doc_identidad = formuser.doc_identidad;
                     user.fecha_nacimiento = formuser.fecha_nacimiento;
+                }
 
+                if (user != null)
+                {
                     //Update patient info
                     //Update tutor's name for all records in the database with this user
                     (from p in _db.pacientes
@@ -74,9 +103,11 @@ namespace CentromedicoDoctor.Services
                        x.doc_identidad_tutor = user.doc_identidad;
                    });
 
+
                     var paciente = (from p in _db.pacientes
                                     where p.MyIdentityUserID == user.Id && p.doc_identidad != null
                                     select p).FirstOrDefault();
+                    
                     if (paciente != null)
                     {
                         paciente.nombre = user.nombre;
@@ -84,10 +115,11 @@ namespace CentromedicoDoctor.Services
                         paciente.apellido = user.apellido;
                     }
 
-                
-               
+                    _db.SaveChanges();
 
-                _db.SaveChanges();
+                }
+
+
 
                 return true;
             }

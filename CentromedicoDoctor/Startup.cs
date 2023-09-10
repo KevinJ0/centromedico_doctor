@@ -61,6 +61,7 @@ namespace CentromedicoDoctor
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IGrupoService, GrupoService>();
+            services.AddScoped<IEspecialidadService, EspecialidadService>();
 
 
             services.AddScoped<IPacienteRepository, PacienteRepository>();
@@ -74,8 +75,10 @@ namespace CentromedicoDoctor
             services.AddScoped<ICoberturaRepository, CoberturaRepository>();
             services.AddScoped<IHorarioMedicoReservaRepository, HorarioMedicoReservaRepository>();
             services.AddScoped<ISecretariaRepository, SecretariaRepository>();
+            services.AddScoped<IEspecialidadRepository, EspecialidadRepository>();
+            services.AddScoped<IBalanceRepository, BalanceRepository>();
             services.AddScoped<IDatabaseChangeNotificationService, SqlDependencyService>();
-
+            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<IS3Service, S3Service>();
             services.AddAWSService<IAmazonS3>();
@@ -133,7 +136,7 @@ namespace CentromedicoDoctor
             });
 
             services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 
 
@@ -159,7 +162,9 @@ namespace CentromedicoDoctor
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
             }).AddEntityFrameworkStores<MyDbContext>().
-                 AddDefaultTokenProviders(); ;
+                 AddDefaultTokenProviders()
+                 .AddErrorDescriber<SpanishIdentityErrorDescriber>(); // Add this line
+
 
             services.AddDbContext<MyDbContext>(option => option.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection")));
@@ -193,12 +198,12 @@ namespace CentromedicoDoctor
                         {
                             var accessToken = context.Request.Query["access_token"];
 
-                         // If the request is for our hub...
-                         var path = context.HttpContext.Request.Path;
+                            // If the request is for our hub...
+                            var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/citas")))
                             {
-                             // Read the token out of the query string
-                             context.Token = accessToken;
+                                // Read the token out of the query string
+                                context.Token = accessToken;
                             }
                             return Task.CompletedTask;
                         }

@@ -1,8 +1,5 @@
 import { Component, OnInit, Inject, Input } from "@angular/core";
 
-import { timer } from 'rxjs';
-
-
 import {
   MatDialog,
   MatDialogRef,
@@ -33,7 +30,7 @@ import { SnackBarService } from "src/app/services/snack-bar.service";
 
 })
 export class DialogPatientDetailsComponent implements OnInit {
-  private data: citaCalendar = this.event.patientData;
+  data: citaCalendar = this.event.patientData;
   isEntryToday: boolean;
   citaDetailFormGroup: FormGroup;
   identDocMask: string = "000-0000000-0";

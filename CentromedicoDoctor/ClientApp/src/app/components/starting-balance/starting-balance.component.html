@@ -1,0 +1,27 @@
+<section class="content">
+  <form [formGroup]="balanceFormGroup" class="balance-form">
+
+    <mat-form-field *ngIf="userRole == 'Doctor'" appearance="outline">
+      <mat-label>Secretaria</mat-label>
+      <mat-select required formControlName="secretariaControl">
+        <mat-option *ngFor="let secre of secretarias" [value]="secre.id">
+          {{secre.nombre+" "+secre.apellido}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" floatLabel="always">
+      <mat-label>Balance Inicial</mat-label>
+      <input [readonly]="balanceReadonly" thousandSeparator="," mask="separator.2" 
+              min="0" [maxLength]="7" formControlName="balanceControl" class="example-right-align" matInput placeholder="0">
+      <span matPrefix>$&nbsp;</span>
+      <span matSuffix>.00</span>
+    </mat-form-field>
+
+    
+    <button (click)="SetBalance()" mat-flat-button color="primary" 
+    [disabled]="disableSetBalance || balanceFormGroup.invalid && userRole == 'Doctor'">Confirmar</button>
+  </form>
+</section>
+
+

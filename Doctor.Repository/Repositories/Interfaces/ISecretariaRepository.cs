@@ -12,5 +12,7 @@ namespace Doctor.Repository.Repositories.Interfaces
     {
         Task<bool> existDoctorAsync( int medicoID);
         secretarias get(MyIdentityUser user);
+        secretarias getById(int secretariaID);
+        List<secretariasDTO> getAllByMedicoId(int value);
     }
 }

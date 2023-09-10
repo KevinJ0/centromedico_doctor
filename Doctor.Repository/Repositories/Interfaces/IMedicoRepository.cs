@@ -9,6 +9,7 @@ namespace Doctor.Repository.Repositories.Interfaces
         medicos get(MyIdentityUser user);
         medicos validateAndGetId(int medicoId);
         Task<int> getMedicoIdAsync(int? medicoID);
-        public medicos getMedicoWithServicesInsurancesEspecs(int medicoID);
+        medicos getMedicoWithServicesInsurancesEspecs(int medicoID);
+        Task<bool> existSecretariaAsync(int secretariaId);
     }
 }

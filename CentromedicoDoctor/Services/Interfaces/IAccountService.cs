@@ -1,16 +1,17 @@
 ﻿using Centromedico.Database.DbModels;
 using Doctor.DTO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace CentromedicoDoctor.Services.Interfaces
 {
     public interface IAccountService
     {
-        Task<bool> saveUserInfoAsync(medicoDTO formuser);
+        MyIdentityUserDto getUserInfo(string docIdentidad);
+        Task<bool> saveUserInfoAsync(userMedicoDto formuser);
         Task<medicoDTO> getUserInfoAsync(MyIdentityUser user);
+        Task<bool> changePassword(ResetPasswordDTO resetPassDto);
+        Task addOrUpdateBalanceStartingAsync(balance_cajaDTO dto);
+        Task confirmBalanceStartingAsync(int medicoId);
     }
 }

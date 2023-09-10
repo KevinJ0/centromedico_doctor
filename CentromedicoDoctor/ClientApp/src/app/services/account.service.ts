@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { UserInfo, group, TokenResponse, CustomError, medico, MedicoUserForm } from '../interfaces/InterfacesDto';
+import { UserInfo, group, TokenResponse, CustomError, medico, userMedicoForm, ResetPassword, secretaria } from '../interfaces/InterfacesDto';
 import { BehaviorSubject, throwError, of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
@@ -12,9 +12,7 @@ import { GrupoService } from './grupo.service';
 })
 export class AccountService {
 
-  // Url to access to the Web API
   baseUrl: string;
-  // Token Controller
   private baseUrlToken: string = "api/token/auth";
 
   // User related properties
@@ -27,7 +25,9 @@ export class AccountService {
   constructor(
     private signalR: SignalrCustomService,
     private gruposSvc: GrupoService,
-    private router: Router, private http: HttpClient, @Inject('BASE_URL') baseUrl: string) {
+    private router: Router,
+    private http: HttpClient,
+    @Inject('BASE_URL') baseUrl: string) {
     this.baseUrl = baseUrl;
   }
 
@@ -71,7 +71,7 @@ export class AccountService {
 
 
   //Login Method
-  Login(userCredential: string, password: string): Observable<TokenResponse> {
+  Login(userCredential: string, password: string): Observable<TokenResponse | any> {
     const grantType = "password";
 
     return this.http.post<TokenResponse>(this.baseUrl + this.baseUrlToken, { userCredential, password, grantType })
@@ -84,9 +84,8 @@ export class AccountService {
             this.SetUserResult(result);
             return result;
 
-          } else {
-            throwError("No se ha provisto del token de seguridad.");
-          }
+          } throwError("No se ha provisto del token de seguridad.");
+          return null;
 
           console.log(result);
 
@@ -154,12 +153,30 @@ export class AccountService {
 
   }
 
-  SaveUserInfo(userInfo: MedicoUserForm): Observable<boolean> {
-    return this.http.post<boolean>(this.baseUrl + "api/account/saveUserInfo", userInfo)
+  SaveUserInfo(userInfo: any): Observable<boolean> {
+
+    return this.http.post<boolean>(this.baseUrl + "api/account/saveUserInfo", userInfo,
+      /*{
+        headers: {  ['Content-Type']: 'multipart/form-data' }
+      }*/)
       .pipe(
         map(() => true),
         catchError(err => {
           return throwError(() => new Error(err));
+        })
+      );
+  }
+
+  ChangePassword(_resetPassword: ResetPassword): Observable<boolean> {
+
+    return this.http.put<boolean>(this.baseUrl + "api/account/changePassword", _resetPassword,
+      /*{
+        headers: {  ['Content-Type']: 'multipart/form-data' }
+      }*/)
+      .pipe(
+        map((r) => r),
+        catchError((err: CustomError) => {
+          return throwError(() => new Error(err.message));
         })
       );
   }
@@ -196,6 +213,62 @@ export class AccountService {
 
   }
 
+  GetStartingBalance(medicoId: number): Observable<number> {
+
+    return this.http.get<number>(this.baseUrl + `api/account/getStartingBalance?medicoId=${medicoId}`)
+      .pipe(
+        map((r: number) => r),
+        catchError((err: CustomError) => {
+          return throwError(() => new Error(err.message));
+        })
+      );
+  }
+
+  SetStartingBalance(medicoId: number, balance: number): Observable<boolean> {
+
+    return this.http.post<boolean>(this.baseUrl + `api/account/setStartingBalance`,
+      { "medicoId": medicoId, "balance": balance })
+      .pipe(
+        map((r: boolean) => r),
+        catchError((err: CustomError) => {
+          return throwError(() => new Error(err.message));
+        })
+      );
+
+  }
+
+
+  GetAllSecretary(): Observable<secretaria[]> {
+    return this.http.get<secretaria[]>(this.baseUrl + `api/account/getAllSecretary`)
+      .pipe(
+        map((secretarias: secretaria[]) => secretarias),
+        catchError((err: CustomError) => {
+          return throwError(err.message);
+        })
+      );
+  }
+
+
+  setUserInfo(userInfo: UserInfo): Observable<boolean> {
+    return this.http.post<boolean>(this.baseUrl + "api/account/setUserInfo", userInfo)
+      .pipe(
+        map(() => true),
+        catchError(err => {
+          return throwError(err);
+        })
+      );
+  }
+
+  getUserInfo(): Observable<UserInfo> {
+    return this.http.get<UserInfo>(this.baseUrl + "api/account/getUserInfo")
+      .pipe(map((data: UserInfo) => data),
+        catchError(err => {
+          return throwError(err);
+        })
+      );
+
+  }
+  
 
   get isLoggesIn() {
     if (sessionStorage.getItem("loginStatus"))

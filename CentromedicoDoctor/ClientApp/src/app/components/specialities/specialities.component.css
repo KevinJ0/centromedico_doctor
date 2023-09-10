@@ -1,0 +1,35 @@
+.content {
+
+  padding: 0px 0px 1rem 3px;
+  width: clamp(400px, 23vw, 600px);
+}
+
+
+.add-form {
+  display: flex;
+  align-items: center;
+  min-height: 88px;
+  gap: 1rem;
+}
+
+.container-table {
+
+  position: relative;
+}
+
+table {
+  width: 100%;
+}
+
+.action mat-icon {
+  color: #f21e1e;
+}
+
+.progress-content {
+  padding: 1rem 0;
+  position: absolute;
+  top: 0;
+  left: 0rem;
+  z-index: 9999999;
+  background: rgba(0, 0, 0, .06);
+}

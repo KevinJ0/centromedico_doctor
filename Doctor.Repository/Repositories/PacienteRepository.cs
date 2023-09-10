@@ -44,13 +44,13 @@ namespace Doctor.Repository.Repositories
 
             return null;
 
-
-
         }
 
         public void Update(pacientes entity)
         {
             _db.pacientes.Update(entity);
         }
+
+
     }
 }

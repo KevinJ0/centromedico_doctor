@@ -32,7 +32,7 @@ export class DialogComponent implements OnInit {
   }
 
 
-  onClick(response: any): void {
+  onClick(response: any = false): void {
     this.dialogRef.close({ response: response });
   }
 }

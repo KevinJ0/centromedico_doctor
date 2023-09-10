@@ -12,5 +12,6 @@ namespace Doctor.Repository.Repositories.Interfaces
     public interface IAccountRepository
     {
         Task<IdentityResult> Add(RegisterDTO formdata);
+        Task<MyIdentityUser> getCurrentUser();
     }
 }

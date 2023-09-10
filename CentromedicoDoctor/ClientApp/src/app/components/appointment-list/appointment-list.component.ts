@@ -10,7 +10,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { CitaService } from 'src/app/services/cita.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAppointmentDetailComponent } from '../dialog-appointment-detail/dialog-appointment-detail.component';
-const moment = _moment;
 
 
 @Component({
@@ -45,10 +44,10 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
     private servicioSvc: ServicioService,
     private seguroSvc: SeguroService
   ) {
-   
+
   }
 
-  
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -96,7 +95,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    
+
     this.citaSvc.GetCitaList().subscribe((r: citaCalendar[]) => {
 
       r.map((v) => {
@@ -124,7 +123,7 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
       insuranceControl: [''],
       serviceTypeControl: [''],
       statusControl: ['']
-    }); 
+    });
 
     this.filterFormGroup
       .valueChanges
@@ -189,11 +188,14 @@ export class AppointmentListComponent implements OnInit, AfterViewInit {
 
   openDialogDetails(citaId: string) {
     const dialogRef = this.dialog.open(DialogAppointmentDetailComponent, {
+
       data: this.dataSource.filteredData.find((v) => {
 
         if (v.id == citaId) {
           return v;
         }
+
+        return undefined;
 
       })
     });

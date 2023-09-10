@@ -8,7 +8,7 @@ import { ServicioService } from "src/app/services/servicio.service";
 })
 export class MainContainerComponent implements OnInit {
   medicoId: any; // para la secretaria solamente
-
+  showFiller: boolean;
   constructor(
     private servicioSvc: ServicioService) {
   }

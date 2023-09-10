@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System; 
+using System.Net; 
 
 namespace CentromedicoDoctor.Exceptions
 {
@@ -22,16 +18,15 @@ namespace CentromedicoDoctor.Exceptions
 
             var statusCode = HttpStatusCode.InternalServerError;
             var customError = false;
+            
             if (context.Exception is EntityNotFoundException)
-            {
                 statusCode = HttpStatusCode.NotFound;
-            }
 
 
             switch (_exception)
             {
 
-                case BadHttpRequestException or BadHttpRequestException or ArgumentOutOfRangeException or ArgumentException:
+                case BadHttpRequestException or ArgumentOutOfRangeException or ArgumentException:
                     statusCode = HttpStatusCode.BadRequest;
                     customError = true;
                     break;
@@ -43,6 +38,11 @@ namespace CentromedicoDoctor.Exceptions
 
                 case NoContentException:
                     statusCode = HttpStatusCode.NoContent;
+                    customError = true;
+                    break;
+
+                case IdentityPwException:
+                    statusCode = HttpStatusCode.BadRequest;
                     customError = true;
                     break;
 

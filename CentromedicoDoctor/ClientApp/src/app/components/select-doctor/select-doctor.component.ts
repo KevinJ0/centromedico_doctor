@@ -15,10 +15,11 @@ export class SelectDoctorComponent implements OnInit {
   constructor(
     private gruposSvc: GrupoService,
     private router: Router,
-    private accountSvc: AccountService) {
+    public accountSvc: AccountService) {
 
        
-    this.medicos = this.router.getCurrentNavigation().extras?.state?.medicos; // debe de tener algo
+    this.medicos = this.router.getCurrentNavigation().extras?.state["medicos"]; // debe de tener algo
+    
     if (!this.medicos)
       this.router.navigate(['login']);
 

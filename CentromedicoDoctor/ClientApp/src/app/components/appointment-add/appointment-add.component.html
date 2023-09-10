@@ -1,0 +1,289 @@
+<main>
+    <mat-card>
+      <mat-stepper [orientation]="(stepperOrientation | async)!" *ngIf="!loading else load">
+  
+        <mat-step [stepControl]="firstFormGroup" label="Servicio y Seguro" state="payments"
+                  errorMessage="Datos requeridos">
+          <form [formGroup]="firstFormGroup" class="form-group _row insurance-form">
+  
+            <mat-card-header>
+              <mat-card-title>ESCOGE EL SERVICIO Y COBERTURA</mat-card-title>
+            </mat-card-header>
+  
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de servicio</mat-label>
+              <mat-select formControlName="serviceTypeControl" name="service" required>
+                <mat-option *ngFor="let servicio of servicios" [value]="servicio.id">
+                  {{servicio.descrip}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+  
+            <mat-form-field appearance="outline">
+              <mat-label>Seguro</mat-label>
+              <mat-select required formControlName="insuranceControl">
+                <mat-option *ngFor="let seguro of coberturas" [value]="seguro.segurosID">
+                  {{seguro.descrip}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <ng-template [ngIf]="loadingPayment" [ngIfElse]="payment">
+              <section class="payment-form dark">
+                <div class="content-payment">
+                  <div class="item">
+                    <p class="item-description">Cargando...</p>
+                  </div>
+                </div>
+              </section>
+            </ng-template>
+  
+  
+  
+            <ng-template #payment>
+              <section class="payment-form dark">
+                <div class="products">
+                  <h3 class="title">Pago</h3>
+                  <div class="item">
+                    <span class="price">RD${{pago}}</span>
+                    <p class="item-name">Costo</p>
+                    <p class="item-description">Costo de la consulta con el médico</p>
+                  </div>
+                  <div class="item">
+                    <span class="price">RD${{cobertura}}</span>
+                    <p class="item-name">Cobertura</p>
+                    <p class="item-description">Cobertura que aplica el seguro médico</p>
+                  </div>
+                  <div class="total">Diferencia<span class="price">RD${{diferencia}}</span></div>
+                </div>
+              </section>
+            </ng-template>
+  
+            <div class="btn-container">
+              <button mat-button matStepperNext>Siguiente</button>
+            </div>
+          </form>
+        </mat-step>
+  
+        <mat-step [stepControl]="secondFormGroup" label="Fecha y Hora" state="date" errorMessage="Datos requeridos">
+          <form [formGroup]="secondFormGroup" class="form-group _row datetime-form">
+            <mat-card-header>
+              <mat-card-title>ESCOGE LA FECHA Y HORA</mat-card-title>
+            </mat-card-header>
+  
+            <mat-form-field (click)="picker.open()"  appearance="outline">
+              <mat-label>Fecha</mat-label>
+              <input class="date-appointment" formControlName="dateControl" [matDatepickerFilter]="dateFilter" matInput [matDatepicker]="picker"
+                required (click)="picker.open()" [readonly]="true">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker touchUi #picker ></mat-datepicker>
+            </mat-form-field>
+  
+            <mat-form-field appearance="outline">
+              <mat-label>Hora</mat-label>
+              <mat-select formControlName="timeControl" name="hora" required [disabled]="loadingDateControl">
+                <mat-option *ngFor="let hora of Horas" [value]="hora.id">
+                  {{hora.descrip}}
+                </mat-option>
+              </mat-select>
+              <mat-hint><span *ngIf="!loadingDateControl else loadHours"></span></mat-hint>
+  
+            </mat-form-field>
+            <div class="btn-container">
+              <button mat-button matStepperPrevious>Volver</button>
+              <button mat-button matStepperNext>Siguiente</button>
+            </div>
+          </form>
+        </mat-step>
+  
+        <mat-step [stepControl]="thirdFormGroup" label="Datos del paciente" state="userdata"
+                  errorMessage="Datos requeridos">
+  
+          <form [formGroup]="thirdFormGroup" (ngSubmit)="onClickSubmit()" class="form-group _row user-data-form">
+  
+            <mat-card-header>
+              <mat-card-title>DATOS DEL PACIENTE</mat-card-title>
+            </mat-card-header>
+  
+            <section>
+              <h4>¿Quién es el paciente?</h4>
+              <mat-button-toggle-group formControlName="appointmentTypeControl" aria-label="Font Style">
+                <mat-button-toggle checked style="min-width: 5rem;" value=0>Yo</mat-button-toggle>
+                <mat-button-toggle value=1>Menor de edad</mat-button-toggle>
+              </mat-button-toggle-group>
+            </section>
+  
+            <div class="under-age" [style.display]="underAgeShow">
+              <div class="userdata-content">
+  
+                <div class="sub-title">
+                  <p>Datos del dependiente</p>
+                  <mat-divider inset></mat-divider>
+                </div>
+  
+                <div class="userdata-item">
+                  <div class="name-wrapper">
+                    <mat-form-field class="name" appearance="outline">
+                      <mat-label>Nombre del dependiente</mat-label>
+                      <input [required]="isDependent" formControlName="dependentNameControl" matInput
+                             placeholder="Nombre del paciente">
+                    </mat-form-field>
+  
+                    <mat-form-field class="lastName" appearance="outline">
+                      <mat-label>Apellido(s) del dependiente</mat-label>
+                      <input [required]="isDependent" formControlName="dependentLastNameControl" matInput
+                             placeholder="Apellido(s) del paciente">
+                    </mat-form-field>
+                  </div>
+                </div>
+  
+                <div class="userdata-item">
+                  <div class="radio-wrapper">
+                    <label>Sexo del dependiente: </label>
+                    <mat-radio-group [required]="isDependent" ariaLabel="Sexo:" style="display: block;"
+                                     class="radio-group" formControlName="dependentSexControl">
+                      <mat-radio-button class="insurance-radio-button" value="m">Masculino</mat-radio-button>
+                      <mat-radio-button class="insurance-radio-button" value="f">Femenino</mat-radio-button>
+                      <mat-error *ngIf="thirdFormGroup.get('dependentSexControl').invalid && loading">
+                        {{getDSexErrorMessage()}}
+                      </mat-error>
+                    </mat-radio-group>
+                  </div>
+  
+                  <mat-form-field appearance="outline">
+                    <mat-label>Fecha de nacimiento</mat-label>
+                    <input [required]="isDependent" formControlName="dependentBirthDateControl"
+                           placeholder="Escoge una fecha" matInput [min]="minDBDDate" [max]="maxDBDDate"
+                           [matDatepicker]="DBDpicker">
+                    <mat-datepicker-toggle matSuffix [for]="DBDpicker"></mat-datepicker-toggle>
+                    <mat-datepicker #DBDpicker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+  
+  
+            <div class="userdata-content">
+  
+              <div class="sub-title">
+                <p>Mis datos</p>
+                <mat-divider inset></mat-divider>
+              </div>
+  
+              <div class="userdata-item">
+    
+                <mat-form-field appearance="outline">
+                  <mat-label>Tipo de documento</mat-label>
+                  <mat-select formControlName="typeIdentityDocControl" name="tipoDoc" required>
+   
+                    <mat-option [value]=0 selected>Cédula</mat-option>
+                    <mat-option [value]=1>Pasaporte</mat-option>
+                    <mat-option [value]=2>RNC</mat-option>
+                  </mat-select>
+                </mat-form-field>
+  
+                <mat-form-field appearance="outline">
+                  <mat-label>Documento de identidad</mat-label>
+                  <mat-icon matSuffix>badge</mat-icon>
+                  <input required [mask]="identDocMask" [readonly]="isUserConfirmed" formControlName="identityDocControl" maxlength="15"
+                         matInput placeholder="Documento de identidad">
+                </mat-form-field>
+  
+                <div class="name-wrapper">
+                  <mat-form-field class="name" appearance="outline">
+                    <mat-label>Nombre</mat-label>
+                    <input required formControlName="userNameControl" matInput [readonly]="isUserConfirmed"
+                           placeholder="Nombre">
+                  </mat-form-field>
+  
+                  <mat-form-field class="lastName" appearance="outline">
+                    <mat-label>Apellido(s)</mat-label>
+                    <input required formControlName="userLastNameControl" [readonly]="isUserConfirmed" matInput
+                           placeholder="Apellido(s)">
+                  </mat-form-field>
+                </div>
+  
+                <!--mantiene el width ration del los mat-form-field -->
+                <div class="radio-wrapper">
+                  <label>Sexo: </label>
+                  <mat-radio-group required ariaLabel="Sexo:" style="display: block;" required class="radio-group"
+                                   formControlName="userSexControl">
+                    <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="m">
+                      Masculino
+                    </mat-radio-button>
+                    <mat-radio-button [disabled]="isUserConfirmed" class="insurance-radio-button" value="f">
+                      Femenino
+                    </mat-radio-button>
+                    <mat-error *ngIf="thirdFormGroup.get('userSexControl').invalid && loading">
+  
+                      {{getSexErrorMessage()}}
+                    </mat-error>
+                  </mat-radio-group>
+                </div>
+              </div>
+              <div class="userdata-item">
+  
+                <mat-form-field appearance="outline">
+                  <mat-label>Fecha de nacimiento</mat-label>
+                  <input required [readonly]="isUserConfirmed" formControlName="birthDateControl"
+                         placeholder="Escoge una fecha" matInput [min]="minBDDate" [max]="maxBDDate"
+                         [matDatepicker]="BDpicker">
+                  <mat-datepicker-toggle [disabled]="isUserConfirmed" matSuffix [for]="BDpicker">
+                  </mat-datepicker-toggle>
+                  <mat-datepicker #BDpicker></mat-datepicker>
+                </mat-form-field>
+  
+                <mat-form-field appearance="outline">
+                  <mat-label>Teléfono</mat-label>
+                  <input required formControlName="contactControl" mask="000-000-0000" type="tel" matInput
+                         placeholder="555-555-1234">
+                  <mat-icon matSuffix>phone</mat-icon>
+                </mat-form-field>
+  
+                <mat-checkbox class="wsReach" formControlName="wsReachControl">
+                  Contactarme vía Whatsapp
+                </mat-checkbox>
+  
+  
+                <mat-form-field appearance="outline">
+                  <mat-label>Nota</mat-label>
+                  <textarea formControlName="noteControl" rows="8" #matInputNote maxlength="200" matInput
+                            placeholder="Nota para el médico"></textarea>
+                  <mat-hint align="end">{{matInputNote.value?.length || 0}}/200</mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+  
+            <div class="btn-container">
+              <button mat-button matStepperPrevious>Volver</button>
+              <button mat-flat-button color="primary" [disabled]="loading" type="submit">Confirmar</button>
+  
+            </div>
+          </form>
+        </mat-step>
+  
+        <!-- Icon overrides. -->
+        <ng-template matStepperIcon="payments">
+          <mat-icon>attach_money</mat-icon>
+        </ng-template>
+        <ng-template matStepperIcon="date">
+          <mat-icon>event</mat-icon>
+        </ng-template>
+        <ng-template matStepperIcon="userdata">
+          <mat-icon>person</mat-icon>
+        </ng-template>
+      </mat-stepper>
+    </mat-card>
+  
+  </main>
+  
+  <ng-template #load>
+    <div class="progress-content">
+      <mat-progress-spinner [mode]="mode">
+      </mat-progress-spinner>
+    </div>
+  </ng-template>
+  
+  <ng-template #loadHours>
+      Cargando...
+  </ng-template>
+  

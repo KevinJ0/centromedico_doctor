@@ -8,8 +8,7 @@
 
         <mat-form-field floatLabel="always" appearance="outline" class="email">
           <mat-label>Correo</mat-label>
-          <input [style.fontSize.px]="getFontSize()" type="email" matInput formControlName="loginEmailControl"
-            [errorStateMatcher]="matcher">
+          <input [style.fontSize.px]="getFontSize()" type="email" matInput formControlName="loginEmailControl">
           <mat-error
             *ngIf="loginFormGroup.get('loginEmailControl').hasError('email') && !loginFormGroup.get('loginEmailControl').hasError('required')">
             Por favor ingrese un correo válido
@@ -21,8 +20,8 @@
 
         <mat-form-field floatLabel="always" appearance="outline" class="password">
           <mat-label>Contraseña</mat-label>
-          <input [style.fontSize.px]="getFontSize()" [errorStateMatcher]="matcher"
-            formControlName="loginPasswordControl" matInput [type]="hide ? 'password' : 'text'">
+          <input [style.fontSize.px]="getFontSize()" formControlName="loginPasswordControl" matInput
+            [type]="hide ? 'password' : 'text'">
           <button type="button" mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
             [attr.aria-pressed]="hide">
             <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
@@ -34,7 +33,7 @@
         </mat-form-field>
 
         <h5 class="forgotpass"><a href="#">¿Contraseña olvidada?</a></h5>
-        <button [disabled]="loading" type="submit" mat-flat-button color="primary">
+        <button [disabled]="loading || loginFormGroup.invalid" type="submit" mat-flat-button color="primary">
           Entrar
         </button>
       </form>

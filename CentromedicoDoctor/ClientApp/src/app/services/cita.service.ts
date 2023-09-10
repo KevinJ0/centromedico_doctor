@@ -5,6 +5,7 @@ import {
   citaEntry,
   citaForm,
   citaPaciente,
+  citaResult,
   CustomError,
 } from "../interfaces/InterfacesDto";
 import { Observable, of, throwError } from "rxjs";
@@ -21,7 +22,6 @@ export class CitaService {
   _ticket: any;
   prueba: string;
   _citasArr: citaCalendar[];
-  // Url to access our Web API’s
   errorMsg: string;
   medicoId: string;
   _citasDataRepo: citaCalendar[];
@@ -96,8 +96,8 @@ export class CitaService {
       map(() => true)
     );
   }
- 
-  GetCitaList(inicio = "", fin = "" , estado = "", servicioId = "", seguroId = ""): Observable<citaCalendar[]> {
+
+  GetCitaList(inicio = "", fin = "", estado = "", servicioId = "", seguroId = ""): Observable<citaCalendar[]> {
     return this.http
       .get<citaCalendar[]>(
         this.baseUrl + `api/citas/getCitasList?medicoid=${this.GetMedicoId}&inicio=${inicio}&fin=${fin}&seguroId=${seguroId}&servicioId=${servicioId}&estado=${estado}`
@@ -115,6 +115,7 @@ export class CitaService {
       );
   }
 
+
   GetCitaForm(): Observable<citaForm> {
     return this.http
       .get(this.baseUrl + `api/citas/getCitaForm?medicoid=${this.GetMedicoId}`)
@@ -127,6 +128,24 @@ export class CitaService {
           return result;
         })
       );
+  }
+
+  CreateCita(_cita: cita): Observable<any> {
+    console.info(_cita);
+    try {
+      return this.http.post<citaResult>(this.baseUrl +
+        `api/citas/createCita`, _cita)
+        .pipe(map(result => {
+          result;
+          return result;
+        }), catchError(err => {
+          return throwError(err);
+        }));
+
+    } catch (err) {
+      console.log('Ha ocurrido un error al tratar de crear la cita: ', err.error);
+      return throwError(err);
+    }
   }
 
   get GetMedicoId() {

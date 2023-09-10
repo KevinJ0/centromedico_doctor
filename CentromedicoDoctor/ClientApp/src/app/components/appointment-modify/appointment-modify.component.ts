@@ -62,7 +62,7 @@ export class AppointmentModifyComponent implements OnInit {
     console.log(this.citaSvc._citasArr);
 
     this.rutaActiva.params.subscribe((params: Params) => {
-      this.citaId = Number.parseInt(params.id);
+      this.citaId = Number.parseInt(params["id"]);
 
       if (this.citaId == 0)
         this.router.navigate([".."]);

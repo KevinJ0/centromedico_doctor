@@ -103,7 +103,7 @@ export class DialogEntryPatientComponent implements OnInit {
 
           }
         },
-        error: (err:CustomError) => {
+        error: (err: CustomError) => {
           this.openSnackBar.open(err.message, 1);
           console.error(err);
           this.loadingC = false;

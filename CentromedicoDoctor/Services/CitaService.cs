@@ -15,6 +15,7 @@ using CentromedicoDoctor.Services.Interfaces;
 using Doctor.Repository.Repositories.Interfaces;
 using CentromedicoDoctor.Hubs;
 using Microsoft.AspNetCore.SignalR;
+using AutoMapper.QueryableExtensions;
 
 namespace CentromedicoDoctor.Services
 {
@@ -37,7 +38,7 @@ namespace CentromedicoDoctor.Services
         private readonly IHubContext<NotificationCitaHub> _hubContext;
 
         public CitaService(
-           IHorarioMedicoReservaRepository horarioMRRepo,
+            IHorarioMedicoReservaRepository horarioMRRepo,
             ISeguroRepository seguroRepo,
             IServicioRepository servicioRepo,
             ICoberturaRepository coberturaRepo,
@@ -49,7 +50,8 @@ namespace CentromedicoDoctor.Services
             UserManager<MyIdentityUser> userManager,
             ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepo,
-            MyDbContext db, IMapper mapper,
+            MyDbContext db, 
+            IMapper mapper,
             IHubContext<NotificationCitaHub> hubContext)
         {
             _pacienteRepo = pacienteRepo;
@@ -112,6 +114,245 @@ namespace CentromedicoDoctor.Services
             }
         }
 
+        public async Task<citaResultDTO> createCitaAsync(citaCreateDTO formdata)
+        {
+
+            pacientes paciente = null;
+            citas cita;
+            horarios_medicos_reservados horaReservacion;
+            string _email = null, codVer, docIdentidad = formdata.userinfo?.doc_identidad;
+            seguros seguro;
+            bool isPatientRole = false;
+
+            MyIdentityUserDto userPacienteDto = null;
+            MyIdentityUser user = _userManager
+              .FindByNameAsync(_httpContextAccessor.HttpContext.User
+              .FindFirst(ClaimTypes.NameIdentifier)?.Value).Result;
+
+            userPacienteDto = _mapper.Map<MyIdentityUserDto>(user);
+
+            if (userPacienteDto != null)
+                isPatientRole = _userManager.IsInRoleAsync(user, "Patient").Result;
+
+            if (!isPatientRole)
+                if (docIdentidad == null)
+                    throw new BadHttpRequestException("La petición del Doctor/Secretaria no puede ser procesada ya que no se ha encontrado la cédula del paciente, por favor enviarla");
+                else
+                {
+                    userPacienteDto = _db.MyIdentityUsers
+                         .ProjectTo<MyIdentityUserDto>(_mapper.ConfigurationProvider)
+                         .FirstOrDefault(x => x.doc_identidad == docIdentidad &&
+                                              x.confirm_doc_identidad == true);
+
+                    // esto quiere decir que no tiene un usuario creado
+                    if (userPacienteDto == null)
+                        userPacienteDto = _db.user_info
+                            .ProjectTo<MyIdentityUserDto>(_mapper.ConfigurationProvider)
+                            .FirstOrDefault(x => x.doc_identidad == docIdentidad);
+
+                    if (userPacienteDto == null)
+                        throw new BadHttpRequestException("No se ha encontrado datos del paciente");
+
+                    _email = userPacienteDto?.email;
+                }
+            else
+                _email = user.Email;
+
+            try
+            {
+
+                //Validate incoming data
+                medicos medico = _medicoRepo.getById(formdata.medicosID);
+
+                if (medico == null)
+                    throw new EntityNotFoundException("El doctor seleccionado no se encuentra habilitado en estos momentos");
+
+                if (_citaRepo.ExistByDocIdentidadAndMedico(medico, userPacienteDto.doc_identidad))
+                    throw new BadRequestException("Ya hay una cita programada con este doctor(a)");
+
+                if (formdata.segurosID == null)
+                    seguro = await _seguroRepo.getByIdAsync(1);//1 by default is None-Insurace
+                else
+                    seguro = await _seguroRepo.getByIdAsync(formdata.segurosID);
+
+                servicios servicio = await _servicioRepo.getByIdAsync(formdata.serviciosID);
+
+                horaReservacion = await _horarioMedicoRepo.getReservedHourAsync(formdata.medicosID, formdata.fecha_hora);
+
+                var availableDateHourlst = getAvailableDateHour(formdata.fecha_hora, formdata.medicosID);
+
+                var patientAgeData = await getPatientAgeAsync(formdata.fecha_nacimiento, formdata.appointment_type);
+                formdata.edad = patientAgeData.Item1;
+                formdata.menor_un_año = patientAgeData.Item2;
+
+                paciente = _pacienteRepo.getByUser(user);
+
+                if (paciente == null)
+                    paciente = _pacienteRepo.getByDocIdent(userPacienteDto.doc_identidad);
+
+                codVer = /*_citaRepo.ExistByDocIdentidad(userPacienteDto.doc_identidad) ?
+                                                                _citaRepo.getCV(userPacienteDto.doc_identidad) 
+                                                                :*/ generateCV(medico.nombre, medico.apellido);
+
+                int nTurn = getNewTurn(formdata.fecha_hora, formdata.medicosID);
+
+
+                //VALIDATORS
+
+                if (String.IsNullOrWhiteSpace(userPacienteDto.doc_identidad))
+                    throw new BadHttpRequestException("Este usuario no cuenta con un documento de identidad previamente ingresado");
+
+                //Determinar si la hora de la cita está disponible en el rango de fechas hábiles
+                if (formdata.fecha_hora < DateTime.Now || formdata.fecha_hora > DateTime.Now.AddDays(30))
+                    throw new BadHttpRequestException("El día suministrado no está en el rango de fecha disponible");
+
+                if (seguro == null)
+                    throw new BadHttpRequestException("El seguro seleccionado no se encuentra en la base de datos");
+
+                if (servicio == null)
+                    throw new BadHttpRequestException("El servicio seleccionado no se encuentra en la base de datos");
+
+                coberturaMedicoDTO cobertura = await _coberturaRepo.getAsync(formdata.medicosID, formdata.segurosID, formdata.serviciosID);
+
+                if (cobertura == null)
+                    throw new BadHttpRequestException("Ha ocurrido un error al tratar de especificar el cobertura del servicio");
+
+                if (horaReservacion != null)
+                    throw new BadHttpRequestException("La fecha y hora para la cita programada está reservada, intente con otra por favor");
+
+                if (availableDateHourlst == null)
+                    throw new ArgumentException("Este doctor(a) no labora el día escogido");
+
+                if (!availableDateHourlst.Contains(formdata.fecha_hora))
+                    throw new ArgumentException("La hora provista no se encuentra en el rango de horas disponibles para ser reservada");
+
+                if (nTurn == 0)
+                    throw new Exception("Ha ocurrido un error al tratar de generar el turno para la cita");
+
+                //Checking appoiment type
+                switch (formdata.appointment_type)
+                {
+                    case (int)appointment.me:
+
+                        bool addNewPaciente = false;
+
+                        if (paciente == null || paciente?.doc_identidad == null) //para no repetir el paciente en la db más de una vez.
+                            addNewPaciente = true;
+                        else
+                        {
+                            // si existe una cita ya realizada con este médico y hay un paciente
+                            // viculado perteneciente a este usuario
+                            cita = _db.citas.Include(x => x.pacientes)
+                                                .FirstOrDefault(
+                                                     x => x.pacientes.doc_identidad == paciente.doc_identidad ||
+                                                     x.pacientes.doc_identidad_tutor == paciente.doc_identidad_tutor &&
+                                                     x.medicosID == formdata.medicosID);
+
+                            if (cita is null)
+                                addNewPaciente = true;
+                            else
+                                paciente = cita.pacientes;
+                        }
+
+                        if (addNewPaciente)
+                        {
+                            paciente = user == null ? _mapper.Map<pacientes>(userPacienteDto)
+                                                    : _mapper.Map<pacientes>(user);
+                            _pacienteRepo.Add(paciente);
+                        }
+                        else
+                            _pacienteRepo.Update(paciente);
+
+                        break;
+                    case (int)appointment.other:
+
+                        paciente = _mapper.Map<pacientes>(formdata);
+
+                        paciente.doc_identidad_tutor = userPacienteDto.doc_identidad;
+                        paciente.nombre_tutor = String.IsNullOrWhiteSpace(userPacienteDto.nombre) ? null : userPacienteDto.nombre;
+                        paciente.apellido_tutor = String.IsNullOrWhiteSpace(userPacienteDto.apellido) ? null : userPacienteDto.apellido;
+                        paciente.MyIdentityUsers = isPatientRole ? user : null;
+                        _pacienteRepo.Add(paciente);
+
+                        break;
+
+                    default:
+                        throw new ArgumentException("No se ha definido al tipo de paciente que se va a consultar, especifique si es \"Yo\" ó \"Otra persona\"");
+                }
+
+
+                //calculate costs
+                decimal coberturaPorciento = (Decimal.Divide((cobertura.porciento), 100));
+                decimal _cobertura = cobertura.pago * coberturaPorciento;
+                decimal _diferencia = cobertura.pago - _cobertura;
+
+                cita = new citas
+                {
+                    cod_verificacionID = codVer,
+                    pacientes = paciente,
+                    medicos = medico,
+                    seguros = seguro,
+                    servicios = servicio,
+                    consultorio = medico.consultorio,
+                    cobertura = _cobertura,
+                    pago = cobertura.pago,
+                    diferencia = _diferencia,
+                    nota = formdata.nota,
+                    contacto = formdata.contacto,
+                    contacto_whatsapp = formdata.contacto_whatsapp,
+                    fecha_hora = formdata.fecha_hora,
+                    turno = nTurn
+                };
+
+                //reserve a doctor's schedule
+                horaReservacion = new horarios_medicos_reservados
+                {
+                    medicosID = formdata.medicosID,
+                    fecha_hora = formdata.fecha_hora,
+                };
+
+                cod_verificacion codVerificacion = new cod_verificacion
+                {
+                    value = codVer,
+                    citas = cita,
+                };
+
+                //Saving entities
+                _citaRepo.Add(cita);
+                _db.cod_verificacion.Add(codVerificacion);
+                _horarioMRRepo.Add(horaReservacion);
+
+                _db.SaveChanges();
+
+
+                var citaResult = _mapper.Map<citaResultDTO>(cita);
+
+                try
+                {
+                   // _notificationService.sendTicketMail(citaResult, _email);
+                    //_notificationService.sendTicketWhatsapp(citaResult, userPacienteDto.contacto);
+
+                }
+                catch (Exception)
+                {
+
+                    //log
+                }
+
+                //I return a ticket
+                return citaResult;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+
+
+
         public async Task<bool> entryCita(citaEntryDTO formdata)
         {
             try
@@ -122,7 +363,13 @@ namespace CentromedicoDoctor.Services
 
                 medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicoID);
 
-                citas _cita = _db.citas.FirstOrDefault(x => x.ID == formdata.ID && x.medicosID == medicoID);
+                citas _cita = _db.citas.FirstOrDefault(x => x.ID == formdata.ID 
+                                                            && x.medicosID == medicoID);
+
+                pacientes _paciente = _db.pacientes.FirstOrDefault(x => x.ID == _cita.pacientesID);
+
+                _paciente.confirm_doc_identidad = true;
+                
 
                 if (_cita == null)
                     throw new BadHttpRequestException("La cita no se encuentra en la base de datos.");
@@ -210,7 +457,7 @@ namespace CentromedicoDoctor.Services
             return
                 new citaFormDTO
                 {
-                    medico = new Medico_Info
+                    medico = new medicoInfo
                     {
                         id = medico.ID,
                         nombre = medico.nombre,
