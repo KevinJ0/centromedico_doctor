@@ -88,7 +88,11 @@ header .mat-button {
 
 
 .logo {
-  display: flex;
+  /* display: flex;
   align-items: center;
   margin-left: clamp(1rem, 20vw, 3rem);
+   */
+  width: 229px;
+  margin-left: 11px;
+  height: auto;
 }

@@ -36,3 +36,19 @@ C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.dll
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\ref\Doctor.DTO.dll
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\bin\Debug\net5.0\Doctor.DTO.deps.json
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\bin\Debug\net5.0\Doctor.DTO.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\bin\Debug\net5.0\Doctor.DTO.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\bin\Debug\net5.0\Centromedico.Database.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\bin\Debug\net5.0\Centromedico.Database.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.csproj.AssemblyReference.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.AssemblyInfoInputs.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.AssemblyInfo.cs
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.csproj.CoreCompileInputs.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.sourcelink.json
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.csproj.Up2Date
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\refint\Doctor.DTO.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\Doctor.DTO.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.DTO\obj\Debug\net5.0\ref\Doctor.DTO.dll

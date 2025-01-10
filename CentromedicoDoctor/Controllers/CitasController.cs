@@ -135,6 +135,36 @@ namespace CentromedicoDoctor.Controllers
 
         }
 
+        /// <summary>
+        /// Crea una cita a partir de los datos de la cita, el paciente 
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /citas/createCita
+        ///      
+        /// </remarks>
+        /// <param name="formdata"></param>
+        /// <returns>citaResultDTO</returns>
+        /// <response code="400">Los datos suministrados son invalidos.</response>  
+        /// <response code="401">El documento de identificación del usuario no se encuentra registrado en la Base de Datos.</response>  
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [HttpPost("[action]")]
+        public async Task<ActionResult<bool>> createCitaAsync(citaCreateDTO formdata)
+        {
+            try
+            {
+
+                bool resulta = await _citaSvc.createCitaAsync(formdata);
+                return resulta;
+            }
+            catch (Exception)
+            {
+                throw;
+
+            }
+        }
+
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
         [HttpPut("{citaID:int}")]
         public async Task<ActionResult<bool>> updateCitaAsync(int citaID, citaPacienteDTO formdata)

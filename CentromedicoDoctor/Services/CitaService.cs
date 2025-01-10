@@ -16,6 +16,9 @@ using Doctor.Repository.Repositories.Interfaces;
 using CentromedicoDoctor.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using AutoMapper.QueryableExtensions;
+using Centromedico.Database;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
+using AutoMapper.Internal;
 
 namespace CentromedicoDoctor.Services
 {
@@ -50,7 +53,7 @@ namespace CentromedicoDoctor.Services
             UserManager<MyIdentityUser> userManager,
             ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepo,
-            MyDbContext db, 
+            MyDbContext db,
             IMapper mapper,
             IHubContext<NotificationCitaHub> hubContext)
         {
@@ -114,66 +117,48 @@ namespace CentromedicoDoctor.Services
             }
         }
 
-        public async Task<citaResultDTO> createCitaAsync(citaCreateDTO formdata)
+        public async Task<bool> createCitaAsync(citaCreateDTO formdata)
         {
 
-            pacientes paciente = null;
-            citas cita;
+            pacientes _paciente = null;
+            citas _cita;
             horarios_medicos_reservados horaReservacion;
-            string _email = null, codVer, docIdentidad = formdata.userinfo?.doc_identidad;
+            string _email = null, _codVer, _docIdentidad = formdata.paciente.doc_identidad;
             seguros seguro;
             bool isPatientRole = false;
 
-            MyIdentityUserDto userPacienteDto = null;
-            MyIdentityUser user = _userManager
-              .FindByNameAsync(_httpContextAccessor.HttpContext.User
-              .FindFirst(ClaimTypes.NameIdentifier)?.Value).Result;
+            _paciente = _pacienteRepo.get(formdata.paciente.ID);
+            if (_paciente?.doc_identidad != null) // if no paciente then use the doc_identidad that is passed by parameter
+                _docIdentidad = _paciente.doc_identidad;
 
-            userPacienteDto = _mapper.Map<MyIdentityUserDto>(user);
 
-            if (userPacienteDto != null)
-                isPatientRole = _userManager.IsInRoleAsync(user, "Patient").Result;
+            var userPaciente = _db.MyIdentityUsers
+                           .FirstOrDefault(x => x.doc_identidad == _docIdentidad && x.confirm_doc_identidad);
 
-            if (!isPatientRole)
-                if (docIdentidad == null)
-                    throw new BadHttpRequestException("La petición del Doctor/Secretaria no puede ser procesada ya que no se ha encontrado la cédula del paciente, por favor enviarla");
-                else
-                {
-                    userPacienteDto = _db.MyIdentityUsers
-                         .ProjectTo<MyIdentityUserDto>(_mapper.ConfigurationProvider)
-                         .FirstOrDefault(x => x.doc_identidad == docIdentidad &&
-                                              x.confirm_doc_identidad == true);
 
-                    // esto quiere decir que no tiene un usuario creado
-                    if (userPacienteDto == null)
-                        userPacienteDto = _db.user_info
-                            .ProjectTo<MyIdentityUserDto>(_mapper.ConfigurationProvider)
-                            .FirstOrDefault(x => x.doc_identidad == docIdentidad);
 
-                    if (userPacienteDto == null)
-                        throw new BadHttpRequestException("No se ha encontrado datos del paciente");
+            if (_docIdentidad == null)
+                throw new BadHttpRequestException("La petición del Doctor/Secretaria no puede ser procesada ya que no se ha encontrado la cédula del paciente, por favor enviarla");
 
-                    _email = userPacienteDto?.email;
-                }
-            else
-                _email = user.Email;
 
             try
             {
+                var userFromPatient = _db.MyIdentityUsers
+             .FirstOrDefault(x => x.doc_identidad == _docIdentidad && x.confirm_doc_identidad);
 
                 //Validate incoming data
                 medicos medico = _medicoRepo.getById(formdata.medicosID);
 
                 if (medico == null)
-                    throw new EntityNotFoundException("El doctor seleccionado no se encuentra habilitado en estos momentos");
+                    throw new EntityNotFoundException("El doctor no pudo ser encontrado en base de datos.");
 
-                if (_citaRepo.ExistByDocIdentidadAndMedico(medico, userPacienteDto.doc_identidad))
-                    throw new BadRequestException("Ya hay una cita programada con este doctor(a)");
+                if (_citaRepo.Exist(medico, _docIdentidad) && formdata.appointment_type == ((int)appointment.me))
+                    throw new BadHttpRequestException("Ya hay una cita programada con este doctor(a)");
 
                 if (formdata.segurosID == null)
                     seguro = await _seguroRepo.getByIdAsync(1);//1 by default is None-Insurace
                 else
-                    seguro = await _seguroRepo.getByIdAsync(formdata.segurosID);
+                    seguro = await _seguroRepo.getByIdAsync((int)formdata.segurosID);
 
                 servicios servicio = await _servicioRepo.getByIdAsync(formdata.serviciosID);
 
@@ -181,16 +166,13 @@ namespace CentromedicoDoctor.Services
 
                 var availableDateHourlst = getAvailableDateHour(formdata.fecha_hora, formdata.medicosID);
 
-                var patientAgeData = await getPatientAgeAsync(formdata.fecha_nacimiento, formdata.appointment_type);
-                formdata.edad = patientAgeData.Item1;
-                formdata.menor_un_año = patientAgeData.Item2;
+                (int edad, bool menor_un_año) patientAgeData = await getPatientAgeAsync(formdata.paciente.fecha_nacimiento, formdata.appointment_type);
 
-                paciente = _pacienteRepo.getByUser(user);
+                formdata.paciente.menor_un_año = patientAgeData.menor_un_año;
 
-                if (paciente == null)
-                    paciente = _pacienteRepo.getByDocIdent(userPacienteDto.doc_identidad);
 
-                codVer = /*_citaRepo.ExistByDocIdentidad(userPacienteDto.doc_identidad) ?
+
+                _codVer = /*_citaRepo.ExistByDocIdentidad(userPacienteDto.doc_identidad) ?
                                                                 _citaRepo.getCV(userPacienteDto.doc_identidad) 
                                                                 :*/ generateCV(medico.nombre, medico.apellido);
 
@@ -199,7 +181,7 @@ namespace CentromedicoDoctor.Services
 
                 //VALIDATORS
 
-                if (String.IsNullOrWhiteSpace(userPacienteDto.doc_identidad))
+                if (String.IsNullOrWhiteSpace(_docIdentidad))
                     throw new BadHttpRequestException("Este usuario no cuenta con un documento de identidad previamente ingresado");
 
                 //Determinar si la hora de la cita está disponible en el rango de fechas hábiles
@@ -221,58 +203,49 @@ namespace CentromedicoDoctor.Services
                     throw new BadHttpRequestException("La fecha y hora para la cita programada está reservada, intente con otra por favor");
 
                 if (availableDateHourlst == null)
-                    throw new ArgumentException("Este doctor(a) no labora el día escogido");
+                    throw new BadHttpRequestException("Este doctor(a) no labora el día escogido");
 
                 if (!availableDateHourlst.Contains(formdata.fecha_hora))
-                    throw new ArgumentException("La hora provista no se encuentra en el rango de horas disponibles para ser reservada");
+                    throw new BadHttpRequestException("La hora provista no se encuentra en el rango de horas disponibles para ser reservada");
 
                 if (nTurn == 0)
                     throw new Exception("Ha ocurrido un error al tratar de generar el turno para la cita");
 
-                //Checking appoiment type
+
+                //Checking appointment type
                 switch (formdata.appointment_type)
                 {
                     case (int)appointment.me:
 
                         bool addNewPaciente = false;
 
-                        if (paciente == null || paciente?.doc_identidad == null) //para no repetir el paciente en la db más de una vez.
+                        if (_paciente?.ID == null || _paciente.ID == 0) //para no repetir el paciente en la db más de una vez.
                             addNewPaciente = true;
-                        else
-                        {
-                            // si existe una cita ya realizada con este médico y hay un paciente
-                            // viculado perteneciente a este usuario
-                            cita = _db.citas.Include(x => x.pacientes)
-                                                .FirstOrDefault(
-                                                     x => x.pacientes.doc_identidad == paciente.doc_identidad ||
-                                                     x.pacientes.doc_identidad_tutor == paciente.doc_identidad_tutor &&
-                                                     x.medicosID == formdata.medicosID);
-
-                            if (cita is null)
-                                addNewPaciente = true;
-                            else
-                                paciente = cita.pacientes;
-                        }
+                      
 
                         if (addNewPaciente)
                         {
-                            paciente = user == null ? _mapper.Map<pacientes>(userPacienteDto)
-                                                    : _mapper.Map<pacientes>(user);
-                            _pacienteRepo.Add(paciente);
+
+                            formdata.paciente.ID = 0;
+                            _paciente = formdata.paciente;
+
+                            //
+                            _pacienteRepo.Add(_paciente);
                         }
-                        else
-                            _pacienteRepo.Update(paciente);
+
+                        if (userPaciente is not null)
+                        {
+                            // I relate it to the existing user
+                            _paciente.MyIdentityUserID = userPaciente.Id;
+                            _paciente.MyIdentityUsers = userPaciente;
+                        }
 
                         break;
                     case (int)appointment.other:
 
-                        paciente = _mapper.Map<pacientes>(formdata);
+                        _paciente = _mapper.Map<pacientes>(formdata.paciente);
 
-                        paciente.doc_identidad_tutor = userPacienteDto.doc_identidad;
-                        paciente.nombre_tutor = String.IsNullOrWhiteSpace(userPacienteDto.nombre) ? null : userPacienteDto.nombre;
-                        paciente.apellido_tutor = String.IsNullOrWhiteSpace(userPacienteDto.apellido) ? null : userPacienteDto.apellido;
-                        paciente.MyIdentityUsers = isPatientRole ? user : null;
-                        _pacienteRepo.Add(paciente);
+                        _pacienteRepo.Add(_paciente);
 
                         break;
 
@@ -286,10 +259,10 @@ namespace CentromedicoDoctor.Services
                 decimal _cobertura = cobertura.pago * coberturaPorciento;
                 decimal _diferencia = cobertura.pago - _cobertura;
 
-                cita = new citas
+                _cita = new citas
                 {
-                    cod_verificacionID = codVer,
-                    pacientes = paciente,
+                    cod_verificacionID = _codVer,
+                    pacientes = _paciente,
                     medicos = medico,
                     seguros = seguro,
                     servicios = servicio,
@@ -298,7 +271,7 @@ namespace CentromedicoDoctor.Services
                     pago = cobertura.pago,
                     diferencia = _diferencia,
                     nota = formdata.nota,
-                    contacto = formdata.contacto,
+                    contacto = formdata.paciente.contacto,
                     contacto_whatsapp = formdata.contacto_whatsapp,
                     fecha_hora = formdata.fecha_hora,
                     turno = nTurn
@@ -313,23 +286,23 @@ namespace CentromedicoDoctor.Services
 
                 cod_verificacion codVerificacion = new cod_verificacion
                 {
-                    value = codVer,
-                    citas = cita,
+                    value = _codVer,
+                    citas = _cita,
                 };
 
                 //Saving entities
-                _citaRepo.Add(cita);
+                _citaRepo.Add(_cita);
                 _db.cod_verificacion.Add(codVerificacion);
                 _horarioMRRepo.Add(horaReservacion);
 
                 _db.SaveChanges();
 
 
-                var citaResult = _mapper.Map<citaResultDTO>(cita);
+                var citaResult = _mapper.Map<citaResultDTO>(_cita);
 
                 try
                 {
-                   // _notificationService.sendTicketMail(citaResult, _email);
+                    // _notificationService.sendTicketMail(citaResult, _email);
                     //_notificationService.sendTicketWhatsapp(citaResult, userPacienteDto.contacto);
 
                 }
@@ -339,14 +312,14 @@ namespace CentromedicoDoctor.Services
                     //log
                 }
 
-                //I return a ticket
-                return citaResult;
 
             }
             catch (Exception)
             {
                 throw;
             }
+
+            return true;
 
         }
 
@@ -363,16 +336,28 @@ namespace CentromedicoDoctor.Services
 
                 medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicoID);
 
-                citas _cita = _db.citas.FirstOrDefault(x => x.ID == formdata.ID 
+                citas _cita = _db.citas.Include(y => y.pacientes).FirstOrDefault(x => x.ID == formdata.ID
                                                             && x.medicosID == medicoID);
-
-                pacientes _paciente = _db.pacientes.FirstOrDefault(x => x.ID == _cita.pacientesID);
-
-                _paciente.confirm_doc_identidad = true;
-                
 
                 if (_cita == null)
                     throw new BadHttpRequestException("La cita no se encuentra en la base de datos.");
+
+                if (_cita.estado == false)
+                    throw new BadHttpRequestException("Esta cita se encuentra inactiva.");
+
+                if(_db.pacientes.Any(x=>x.doc_identidad == _cita.pacientes.doc_identidad && x.confirm_doc_identidad && x.ID != _cita.pacientesID ))
+                    throw new BadHttpRequestException("Esta cédula ya se encuentra registrada y confirmada por el personal.");
+
+                pacientes _paciente = _db.pacientes.FirstOrDefault(x => x.ID == _cita.pacientesID);
+                //
+                //clean anyone who has the same doc_identidad
+                 _db.pacientes.Where(x => x.doc_identidad == _cita.pacientes.doc_identidad && x.ID != _cita.pacientesID).ForAll(w => w.doc_identidad = null);
+                    
+                _paciente.confirm_doc_identidad = true;
+                
+                if(_paciente.MyIdentityUsers != null)
+                    _paciente.MyIdentityUsers.confirm_doc_identidad = true;
+
 
                 Math.Abs(descuento);
 
@@ -380,13 +365,15 @@ namespace CentromedicoDoctor.Services
                     descuento = _cita.diferencia;
 
                 _cita.descuento = descuento;
+                _cita.pago = Math.Abs(_cita.pago - descuento - (_cita.cobertura ?? 0));
 
                 _cita.observacion = String.IsNullOrWhiteSpace(formdata.observacion) ? null : formdata.observacion;
                 _cita.estado = false;
 
                 _citaRepo.Update(_cita);
-
                 var r = _db.SaveChanges();
+                // si hago ambos juntos solo hace el remove
+
 
                 if (r <= 0)
                     throw new Exception("Ha ocurrido un error al tratar e guardar la entidad en la base de datos.");
@@ -755,7 +742,7 @@ namespace CentromedicoDoctor.Services
                 throw;
             }
         }
-        private async Task<Tuple<int, bool>> getPatientAgeAsync(DateTime fechaNacimiento, int appointmentType)
+        private async Task<(int edad, bool menor_un_año)> getPatientAgeAsync(DateTime fechaNacimiento, int appointmentType)
         {
             try
             {
@@ -787,10 +774,10 @@ namespace CentromedicoDoctor.Services
                 {
                     int _edadMeses = DateTime.Today.AddTicks(-fechaNacimiento.Ticks).Month;
 
-                    return new Tuple<int, bool>((_edadMeses - 1), true); // 12 month minus 1
+                    return ((_edadMeses - 1), true); // 12 month minus 1
                 }
 
-                return new Tuple<int, bool>(_edad, false); // 12 month minus 1
+                return (_edad, false); // 12 month minus 1
 
             }
             catch (Exception)
@@ -929,7 +916,9 @@ namespace CentromedicoDoctor.Services
             try
             {
                 citas _cita = _citaRepo.get(citaID, medicoID);
-                _citaRepo.Remove(_cita);
+                _cita.estado = false;
+                _cita.deleted = true;
+                _citaRepo.Update(_cita);
 
                 var newHoraMR = new horarios_medicos_reservados
                 {
@@ -947,6 +936,50 @@ namespace CentromedicoDoctor.Services
                 throw;
             }
         }
+        private string generateCV(string value1, string value2)
+        {
+
+            Random rand = new Random();
+            string initialName = value1.Substring(0, 1);
+            string initialLastName = value2.Substring(0, 1);
+            string newCod = "";
+            bool isUnique = false;
+
+            while (!isUnique)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    int numero = rand.Next(26);
+                    newCod = newCod + Char.ToString((char)(((int)'A') + numero));
+                }
+
+                newCod = initialName + initialLastName + "" + newCod;
+
+                if (!_db.citas.Where(x => x.cod_verificacionID == newCod).Any())
+                    isUnique = true;
+            }
+            return newCod;
+        }
+
+        private int getNewTurn(DateTime fecha_hora, int medicoID)
+        {
+            try
+            {
+                var TimeTurnDic = _horarioMedicoRepo.getAvailableHoursTurnDic(fecha_hora, medicoID);
+
+                if (TimeTurnDic?.Count < 1)
+                    return 0;
+
+                int nTurn = TimeTurnDic.First(x => x.Key.Equals(fecha_hora)).Value;
+
+                return nTurn;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
 
         enum appointment : int
         {

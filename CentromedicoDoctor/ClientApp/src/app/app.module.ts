@@ -92,15 +92,27 @@ import { FlatpickrModule } from 'angularx-flatpickr';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 import { StartingBalanceComponent } from './components/starting-balance/starting-balance.component';
 import { SpecialitiesComponent } from './components/specialities/specialities.component';
+<<<<<<< HEAD
+import { AppointmentCreateComponent } from "./components/appointment-create/appointment-create.component";
+import localeEsDO from '@angular/common/locales/es-DO';
+import { DEFAULT_CURRENCY_CODE } from '@angular/core';
+
+// Registrar el locale de República Dominicana
+registerLocaleData(localeEsDO, 'es-DO');
+=======
 import { AppointmentAddComponent } from './components/appointment-add/appointment-add.component';
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
 export function tokenGetter() {
   //return "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJKb3NlQGdtYWlsLmNvbSIsImp0aSI6IjdjOGY5ZGIyLTAyNzYtNDJkMS1iNTc3LTUyNTg1NjhjMTdlZSIsIm5hbWVpZCI6IjAxZTNhMjJiLTI2MjctNDgyMS05ZTBlLTE0NzE1MTNhOWY5NCIsInJvbGUiOiJQYXRpZW50IiwiTG9nZ2VkT24iOiI1LzI0LzIwMjEgMTA6Mjk6NTggUE0iLCJuYmYiOjE2MjE5MDk3OTgsImV4cCI6MTcxNDYyMzcxOCwiaWF0IjoxNjIxOTA5Nzk4LCJpc3MiOiJodHRwczovL2xvY2FsaG9zdDo0NDMzNyIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjQ0MzM3In0.Auc5Om1B4G5M5BJ31EEEtElCsBTug4WMO1ugChYdcEE";
   return sessionStorage.getItem("jwt");
 }
 
+<<<<<<< HEAD
+=======
 registerLocaleData(localeEs, 'es');
 
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 export const MY_FORMATS = {
   // parse: {
   //   dateInput: 'LL',
@@ -142,7 +154,11 @@ export const MY_FORMATS = {
     ResetPasswordComponent,
     StartingBalanceComponent,
     SpecialitiesComponent,
+<<<<<<< HEAD
+    AppointmentCreateComponent,
+=======
     AppointmentAddComponent,
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
   ],
   imports: [
     ImageCropperModule,
@@ -211,7 +227,11 @@ export const MY_FORMATS = {
           },
           {
             path: "crear-cita",
+<<<<<<< HEAD
+            component: AppointmentCreateComponent,
+=======
             component: AppointmentAddComponent,
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
             canActivate: [AuthGuardService],
           },
           {
@@ -245,11 +265,16 @@ export const MY_FORMATS = {
   ],
   providers: [
     { provide: MatPaginatorIntl, useValue: CustomPaginator() },
-    { provide: MAT_DATE_LOCALE, useValue: 'es' },
+    { provide: MAT_DATE_LOCALE, useValue: 'es-DO' },
     //{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+<<<<<<< HEAD
+    { provide: LOCALE_ID, useValue: 'es-DO' },
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'DOP' },
+=======
     { provide: LOCALE_ID, useValue: 'es' },
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
     AccountService,
     ServicioService,
     HorarioMedicoService,

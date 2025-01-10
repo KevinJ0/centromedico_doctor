@@ -49,3 +49,21 @@ C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.dll
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\ref\Doctor.Repository.dll
 C:\Users\Pc\source\repos\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Doctor.Repository.deps.json
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Doctor.Repository.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Doctor.Repository.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Centromedico.Database.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Doctor.DTO.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Doctor.DTO.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\bin\Debug\net5.0\Centromedico.Database.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.csproj.AssemblyReference.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.AssemblyInfoInputs.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.AssemblyInfo.cs
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.sourcelink.json
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.R.F1C965E3.Up2Date
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\refint\Doctor.Repository.dll
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\Doctor.Repository.pdb
+C:\Users\Kevin\Documents\New folder\Centro Medico\Doctor\Doctor.Repository\obj\Debug\net5.0\ref\Doctor.Repository.dll

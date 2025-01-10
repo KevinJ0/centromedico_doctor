@@ -80,6 +80,7 @@ namespace Doctor.Repository.Repositories
                 List<citaDTO> citaslst = _db.citas
                     .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
                     .Where(p => p.medicosID == medicoId
+                                && !p.deleted 
                                 && p.serviciosID == (servicioId == null ? p.serviciosID : servicioId.Value)
                                 && p.segurosID == (seguroId == null ? p.segurosID : seguroId.Value)
                                 && p.fecha_hora.Date >= (inicio == null ? p.fecha_hora.Date : inicio.Value.Date)
@@ -110,12 +111,12 @@ namespace Doctor.Repository.Repositories
         {
             _db.citas.Add(entity);
         }
-        public bool Exist(medicos medico, MyIdentityUser user)
+        public bool Exist(medicos medico, string doc_identidad)
         {
             try
             {
                 if (_db.citas.FirstOrDefault(x => x.medicos == medico
-                  && x.pacientes.MyIdentityUsers == user && x.estado == true) != null)
+                  && x.pacientes.doc_identidad == doc_identidad && x.estado == true) != null)
                     return true;
 
                 return false;
@@ -128,26 +129,7 @@ namespace Doctor.Repository.Repositories
             }
         }
 
-
-        public bool Exist(MyIdentityUser user)
-        {
-
-            try
-            {
-                if (_db.citas.FirstOrDefault(x => x.pacientes.MyIdentityUsers == user && x.estado == true) != null)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
+ 
         public void Remove(citas entity)
         {
             try

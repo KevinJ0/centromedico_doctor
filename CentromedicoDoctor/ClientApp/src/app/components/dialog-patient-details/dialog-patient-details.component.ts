@@ -63,7 +63,7 @@ export class DialogPatientDetailsComponent implements OnInit {
       serviceType: new FormControl(this.data.serviciosID),
       insurance: new FormControl(this.data.segurosID),
       lastName: new FormControl(this.data.paciente_apellido),
-      tutorName: new FormControl(this.data.paciente_nombre),
+      tutorName: new FormControl(this.data.paciente_nombre_tutor),
       tutorLastName: new FormControl(this.data.paciente_apellido_tutor),
       contact: new FormControl(this.data.contacto),
       tutorIdentification: new FormControl(this.data.doc_identidad),
@@ -72,7 +72,7 @@ export class DialogPatientDetailsComponent implements OnInit {
     this._fechaHora = _moment(this.data.fecha_hora)
       .format("D/M/YYYY - hh:mm a")
       .toString();
-      
+
   }
 
   ngOnInit(): void {
@@ -102,7 +102,7 @@ export class DialogPatientDetailsComponent implements OnInit {
 
   setSegurosByServicio(servicioID: number) {
     console.log(this.servicios);
-    this.coberturas = this.servicios.find((r) => r.id == servicioID).coberturas;
+    this.coberturas = this.servicios.find((r) => r.id == servicioID)?.coberturas;
     this.citaDetailFormGroup
       .get("insurance")
       .reset(null, { onlySelf: true, emitEvent: false });
@@ -120,7 +120,7 @@ export class DialogPatientDetailsComponent implements OnInit {
     if (Number.isInteger(seguroId) && Number.isInteger(servicioId)) {
       console.log(this.coberturas);
 
-      let result = this.coberturas.find((r) => r.segurosID == seguroId);
+      let result = this.coberturas?.find((r) => r.segurosID == seguroId) ?? null;
       this.pago = result?.pago;
       this.cobertura = result?.cobertura;
       this.diferencia = result?.diferencia;
@@ -184,6 +184,6 @@ export class DialogPatientDetailsComponent implements OnInit {
     });
   }
 
- 
+
 
 }

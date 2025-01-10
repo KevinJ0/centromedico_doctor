@@ -11,6 +11,6 @@ namespace Doctor.Repository.Repositories.Interfaces
     public interface ICoberturaRepository
     {
         public Task<List<coberturaDTO>> getAllByDoctorIdAsync(int medicoID);
-        public Task<cobertura_medicos> getAsync(int medicosID, int? segurosID, int? serviciosID);
+        public Task<coberturaMedicoDTO> getAsync(int medicosID, int? segurosID, int? serviciosID);
     }
 }

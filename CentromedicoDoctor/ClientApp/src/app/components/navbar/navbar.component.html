@@ -1,22 +1,22 @@
 <header>
 
 
-  <div class="logo"> <mat-icon>code</mat-icon><p>Developing</p></div>
+  <div class="logo-container"> <img class="logo" src="../../../assets/images/header_logo.png" alt=""></div>
 
   <div class="session-container">
-    
-      <button mat-button  [matMenuTriggerFor]="menu" aria-label="icon-button with a menu">
-        <div class="session">
-            <div class="session-info">
-              <span class="user-name">{{userName}}</span>
-              <span class="role">{{userRole}}</span>
-            </div>
+
+    <button mat-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu">
+      <div class="session">
+        <div class="session-info">
+          <span class="user-name">{{userName}}</span>
+          <span class="role">{{userRole}}</span>
+        </div>
         <div class="flex-center">
           <mat-icon>account_circle</mat-icon>
           <mat-icon class="expand">expand_more</mat-icon>
         </div>
-    </div>
-      </button>
+      </div>
+    </button>
     <mat-menu xPosition="before" #menu="matMenu">
       <button (click)="LogOut()" mat-menu-item>
         <mat-icon>logout</mat-icon>

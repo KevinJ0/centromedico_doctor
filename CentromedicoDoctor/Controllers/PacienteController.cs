@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using CentromedicoDoctor.Services;
 using Centromedico.Database.DbModels;
+using System.Collections.Generic;
 
 
 namespace CentromedicoDoctor.Controllers
@@ -144,9 +145,38 @@ namespace CentromedicoDoctor.Controllers
 
             try
             {
+                throw new Exception("No implementado");
+
                 string userName = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                
                 MyIdentityUser user = await _userManager.FindByNameAsync(userName);
+
+
                 return user.confirm_doc_identidad ? true : false;
+            }
+            catch (Exception e)
+            {
+
+                throw new Exception("Ha ocurrido un error al tratar de hacer la solicitud: " + e.Message);
+            }
+
+        }
+
+
+        /// <summary>
+        /// Método que devuelve un lista de paciente del médico solicitado.
+        /// </summary>
+        /// <returns>bool</returns>
+        /// <response code="500">Ha ocurrido un error al tratar de hacer la solicitud.</response>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<pacientes>>> getAllPacienteAsync(int medicoId)
+        {
+
+            try
+            {
+                var result = await _pacienteSvc.getPacienteListAsync(medicoId);
+                return Ok(result);
             }
             catch (Exception e)
             {

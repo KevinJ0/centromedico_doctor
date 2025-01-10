@@ -32,7 +32,7 @@
                 </div>
               </div>
               <div class="col-md-4">
-                <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es' }}</h3>
+                <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es-DO' }}</h3>
               </div>
               <div class="col-md-4">
                 <div class="btn-group">
@@ -73,7 +73,7 @@
         </mat-step>
 
 
-        
+
         <mat-step>
           <ng-template matStepLabel>
             <mat-icon>toc</mat-icon> Tabla
@@ -86,6 +86,7 @@
       </mat-stepper>
     </div>
     
+
 
     <ng-template #load>
       <div class="progress-content">

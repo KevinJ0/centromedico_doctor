@@ -9,14 +9,24 @@
 
 
     <mat-tab-group mat-align-tabs="start">
+<<<<<<< HEAD
+
+
+=======
       
       
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
       <mat-tab *ngIf="userRole == 'Doctor'" label="Mi Perfil">
         <ng-template matStepLabel>
           <mat-icon>manage_accounts</mat-icon>Mi Perfil
         </ng-template>
+<<<<<<< HEAD
+
+        <form [formGroup]="userFormGroup" class="form-group _row" *ngIf="!loading else load">
+=======
         
         <form [formGroup]="userFormGroup" class="form-group _row">
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
           <div class="account-container" style="margin-top:10px">
 
@@ -36,13 +46,16 @@
                   </label>
                 </div>
 
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
                 <h5>Usuario</h5>
 
                 <div class="user-name">
                   <img src="https://cdn-icons-png.flaticon.com/512/2102/2102647.png" alt="">
-                  <p>Paolarodriguez</p>
+                  <p>{{_medico.correo}}</p>
                 </div>
 
                 <div class="user-password">
@@ -197,7 +210,11 @@
         <app-starting-balance></app-starting-balance>
       </mat-tab>
 
+<<<<<<< HEAD
+
+=======
       
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
       <mat-tab *ngIf="userRole == 'Doctor'" label="Especialidades">
         <ng-template matStepLabel>
           <mat-icon>local_hospital</mat-icon>
@@ -211,3 +228,10 @@
 
 
 </main>
+
+<ng-template #load>
+  <div class="progress-content">
+    <mat-progress-spinner diameter=40 strokeWidth=2 [mode]="mode">
+    </mat-progress-spinner>
+  </div>
+</ng-template>

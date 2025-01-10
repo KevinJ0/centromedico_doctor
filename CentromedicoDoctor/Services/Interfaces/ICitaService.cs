@@ -16,5 +16,6 @@ namespace CentromedicoDoctor.Services.Interfaces
         Task<bool> updateCitaAsync(int citaID, citaPacienteDTO formdata);
         Task updateDateTimeAsync(int citaID, citaDateTimeDTO fechaHora);
         void deleteCita(int citaID, int medicoID);
+        Task<bool> createCitaAsync(citaCreateDTO formdata);
     }
 }

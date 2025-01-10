@@ -1,11 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { UserInfo, group, TokenResponse, CustomError, medico, userMedicoForm, ResetPassword, secretaria } from '../interfaces/InterfacesDto';
 import { BehaviorSubject, throwError, of, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SignalrCustomService } from './signalr-custom.service';
 import { GrupoService } from './grupo.service';
+import { group } from '../interfaces/InterfacesDto';
 
 @Injectable({
   providedIn: 'root'
@@ -207,6 +207,7 @@ export class AccountService {
       sessionStorage.removeItem('expiration');
       sessionStorage.removeItem('groups');
       sessionStorage.removeItem('medicoId');
+      sessionStorage.removeItem('medicoId');
       sessionStorage.setItem('loginStatus', '0');
       console.log("Logged Out Successfully");
     });
@@ -268,7 +269,15 @@ export class AccountService {
       );
 
   }
-  
+
+  isStartingBalanceConfirmed(): Observable<boolean> {
+    return this.http.get<boolean>(this.baseUrl + `api/account/isStartingBalanceConfirmed?medicoId=1`)
+      .pipe(map((data: boolean) => data),
+        catchError(err => {
+          return throwError(err);
+        })
+      );
+  }
 
   get isLoggesIn() {
     if (sessionStorage.getItem("loginStatus"))
@@ -287,4 +296,7 @@ export class AccountService {
     return this.UserRole.asObservable();
   }
 
+  get GetMedicoId() {
+    return sessionStorage.getItem("medicoId");
+  }
 }

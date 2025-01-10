@@ -1,102 +1,102 @@
 <mat-dialog-content>
 
 
-    <div class="header">
-  
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon>tag</mat-icon>
-        </div>
-        <h6 class="data">{{data.id}}</h6>
+  <div class="header">
+
+    <div class="item">
+      <div class="icon-container">
+        <mat-icon>tag</mat-icon>
       </div>
-  
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon class="material-symbols-outlined">confirmation_number</mat-icon>
-        </div>
-        <h6 class="data">#{{data.turno}}</h6>
-      </div>
-  
-      <div class="item">
-        <div class="icon-container">
-          <mat-icon>calendar_month</mat-icon>
-        </div>
-        <h6 class="data">{{data.fecha_hora |  date:'d/MM/YYYY hh:mm:ss a'}}</h6>
-      </div>
-  
-  
+      <h6 class="data">{{data.id}}</h6>
     </div>
-    <mat-divider></mat-divider>
-  
-    <div class="flex-container">
-  
-      <div class="body normal" [ngStyle]="data.paciente_nombre_tutor?  adult : tutor">
-  
-  
-        <mat-form-field style="grid-area: name;" class="name" appearance="outline">
-          <mat-label>Nombre y apellido <span *ngIf="data.paciente_nombre_tutor;">dependiente</span></mat-label>
-          <input matInput [value]="data.paciente_nombre+' '+data.paciente_apellido" placeholder="Nombre y apellido"
-            readonly>
-        </mat-form-field>
-  
-        <mat-form-field *ngIf="data.paciente_nombre_tutor;" style="grid-area: tutor;" appearance="outline">
-          <mat-label>Nombre y apellido tutor</mat-label>
-          <input [value]="data.paciente_nombre_tutor+' '+data.paciente_apellido_tutor+'nombre de tutor'" matInput
-            placeholder="Nombre y apellido tutor" readonly>
-        </mat-form-field>
-  
-        <mat-form-field style="grid-area: document;" appearance="outline">
-          <mat-label>Documento de identidad</mat-label>
-          <mat-icon matSuffix>badge</mat-icon>
-          <input readonly [value]="data.doc_identidad" matInput placeholder="Documento de identidad">
-        </mat-form-field>
-  
-        <mat-form-field style="grid-area: service;" appearance="outline">
-          <mat-label>Tipo de servicio</mat-label>
-          <mat-select [value]="data.servicio_descrip" readonly name="service">
-            <mat-option [value]="data.servicio_descrip">
-              {{data.servicio_descrip}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-form-field style="grid-area: insurance;" appearance="outline">
-          <mat-label>Seguro</mat-label>
-          <mat-select [value]="data.seguro_descrip">
-            <mat-option [value]="data.seguro_descrip">
-              {{data.seguro_descrip}}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-  
-        <mat-form-field style="grid-area: nota;" appearance="outline">
-          <mat-label>Nota</mat-label>
-          <textarea readonly rows="6" matInput placeholder="Nota para el médico">{{data.nota}}</textarea>
-        </mat-form-field>
-  
-  
+
+    <div class="item">
+      <div class="icon-container">
+        <mat-icon class="material-symbols-outlined">confirmation_number</mat-icon>
       </div>
-  
-      <!-- Resumen de costos -->
-      <div class="costs-container box-info">
-  
-        <h6 >Costos</h6>
-  
-        <mat-divider></mat-divider>
-  
-        <div class="data">
-          <p>Pago: </p><span>DOP${{data.pago}}</span>
-          <p>Descuento: </p><span>- DOP${{data.descuento}}</span>
-          <p>Cobertura: </p><span>- DOP${{data.cobertura}}</span>
-        </div>
-  
-        <mat-divider></mat-divider>
-  
-        <div class="data">
-          <p>Diferencia: </p><span>DOP${{data.diferencia}}</span>
-        </div>
-  
-      </div>
+      <h6 class="data">#{{data.turno}}</h6>
     </div>
-  
-  </mat-dialog-content>
+
+    <div class="item">
+      <div class="icon-container">
+        <mat-icon>calendar_month</mat-icon>
+      </div>
+      <h6 class="data">{{data.fecha_hora |  date:'d/MM/YYYY hh:mm:ss a'}}</h6>
+    </div>
+
+
+  </div>
+  <mat-divider></mat-divider>
+
+  <div class="flex-container">
+
+    <div class="body normal" [ngStyle]="data.paciente_nombre_tutor?  adult : tutor">
+
+
+      <mat-form-field style="grid-area: name;" class="name" appearance="outline">
+        <mat-label>Nombre y apellido <span *ngIf="data.paciente_nombre_tutor;">dependiente</span></mat-label>
+        <input matInput [value]="data.paciente_nombre+' '+data.paciente_apellido" placeholder="Nombre y apellido"
+          readonly>
+      </mat-form-field>
+
+      <mat-form-field *ngIf="data.paciente_nombre_tutor;" style="grid-area: tutor;" appearance="outline">
+        <mat-label>Nombre y apellido tutor</mat-label>
+        <input [value]="data.paciente_nombre_tutor+' '+data.paciente_apellido_tutor" matInput
+          placeholder="Nombre y apellido tutor" readonly>
+      </mat-form-field>
+
+      <mat-form-field style="grid-area: document;" appearance="outline">
+        <mat-label>Documento de identidad</mat-label>
+        <mat-icon matSuffix>badge</mat-icon>
+        <input readonly [value]="data.doc_identidad" matInput placeholder="Documento de identidad">
+      </mat-form-field>
+
+      <mat-form-field style="grid-area: service;" appearance="outline">
+        <mat-label>Tipo de servicio</mat-label>
+        <mat-select [value]="data.servicio_descrip" readonly name="service">
+          <mat-option [value]="data.servicio_descrip">
+            {{data.servicio_descrip}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field style="grid-area: insurance;" appearance="outline">
+        <mat-label>Seguro</mat-label>
+        <mat-select [value]="data.seguro_descrip">
+          <mat-option [value]="data.seguro_descrip">
+            {{data.seguro_descrip}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field style="grid-area: nota;" appearance="outline">
+        <mat-label>Nota</mat-label>
+        <textarea readonly rows="6" matInput placeholder="Nota para el médico">{{data.nota}}</textarea>
+      </mat-form-field>
+
+
+    </div>
+
+    <!-- Resumen de costos -->
+    <div class="costs-container box-info">
+
+      <h6>Costos</h6>
+
+      <mat-divider></mat-divider>
+
+      <div class="data">
+        <p>Pago: </p><span>DOP${{data.pago}}</span>
+        <p>Descuento: </p><span>- DOP${{data.descuento}}</span>
+        <p>Cobertura: </p><span>- DOP${{data.cobertura}}</span>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="data">
+        <p>Diferencia: </p><span>DOP${{data.diferencia}}</span>
+      </div>
+
+    </div>
+  </div>
+
+</mat-dialog-content>

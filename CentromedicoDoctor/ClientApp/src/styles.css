@@ -1,5 +1,6 @@
 :root {
-  --primary-color: #1f8fff;
+  --primary-color: #067ACC;
+  --secondary-color: #79818a;
   --max-width: 1360px;
   --screen-width: 320px;
   --screen-height: 560px;
@@ -51,6 +52,10 @@ main:not(.app-main, .no-styles) {
   margin: 2rem .5rem;
 }
 
+mat-form-field mat-icon {
+  color: var(--secondary-color);
+}
+
 /* para que los inputs no se superpongan en el formulario de modificacion */
 .appointment-modify .mat-form-field-infix {
   width: auto !important;
@@ -82,6 +87,9 @@ main:not(.app-main, .no-styles) {
   color: white;
 }
 
+.mat-simple-snackbar-action .mat-button-wrapper {
+  color: white;
+}
 
 .loading-layer {
   background: white;
@@ -148,4 +156,40 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  background: linear-gradient(0deg, #fafafa 50%, var(--primary-color) 100%);
+  animation: spin 1s linear infinite;
+}
+
+.inner-circle {
+  width: 90%;
+  height: 90%;
+  background-color: #fafafa;
+  border-radius: 50%;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }

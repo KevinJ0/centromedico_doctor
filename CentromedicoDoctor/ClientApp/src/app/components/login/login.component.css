@@ -6,7 +6,10 @@ main {
   align-content: center;
   flex-direction: column;
   align-items: center;
-  background: linear-gradient(318deg, #66a4ff29, #fcedee30);
+  background-position: center;
+  background-image: url("../../../assets/images/page-turner.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .mat-card {
@@ -14,15 +17,17 @@ main {
   padding: 3rem 4rem;
 }
 
-  .mat-card:not([class*=mat-elevation-z]) {
-    box-shadow: 0px 0px 1px 0px rgb(0 0 0 / 7%);
-    border-radius: 22px;
-  }
+.mat-card:not([class*=mat-elevation-z]) {
+  box-shadow: 3px 3px 20px 10px rgb(0 0 0 / 15%);
+  border-radius: 22px;
+}
 
 .mat-card-header {
   font-size: 2rem;
   font-weight: 400;
-  color: #606060;
+  color: #454545;
+  display: flex;
+  justify-content: center;
 }
 
 .mat-form-field {
@@ -37,12 +42,18 @@ main {
 
 .forgotpass {
   text-align: end;
-  font-size: small; 
+  font-size: small;
 }
 
-.mat-flat-button {
+.login-btn {
   padding: 4px 28px;
   font-size: 17px;
   font-weight: 400;
-  margin-top: 1rem;
+  width: 100%;
+  margin-top: 2rem;
+  min-height: 50px;
+  min-width: max-content;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

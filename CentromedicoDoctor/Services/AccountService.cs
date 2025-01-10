@@ -181,6 +181,12 @@ namespace CentromedicoDoctor.Services
 
         }
 
+
+
+
+       
+
+
         private bool validateBirth(DateTime _fechaNacimiento)
         {
             int _edad = DateTime.Today.AddTicks(-_fechaNacimiento.Ticks).Year - 1;
@@ -474,6 +480,31 @@ namespace CentromedicoDoctor.Services
                                              x.confirm_doc_identidad == true);
 
             return userPacienteDto;
+
+
+        }
+
+        public async Task<bool> isBalanceStartingConfirmedAsync(int medicoId) 
+        {
+
+            MyIdentityUser user = await getCurrentUser();
+
+            secretarias _secretaria = _secretaryRepo.get(user);
+
+            bool existDoctor = await _secretaryRepo.existDoctorAsync(medicoId);
+
+            if (!existDoctor)
+                throw new EntityNotFoundException("Esta secretaria no tiene relación con este médico.");
+
+            var balance = _db.balance_caja.FirstOrDefault(x => x.medicosID == medicoId
+                                                            && x.fecha.Date == DateTime.Now.Date
+                                                            && x.secretariasID == _secretaria.ID);
+
+            if (balance == null)
+                throw new ArgumentException("No se ha establecido ningún balance inicial para el día de hoy " + DateTime.Now.ToString("dd-MM-yyyy"));
+
+
+            return await Task.FromResult( !String.IsNullOrEmpty(balance.secretaria_nombre?.Trim()) );
 
 
         }

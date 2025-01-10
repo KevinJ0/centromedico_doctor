@@ -33,8 +33,19 @@
         </mat-form-field>
 
         <h5 class="forgotpass"><a href="#">¿Contraseña olvidada?</a></h5>
+<<<<<<< HEAD
+        <button class="login-btn" [disabled]="loading" type="submit" mat-flat-button color="primary">
+
+          <span *ngIf="!loading; else elseBlock">Entrar</span>
+          <ng-template #elseBlock>
+            <mat-progress-spinner diameter=25 strokeWidth=2 [mode]="mode">
+            </mat-progress-spinner>
+          </ng-template>
+
+=======
         <button [disabled]="loading || loginFormGroup.invalid" type="submit" mat-flat-button color="primary">
           Entrar
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
         </button>
       </form>
     </mat-card-content>

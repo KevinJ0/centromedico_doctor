@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit {
 
   mode: ProgressSpinnerMode = 'indeterminate';
   hide = true;
-
   loginFormGroup: FormGroup;
   loading: boolean = false;
   returnUrl: string;

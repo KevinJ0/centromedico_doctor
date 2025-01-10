@@ -5,8 +5,8 @@ import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
   providedIn: "root",
 })
 export class SnackBarService {
-  
-  constructor(private _snackBar: MatSnackBar) {}
+
+  constructor(private _snackBar: MatSnackBar) { }
 
   open(message: string, type?: number, action: string = "Cerrar", autoClose: boolean = true) {
     const config = new MatSnackBarConfig();
@@ -22,7 +22,8 @@ export class SnackBarService {
         break;
     }
 
-    if(autoClose)
+    if (autoClose)
+
       config.duration = 3000;
 
     this._snackBar.open(message, action, config);

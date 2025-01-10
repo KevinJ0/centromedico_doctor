@@ -35,8 +35,12 @@ namespace CentromedicoDoctor.Services
 
         public void Config()
         {
+            string connString = _configuration.GetConnectionString("DefaultConnection");
+
+           // new ServiceBrokerHelper().EnableServiceBroker(connString, "centromedico");
             SubscribePacienteTableOnChange();
             SubscribeCitaTableOnChange();
+
         }
 
         private async void SubscribePacienteTableOnChange()
@@ -64,10 +68,10 @@ namespace CentromedicoDoctor.Services
 
         private void SubscribeCitaTableOnChange()
         {
-            string connString = _configuration.GetConnectionString("DefaultConnection");
 
             try
             {
+                string connString = _configuration.GetConnectionString("DefaultConnection");
 
                 var conn = new SqlTableDependency<citas>(connString);
 
@@ -76,6 +80,7 @@ namespace CentromedicoDoctor.Services
             }
             catch (System.Exception)
             {
+                throw;
                 // Log to administration
             }
         }

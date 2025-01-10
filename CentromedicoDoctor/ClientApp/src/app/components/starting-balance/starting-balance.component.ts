@@ -22,8 +22,10 @@ export class StartingBalanceComponent implements OnInit {
   secretarias: secretaria[];
   disableSetBalance: boolean;
   balanceReadonly: boolean;
+  isBalanceConfirmed: boolean = true;
   userRole: string;
   currentUserRole$ = this.accountSvc.currentUserRole;
+  private initialized = false;
 
   constructor(
     private balanceCajaSvc: BalanceCajaService,
@@ -34,59 +36,24 @@ export class StartingBalanceComponent implements OnInit {
 
 
 
-  SetBalance(): void {
-
-    if (this.userRole == 'Doctor') {
-      this.balance_caja = {
-        medicosID: this.medicoId,
-        secretariasID: this.balanceFormGroup.get("secretariaControl").value,
-        balance_inicial: this.balanceFormGroup.get("balanceControl").value
-      };
-
-      this.disableSetBalance = true;
-
-      this.balanceCajaSvc.SetStartingBalance(this.balance_caja)
-        .subscribe(() => {
-          this.openSnackBar.open("Guardado correctamente 👌", 0);
-        },
-          (err) => {
-            console.error(err);
-            this.openSnackBar.open(err, 1, "Cerrar", false);
-          }, () => {
-            this.disableSetBalance = false;
-          }
-        );
-
-
-    } else if (this.userRole == 'Secretary')
-
-      this.balanceCajaSvc.ConfirmStartingBalance(this.medicoId).subscribe(() => {
-        this.openSnackBar.open("Guardado correctamente 👌", 0);
-      },
-        (err) => {
-          console.error(err);
-          this.disableSetBalance = false;
-          this.openSnackBar.open(err, 1, "Cerrar", false);
-        }
-      );
-
-  }
-
 
 
 
   ngOnInit(): void {
+    this.accountSvc.isStartingBalanceConfirmed().subscribe((value) => {
+      this.isBalanceConfirmed = value;
+    });
 
     this.balanceFormGroup = this._formBuilder.group({
-      balanceControl: ["", Validators.required],
-      secretariaControl: ["", Validators.required],
+      balanceControl: [0, Validators.required],
+    secretariaControl: ["", Validators.required],
     });
 
     this.currentUserRole$.subscribe(
       r => {
-        this.userRole = r;
+        this.userRole = r.toLocaleLowerCase();
 
-        if (this.userRole == 'Doctor') {
+        if (this.userRole == 'doctor') {
 
           this.accountSvc.GetAllSecretary()
             .subscribe((secretarias: secretaria[]) => {
@@ -106,17 +73,62 @@ export class StartingBalanceComponent implements OnInit {
               console.error(err);
               this.openSnackBar.open(err, 1, "Cerrar", false);
             });
-        } else if (this.userRole == 'Secretary') {
-          this.balanceReadonly = true;
-          this.disableSetBalance = false;
-          this.getStartingBalance(this.medicoId);
+        } else if (this.userRole == 'secretary') {
+
+          if (!this.initialized) {
+            this.initialized = true;
+            //
+            this.balanceReadonly = true;
+            this.disableSetBalance = false;
+            this.getStartingBalance(this.medicoId);
+          }
         }
       });
 
   }
 
 
-  
+  SetBalance(): void {
+
+    if (this.userRole == 'doctor') {
+      this.balance_caja = {
+        medicosID: this.medicoId,
+        secretariasID: this.balanceFormGroup.get("secretariaControl").value,
+        balance_inicial: this.balanceFormGroup.get("balanceControl").value
+      };
+
+      this.disableSetBalance = true;
+
+      this.balanceCajaSvc.SetStartingBalance(this.balance_caja)
+        .subscribe(() => {
+          this.openSnackBar.open("Guardado correctamente 👌", 0);
+        },
+          (err) => {
+            console.error(err);
+            this.openSnackBar.open(err, 1, "Cerrar", false);
+            this.disableSetBalance = false;
+          }, () => {
+            this.disableSetBalance = false;
+          }
+        );
+
+
+    } else if (this.userRole == 'secretary')
+
+      this.balanceCajaSvc.ConfirmStartingBalance(this.medicoId).subscribe(() => {
+        this.isBalanceConfirmed = true;
+        this.openSnackBar.open("Guardado correctamente 👌", 0);
+      },
+        (err) => {
+          console.error(err);
+          this.disableSetBalance = false;
+          this.openSnackBar.open(err, 1, "Cerrar", false);
+        }
+      );
+
+  }
+
+
 
   getStartingBalance(secreId: number) {
 
@@ -129,7 +141,8 @@ export class StartingBalanceComponent implements OnInit {
         console.error(err);
         this.balanceFormGroup.get("balanceControl").setValue("");
         this.openSnackBar.open(err, 1, "Cerrar", false);
-      }, () => {
+        this.disableSetBalance = false;
+}, () => {
         this.disableSetBalance = false;
       });
   }

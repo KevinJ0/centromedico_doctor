@@ -1,7 +1,6 @@
 
 import {
   Component,
-  ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
   OnInit,
@@ -10,15 +9,10 @@ import {
 import {
   startOfDay,
   endOfDay,
-  subDays,
-  addDays,
-  endOfMonth,
   isSameDay,
   isSameMonth,
-  addHours,
-  addMinutes,
 } from "date-fns";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import {
   CalendarEvent,
   CalendarEventAction,
@@ -30,12 +24,11 @@ import { citaCalendar } from "src/app/interfaces/InterfacesDto";
 import * as _moment from "moment";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
-import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
+import { MatSnackBar } from "@angular/material/snack-bar";
 import { SignalrCustomService } from "src/app/services/signalr-custom.service";
 import { HubConnectionState } from "@microsoft/signalr";
 import { Router } from "@angular/router";
 import { STEPPER_GLOBAL_OPTIONS } from "@angular/cdk/stepper";
-import { DialogAppointmentDetailComponent } from "../dialog-appointment-detail/dialog-appointment-detail.component";
 import { DialogPatientDetailsComponent } from "../dialog-patient-details/dialog-patient-details.component";
 
 const colors: any = {
@@ -69,7 +62,7 @@ export class DashboardComponent implements OnInit {
   @ViewChild("modalContent", { static: true }) modalContent: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
-  locale: string = "es";
+  locale: string = "es-DO";
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   loadingC: boolean = true;
@@ -146,7 +139,8 @@ export class DashboardComponent implements OnInit {
 
 
   setCitaList(): void {
-    this.citaSvc.GetCitaList().subscribe({
+    this.loadingC = true;
+    this.citaSvc.GetCitaList("", "", "true").subscribe({
       next: (re: citaCalendar[]) => {
 
         re.map((v) => {

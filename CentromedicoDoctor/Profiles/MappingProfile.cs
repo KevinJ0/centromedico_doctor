@@ -81,6 +81,12 @@ namespace CentromedicoDoctor.Profiles
                 .ForMember(dest => dest.correo, opt => opt.MapFrom(src => src.pacientes.MyIdentityUsers.Email))
                 .ForMember(dest => dest.turno, opt => opt.MapFrom(src => src.turno));
 
+            CreateMap<pacientes, PacienteDto>()
+                      .ForMember(dest => dest.edad, opt => opt.MapFrom(src => src.edad))
+                      .ForMember(dest => dest.confirm_doc_identidad, opt => opt.MapFrom(src => src.confirm_doc_identidad))
+                      .ForMember(dest => dest.correo, opt => opt.MapFrom(src => src.MyIdentityUsers.Email))
+                      .ForMember(dest => dest.menor_un_año, opt => opt.MapFrom(src => src.menor_un_año));
+
             CreateMap<medicoDTO, medicos>().ForMember(x => x.nombre, opt => opt.MapFrom(src => src.nombre))
                 .ForMember(x => x.apellido, opt => opt.MapFrom(src => src.apellido))
                 .ForMember(x => x.telefono1, opt => opt.MapFrom(src => src.telefono1))

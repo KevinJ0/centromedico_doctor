@@ -26,7 +26,6 @@
     "@angular/router": "14.2.9",
     "@auth0/angular-jwt": "^5.1.0",
     "@microsoft/signalr": "^6.0.10",
-    "@nebular/eva-icons": "^9.0.3",
     "@ng-bootstrap/ng-bootstrap": "^13.1.0",
     "@ngtools/webpack": "^14.2.8",
     "@popperjs/core": "^2.11.6",

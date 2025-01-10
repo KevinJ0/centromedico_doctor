@@ -11,13 +11,22 @@ main {
   background: #fdfdfd;
   min-height: 100vh;
   background-repeat: no-repeat;
+<<<<<<< HEAD
+  background-size: cover;
+  background-position: center;
+  background-image: url(../../../assets/images/pattern-randomized.svg);
+=======
   background-size: contain;
    background-image: url(../../../assets/images/circle-scatter-haikei.svg); 
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
   /* background: linear-gradient(318deg, #66a4ff29, #fcedee30); */
 }
-.title{
-  margin-top: 5rem ;
+
+.title {
+  margin-top: 5rem;
+  color: rgb(0, 0, 0);
 }
+
 .container {
   position: relative;
   z-index: 1;
@@ -74,7 +83,7 @@ main {
 }
 
 .container .card .content .contentBx h3 {
-  color: rgb(43, 43, 43);
+  color: rgb(0, 0, 0);
   text-transform: uppercase;
   letter-spacing: 2px;
   font-weight: 500;
@@ -110,6 +119,6 @@ main {
 }
 
 .container .card .sci li span {
-    color: rgb(43, 43, 43);
-    font-size: 14px;
+  color: rgb(43, 43, 43);
+  font-size: 14px;
 }

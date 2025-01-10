@@ -240,7 +240,88 @@ export interface citaPaciente {
   fecha_hora: string | Date;
   segurosID: number;
   turno?: number;
+}
 
+export interface ResetPassword {
+  password: string;
+  confirmPassword: string;
+}
+
+export interface balanceCaja {
+  medicosID?: number;
+  secretariasID: number;
+  balance_inicial: number;
+}
+
+export interface secretaria {
+  id: number | string,
+  correo: string,
+  nombre: string,
+  apellido: string
+}
+
+
+export interface citaResult {
+  cod_verificacion: string;
+  servicio: string;
+  consultorio: number;
+  fecha_hora: string;
+  medico_nombre_apellido: string;
+  seguro: string;
+  pago: number;
+  cobertura: number;
+  diferencia: number;
+  paciente_nombre_apellido: string;
+  doc_identidad_tutor: string;
+  doc_identidad: string;
+  tutor_nombre_apellido: string;
+  contacto: string;
+  correo: string;
+  turno: number;
+}
+
+export interface cita {
+  id?: number | string;
+  nombre: string;
+  apellido: string;
+  sexo: string;
+  doc_identidad: string;
+  fecha_hora: Date;
+  medicosID: number;
+  serviciosID: number;
+  fecha_nacimiento: Date;
+  contacto: string;
+  contacto_whatsapp: boolean;
+  appointment_type: number;
+  segurosID: number;
+  nota: string;
+}
+
+export interface CitaCreate {
+  fecha_hora: Date;
+  medicosID: number;
+  telefono: string;
+  serviciosID: number;
+  appointment_type: number;
+  email: string;
+  segurosID: number;
+  nota: string;
+  paciente: Paciente;
+}
+
+export interface Paciente {
+  Id: number;
+  doc_identidad: string;
+  doc_identidad_tutor?: string;
+  nombre: string;
+  apellido: string;
+  contacto?: string;
+  contacto_whatsapp: boolean;
+  fecha_nacimiento: Date;
+  sexo: string;
+  email?: string;
+  nombre_tutor?: string;
+  apellido_tutor?: string;
 }
 
 export interface ResetPassword {

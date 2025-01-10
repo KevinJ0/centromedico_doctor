@@ -1,5 +1,9 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+<<<<<<< HEAD
+import { FormGroup, FormBuilder } from '@angular/forms';
+=======
 import { FormGroup,  FormBuilder } from '@angular/forms';
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
 import * as _moment from 'moment';
 import { MatTableDataSource } from '@angular/material/table';
@@ -45,7 +49,12 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
 
   }
   ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
+    try {
+      this.dataSource.sort = this.sort;
+
+    } catch (error) {
+
+    }
   }
 
 
@@ -54,9 +63,11 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
     if (this.citas) {
       this.dataSource = new MatTableDataSource(this.citas);
       this.dataSource.paginator = this.paginator;
-      this.loading = false;
-
+      //this.loading = false;
     }
+    //!lo moví aqui
+    this.loading = false;
+
   }
 
   applyFilter(event: Event) {
@@ -77,30 +88,41 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
 
 
     this.filterFormGroup.get("statusControl").valueChanges.subscribe((v) => this.getCitas());
+<<<<<<< HEAD
+    try {
+
+      this.dataSource.filterPredicate = (data, filter) => {
+=======
 
     this.dataSource.filterPredicate = (data, filter) => {
 
     //  console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
+>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
-      if (data.id.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.turno.toString().toLowerCase().indexOf(filter) !== -1 ||
-        (data.paciente_nombre + " " + data.paciente_apellido).toLowerCase().indexOf(filter) !== -1 ||
-        data.servicio_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.seguro_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
-        _moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a').toLowerCase().indexOf(filter) !== -1 ||
-        data.cobertura.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.diferencia.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.pago.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.descuento.toString().toLowerCase().indexOf(filter) !== -1 ||
-        String(data.total).indexOf(filter) !== -1 ||
-        data.doc_identidad.toString().toLowerCase().indexOf(filter) !== -1 ||
-        data.contacto.toString().toLowerCase().indexOf(filter) !== -1)
-        return true;
-      else
-        return false;
+        //  console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
+
+        if (data.id.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.turno.toString().toLowerCase().indexOf(filter) !== -1 ||
+          (data.paciente_nombre + " " + data.paciente_apellido).toLowerCase().indexOf(filter) !== -1 ||
+          data.servicio_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.seguro_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
+          _moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a').toLowerCase().indexOf(filter) !== -1 ||
+          data.cobertura.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.diferencia.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.pago.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.descuento.toString().toLowerCase().indexOf(filter) !== -1 ||
+          String(data.total).indexOf(filter) !== -1 ||
+          data.doc_identidad.toString().toLowerCase().indexOf(filter) !== -1 ||
+          data.contacto.toString().toLowerCase().indexOf(filter) !== -1)
+          return true;
+        else
+          return false;
+
+      }
+
+    } catch (error) {
 
     }
-
   }
 
   getCitas(): void {

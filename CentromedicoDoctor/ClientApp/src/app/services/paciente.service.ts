@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
-import { UserInfo } from "../interfaces/InterfacesDto";
+import { Paciente, UserInfo } from "../interfaces/InterfacesDto";
 import { BehaviorSubject, throwError, of, Observable } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { Router } from "@angular/router";
@@ -18,15 +18,29 @@ export class PacienteService {
   ) {
     this.baseUrl = baseUrl;
   }
- 
+
   getUserInfo(citaId: number | string): Observable<UserInfo> {
     return this.http
       .get<UserInfo>(
         this.baseUrl +
-          `api/paciente/getUserInfo?citaid=${citaId}&medicoid=${this.medicoId}`
+        `api/paciente/getUserInfo?citaid=${citaId}&medicoid=${this.medicoId}`
       )
       .pipe(
         map((data: UserInfo) => data),
+        catchError((err) => {
+          return throwError(err);
+        })
+      );
+  }
+
+  getAllPaciente(): Observable<Paciente[]> {
+    return this.http
+      .get<Paciente[]>(
+        this.baseUrl +
+        `api/paciente/getAllPaciente?medicoId=${this.medicoId}`
+      )
+      .pipe(
+        map((data: Paciente[]) => data),
         catchError((err) => {
           return throwError(err);
         })

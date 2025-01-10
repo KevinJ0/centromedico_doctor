@@ -285,7 +285,7 @@ namespace CentromedicoDoctor.Controllers
             try
             {
 
-                await _accountSvc.confirmBalanceStartingAsync(1);
+                await _accountSvc.confirmBalanceStartingAsync(medicoId);
 
                 return Ok();
             }
@@ -297,27 +297,31 @@ namespace CentromedicoDoctor.Controllers
 
 
         /// <summary>
-        /// Método que devulve los datos del usuario por medio del documento de identidad que ya haya sido verificado por el personal médico de manera física.
+        /// Devuelve si la secretaria tiene o no el balance ya confirmado
         /// </summary>
-        /// <returns>bool</returns>
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor, Secretary")]
+        /// <remarks>
+        /// Sample response:
+        ///
+        ///     Post /Account/isStartingBalanceConfirmed
+        ///      
+        /// </remarks>
+        /// <returns>true</returns>
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary")]
         [HttpGet("[action]")]
-        public MyIdentityUserDto getUserInfo(string docIdentidad)
+        public async Task<ActionResult<bool>> isStartingBalanceConfirmedAsync([FromQuery] int medicoId)
         {
             try
             {
-                var r = _accountSvc.getUserInfo(docIdentidad);
 
-                return r;
+                var res = await _accountSvc.isBalanceStartingConfirmedAsync(medicoId);
 
+                return Ok(res);
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-
 
     }
 

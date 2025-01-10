@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Centromedico.Database;
 using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
@@ -8,6 +9,7 @@ using Doctor.DTO;
 using Doctor.Repository.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +41,16 @@ namespace CentromedicoDoctor.Services
             _userManager = userManager;
             _db = db;
             _mapper = mapper;
+        }
+
+        public async Task<List<PacienteDto>> getPacienteListAsync(int medicoId)
+        {
+            var pacientesDTOList = await _db.pacientes
+                .Where(x => x.citas.Any(y => y.medicosID == medicoId && y.pacientesID == x.ID && !x.menor_un_año))
+                .ProjectTo<PacienteDto>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return pacientesDTOList;
         }
 
         public async Task<bool> saveUserInfoAsync(UserInfo formuser)
@@ -74,7 +86,7 @@ namespace CentromedicoDoctor.Services
                         _db.user_info.Add(userInfo);
                         _db.SaveChanges();
                     }
-                    else 
+                    else
                         _db.SaveChanges();
 
 
@@ -107,7 +119,7 @@ namespace CentromedicoDoctor.Services
                     var paciente = (from p in _db.pacientes
                                     where p.MyIdentityUserID == user.Id && p.doc_identidad != null
                                     select p).FirstOrDefault();
-                    
+
                     if (paciente != null)
                     {
                         paciente.nombre = user.nombre;

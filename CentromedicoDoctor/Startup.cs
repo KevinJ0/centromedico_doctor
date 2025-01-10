@@ -202,7 +202,6 @@ namespace CentromedicoDoctor
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/citas")))
                             {
-                                // Read the token out of the query string
                                 context.Token = accessToken;
                             }
                             return Task.CompletedTask;
@@ -217,19 +216,19 @@ namespace CentromedicoDoctor
 
             });
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo
-                {
-                    Title = "Centro Medico Doctor Api",
-                    Version = "v1",
-                    Description = "Esta api describe las funciones de los diferentes endpoint que trabajan en la applicación que da vista al doctor y secretaria.",
-                });
-                // Set the comments path for the Swagger JSON and UI.
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+            /* services.AddSwaggerGen(c =>
+             {
+                 c.SwaggerDoc("v1", new OpenApiInfo
+                 {
+                     Title = "Centro Medico Doctor Api",
+                     Version = "v1",
+                     Description = "Esta api describe las funciones de los diferentes endpoint que trabajan en la applicación que da vista al doctor y secretaria.",
+                 });
+                 // Set the comments path for the Swagger JSON and UI.
+                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                 c.IncludeXmlComments(xmlPath);
+             });*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -238,24 +237,23 @@ namespace CentromedicoDoctor
             IWebHostEnvironment env,
             IDatabaseChangeNotificationService notificationService)
         {
-            /*if (env.IsDevelopment())
-            {*/
+            if (env.IsDevelopment())
+            {
             app.UseDeveloperExceptionPage();
-            /*      }
+                 }
                else
             {
                    app.UseExceptionHandler("/Error");
-                   // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                    app.UseHsts();
-               }*/
+               }
             app.UseCors("EnableCORS");
 
             app.UseHttpsRedirection();
-            app.UseSwagger();
+            /*app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Centro Medico Doctor API");
-            });
+            });*/
             app.UseStaticFiles();
             app.UseAuthentication();
 
@@ -278,8 +276,6 @@ namespace CentromedicoDoctor
 
             app.UseSpa(spa =>
             {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
 
                 spa.Options.SourcePath = "ClientApp";
 

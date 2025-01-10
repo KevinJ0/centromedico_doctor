@@ -24,10 +24,10 @@ namespace Doctor.Repository.Repositories
             _mapper = mapper;
         }
 
-        public async Task<cobertura_medicos> getAsync(int medicosID, int? segurosID, int? serviciosID)
+        public async Task<coberturaMedicoDTO> getAsync(int medicosID, int? segurosID, int? serviciosID)
         {
 
-            var r = await _db.cobertura_medicos.FirstOrDefaultAsync(x =>
+            var r = await  _db.cobertura_medicos.ProjectTo<coberturaMedicoDTO>(_mapper.ConfigurationProvider).FirstOrDefaultAsync(x =>
                                x.medicosID == medicosID &&
                                x.segurosID == segurosID &&
                                x.serviciosID == serviciosID);

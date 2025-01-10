@@ -17,6 +17,11 @@
   color: #4a93ff;
 }
 
+.mat-icon-check {
+  color: rgb(0, 199, 132);
+}
+
+
 .mat-dialog-content {
   display: flex;
   flex-direction: row;

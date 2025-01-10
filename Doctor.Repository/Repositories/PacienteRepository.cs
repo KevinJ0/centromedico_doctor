@@ -34,6 +34,16 @@ namespace Doctor.Repository.Repositories
             return r;
         }
 
+        public pacientes getByDocIdent(string doc_identidad)
+        {
+            var r = _db.pacientes
+                      .FirstOrDefault(p => p.doc_identidad == doc_identidad); //this is for add another row with the same ID tutor.
+
+            return r;
+        }
+
+     
+
         public async Task<string> getEmailAsync(int pacienteId)
         {
             var r = await _db.pacientes.Include("MyIdentityUsers")

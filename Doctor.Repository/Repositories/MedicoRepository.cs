@@ -172,5 +172,20 @@ namespace Doctor.Repository.Repositories
             return r != null ? true : false;
 
         }
+
+        public medicos getById(int medicoId)
+        {
+            try
+            {
+
+                medicos _medico = _db.medicos.FirstOrDefault(x => x.ID == medicoId);
+                return _medico;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

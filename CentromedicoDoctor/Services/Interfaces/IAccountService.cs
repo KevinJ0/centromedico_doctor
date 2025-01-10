@@ -13,5 +13,6 @@ namespace CentromedicoDoctor.Services.Interfaces
         Task<bool> changePassword(ResetPasswordDTO resetPassDto);
         Task addOrUpdateBalanceStartingAsync(balance_cajaDTO dto);
         Task confirmBalanceStartingAsync(int medicoId);
+        Task<bool> isBalanceStartingConfirmedAsync(int medicoId);
     }
 }
