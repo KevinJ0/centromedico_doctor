@@ -221,15 +221,9 @@ article .note {
 @media only screen and (max-width: 1100px) {
   .right-side .mat-card-content {
     grid-template-areas: "name lastName"
-<<<<<<< HEAD
       "telefono1 telefono1"
       "reach1 reach2"
       "telefono2 telefono2"
-=======
-      "telefono1 telefono1" 
-      "reach1 reach2"
-      "telefono2 telefono2" 
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
       "reach3 reach4"
       "hospital-contact hospital-contact"
       "extensions extensions"
@@ -238,7 +232,6 @@ article .note {
       " urlF urlF"
       "urlT urlT"
       "urlI urlI";
-<<<<<<< HEAD
 
 
   }
@@ -248,9 +241,3 @@ article .note {
 .progress-content {
   padding: 20px 0;
 }
-=======
-   
-
-  }
-}
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22

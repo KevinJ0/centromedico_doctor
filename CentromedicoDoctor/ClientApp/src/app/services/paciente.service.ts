@@ -1,9 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable } from "@angular/core";
-import { Paciente, UserInfo } from "../interfaces/InterfacesDto";
 import { BehaviorSubject, throwError, of, Observable } from "rxjs";
 import { map, catchError } from "rxjs/operators";
 import { Router } from "@angular/router";
+import { Paciente, UserInfo } from "../interfaces/InterfacesDto";
 @Injectable({
   providedIn: "root",
 })

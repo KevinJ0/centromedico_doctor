@@ -7,10 +7,7 @@ import { ImageCropperComponent } from '../image-cropper/image-cropper.component'
 import { base64ToFile } from 'ngx-image-cropper';
 import { SnackBarService } from 'src/app/services/snack-bar.service';
 import { ResetPasswordComponent } from '../reset-password/reset-password.component';
-<<<<<<< HEAD
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
-=======
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 var mimeDb = require("mime-db");
 
 @Component({
@@ -28,11 +25,8 @@ export class UserSettingsComponent implements OnInit {
   ext_tele = [];
   isExtDuplicated: boolean;
   currentUserRole$ = this.accountSvc.currentUserRole;
-<<<<<<< HEAD
   mode: ProgressSpinnerMode = 'indeterminate';
   loading: boolean = false;
-=======
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -44,11 +38,7 @@ export class UserSettingsComponent implements OnInit {
 
 
     this.currentUserRole$.subscribe(r => {
-<<<<<<< HEAD
       this.userRole = r;
-=======
-      this.userRole = r; 
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
     });
 
     this.userFormGroup = this._formBuilder.group({
@@ -79,10 +69,7 @@ export class UserSettingsComponent implements OnInit {
 
 
   ngOnInit(): void {
-<<<<<<< HEAD
     this.loading = true;
-=======
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
     this.accountSvc.GetUserInfo().subscribe(
       (r: medico) => {
@@ -108,12 +95,9 @@ export class UserSettingsComponent implements OnInit {
       (err) => {
         console.error(err);
         this.openSnackBar.open("Error al tratar de traer los datos 😥", 1);
-<<<<<<< HEAD
       },
       () => {
         this.loading = false;
-=======
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
       }
     );
 
@@ -135,7 +119,6 @@ export class UserSettingsComponent implements OnInit {
 
       this.userFormGroup.get("ext1Control").setErrors({
         notUnique: true
-<<<<<<< HEAD
       });
 
       this.userFormGroup.get("ext2Control").setErrors({
@@ -225,96 +208,6 @@ export class UserSettingsComponent implements OnInit {
     );
 
   }
-=======
-      });
-
-      this.userFormGroup.get("ext2Control").setErrors({
-        notUnique: true
-      });
-
-      this.userFormGroup.get("ext3Control").setErrors({
-        notUnique: true
-      });
-
-      this.userFormGroup.get("ext1Control").markAsTouched();
-      this.userFormGroup.get("ext2Control").markAsTouched();
-      this.userFormGroup.get("ext3Control").markAsTouched();
-    } else {
-
-      this.userFormGroup.get("ext1Control").setErrors(null);
-      this.userFormGroup.get("ext2Control").setErrors(null);
-      this.userFormGroup.get("ext3Control").setErrors(null);
-
-      this.userFormGroup.get("ext1Control").markAsUntouched();
-      this.userFormGroup.get("ext2Control").markAsUntouched();
-      this.userFormGroup.get("ext3Control").markAsUntouched();
-    }
-
-    console.log('ha cambiado la extension')
-
-  }
-
-  Submit(): void {
-
-
-    if (this.userFormGroup.invalid) {
-      console.error("Formulario incompleto");
-      console.log(this.userFormGroup.get("ext1Control").errors)
-      this.openSnackBar.open("Hay campos que necesitan ser completados.", 1);
-
-      return;
-    }
-
-    let telefono1_contact = (this.userFormGroup.get("telefono1ReachControl").value ? "w" : "") +
-      (this.userFormGroup.get("telefono2ReachControl").value ? "t" : "");
-
-    let telefono2_contact = (this.userFormGroup.get("telefono3ReachControl").value ? "w" : "") +
-      (this.userFormGroup.get("telefono4ReachControl").value ? "t" : "");
-
-    if (this.isExtDuplicated) {
-      return;
-    }
-
-    const formData = new FormData()
-
-    if (this.isProfiPhotoChanged) {
-      const imagePath = base64ToFile(this.croppedImage);
-
-      const imgFile = new File([imagePath], 'profilePhoto.' + mimeDb[imagePath.type].extensions[0]);
-
-      formData.append('ProfilePhoto', imgFile, imgFile.name);
-    }
-
-    const _form = { ... this.userFormGroup };
-
-    formData.append('nombre', _form.value.nameControl);
-    formData.append('apellido', _form.value.lastNameControl ?? "");
-    formData.append('telefono1', _form.value.telefono1Control ?? "");
-    formData.append('telefono2', _form.value.telefono2Control ?? "");
-    formData.append('telefono1_contact', telefono1_contact);
-    formData.append('telefono2_contact', telefono2_contact);
-    formData.append('exten_tel_arrstr', this.ext_tele.toString());
-    formData.append('consultorio', _form.value.consultingRoomControl ?? "");
-    formData.append('url_facebook', _form.value.urlFacebookControl ?? "");
-    formData.append('url_twitter', _form.value.urlTwitterControl ?? "");
-    formData.append('url_instagram', _form.value.urlInstagramControl ?? "");
-
-
-    this.accountSvc.SaveUserInfo(formData).subscribe(
-      (r) => {
-        console.log(r);
-        if (r)
-          this.openSnackBar.open("Actualizado correctamente 👌", 0);
-
-      }, (err) => {
-        this.openSnackBar.open("Ha ocurrido un error 😥", 1);
-        console.error(err);
-      });
-
-  }
-
-
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
 
   fileChangeEvent(event: any): void {

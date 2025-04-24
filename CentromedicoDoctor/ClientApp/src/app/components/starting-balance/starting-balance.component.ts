@@ -46,7 +46,7 @@ export class StartingBalanceComponent implements OnInit {
 
     this.balanceFormGroup = this._formBuilder.group({
       balanceControl: [0, Validators.required],
-    secretariaControl: ["", Validators.required],
+      secretariaControl: ["", Validators.required],
     });
 
     this.currentUserRole$.subscribe(
@@ -142,7 +142,7 @@ export class StartingBalanceComponent implements OnInit {
         this.balanceFormGroup.get("balanceControl").setValue("");
         this.openSnackBar.open(err, 1, "Cerrar", false);
         this.disableSetBalance = false;
-}, () => {
+      }, () => {
         this.disableSetBalance = false;
       });
   }

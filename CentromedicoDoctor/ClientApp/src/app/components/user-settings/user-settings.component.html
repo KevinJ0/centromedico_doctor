@@ -9,24 +9,14 @@
 
 
     <mat-tab-group mat-align-tabs="start">
-<<<<<<< HEAD
 
 
-=======
-      
-      
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
       <mat-tab *ngIf="userRole == 'Doctor'" label="Mi Perfil">
         <ng-template matStepLabel>
           <mat-icon>manage_accounts</mat-icon>Mi Perfil
         </ng-template>
-<<<<<<< HEAD
 
         <form [formGroup]="userFormGroup" class="form-group _row" *ngIf="!loading else load">
-=======
-        
-        <form [formGroup]="userFormGroup" class="form-group _row">
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
           <div class="account-container" style="margin-top:10px">
 
@@ -46,11 +36,6 @@
                   </label>
                 </div>
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
                 <h5>Usuario</h5>
 
                 <div class="user-name">
@@ -210,18 +195,14 @@
         <app-starting-balance></app-starting-balance>
       </mat-tab>
 
-<<<<<<< HEAD
+      <<<<<<< HEAD=======>>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
+        <mat-tab *ngIf="userRole == 'Doctor'" label="Especialidades">
+          <ng-template matStepLabel>
+            <mat-icon>local_hospital</mat-icon>
+          </ng-template>
+          <app-specialities></app-specialities>
+        </mat-tab>
 
-=======
-      
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
-      <mat-tab *ngIf="userRole == 'Doctor'" label="Especialidades">
-        <ng-template matStepLabel>
-          <mat-icon>local_hospital</mat-icon>
-        </ng-template>
-        <app-specialities></app-specialities>
-      </mat-tab>
-      
     </mat-tab-group>
   </div>
 

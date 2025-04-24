@@ -17,9 +17,9 @@ export class SelectDoctorComponent implements OnInit {
     private router: Router,
     public accountSvc: AccountService) {
 
-       
+
     this.medicos = this.router.getCurrentNavigation().extras?.state["medicos"]; // debe de tener algo
-    
+
     if (!this.medicos)
       this.router.navigate(['login']);
 
@@ -27,5 +27,5 @@ export class SelectDoctorComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  
+
 }

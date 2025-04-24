@@ -99,11 +99,8 @@ export class CitaService {
   }
 
   GetCitaList(inicio = "", fin = "", estado = "", servicioId = "", seguroId = ""): Observable<citaCalendar[]> {
-<<<<<<< HEAD
     console.log(this.baseUrl + `api/citas/getCitasList?medicoid=${this.GetMedicoId}&inicio=${inicio}&fin=${fin}&seguroId=${seguroId}&servicioId=${servicioId}&estado=${estado}`);
 
-=======
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
     return this.http
       .get<citaCalendar[]>(
         this.baseUrl + `api/citas/getCitasList?medicoid=${this.GetMedicoId}&inicio=${inicio}&fin=${fin}&seguroId=${seguroId}&servicioId=${servicioId}&estado=${estado}`
@@ -136,11 +133,7 @@ export class CitaService {
       );
   }
 
-<<<<<<< HEAD
   CreateCita(_cita: CitaCreate): Observable<any> {
-=======
-  CreateCita(_cita: cita): Observable<any> {
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
     console.info(_cita);
     try {
       return this.http.post<citaResult>(this.baseUrl +

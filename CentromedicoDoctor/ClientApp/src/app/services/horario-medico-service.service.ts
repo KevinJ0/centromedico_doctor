@@ -21,7 +21,7 @@ export class HorarioMedicoService {
 
 
   GetHoursList(fecha: Date, medicoID: number): Observable<any> {
- 
+
     try {
       return this.http.get<any>(this.baseUrl +
         `api/horarios_medicos/getHoursList?fecha_hora=${fecha.toISOString()}&medicoID=${medicoID}`)

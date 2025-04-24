@@ -6,8 +6,8 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
 export function getBaseUrl() {
-  //return "https://kevinj12-001-site1.ftempurl.com/";
   return "https://localhost:44327/";
+  //return "http://centromedicox5-001-site1.ltempurl.com/";
   return document.getElementsByTagName('base')[0].href;
 }
 

@@ -112,27 +112,26 @@ export class DashboardComponent implements OnInit {
     this.setCitaList();
 
     //me conecto a las notificaciones
-    if (this.signalRSvc.hubConnection?.state != HubConnectionState.Connected)
-      this.signalRSvc.Connect().then(() => {
-        let groups = JSON.parse(sessionStorage.getItem("groups"));
-        let groupCitaName: string = groups?.CitasNotificacion;
+    this.signalRSvc.Connect().then(() => {
+      const groups = JSON.parse(sessionStorage.getItem("groups"));
+      const groupCitaName: string = groups?.CitaNotificacion;
+      const medicoId = Number(sessionStorage.getItem("medicoId"));
 
-        if (groupCitaName)
-          // me conecto al grupo de notificaciones de citas y pacientes
-          this.signalRSvc.hubConnection.on(groupCitaName, (msj) => {
-
-            this.zone.run(() => {
-              if (this.router.url.includes("dashboard")) {
-                this._snackBar.open("Han ocurrido cambios en los registros", "Actualizar", {
-                  horizontalPosition: "right"
-                }).onAction().subscribe((v) => {
-                  this.setCitaList();
-                  console.log(v);
-                });
-              }
-            });
+      if (groupCitaName && medicoId) {
+        this.signalRSvc.joinCitaGroup(groupCitaName, medicoId, (msj) => {
+          this.zone.run(() => {
+            if (this.router.url.includes("dashboard")) {
+              this._snackBar.open("Han ocurrido cambios en los registros", "Actualizar", {
+                horizontalPosition: "right"
+              }).onAction().subscribe(() => {
+                this.setCitaList();
+              });
+            }
           });
-      });
+        });
+      }
+    });
+
 
 
   }

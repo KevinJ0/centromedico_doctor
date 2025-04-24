@@ -5,7 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { SignalrCustomService } from './signalr-custom.service';
 import { GrupoService } from './grupo.service';
-import { group } from '../interfaces/InterfacesDto';
+import { CustomError, group, medico, ResetPassword, secretaria, TokenResponse, UserInfo } from '../interfaces/InterfacesDto';
 
 @Injectable({
   providedIn: 'root'

@@ -1,9 +1,5 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-<<<<<<< HEAD
 import { FormGroup, FormBuilder } from '@angular/forms';
-=======
-import { FormGroup,  FormBuilder } from '@angular/forms';
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
 import * as _moment from 'moment';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,10 +18,6 @@ const moment = _moment;
   styleUrls: ['./table-appointments.component.css']
 })
 export class TableAppointmentsComponent implements OnInit, AfterViewInit {
-  //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-  //Add 'implements AfterViewInit' to the class.
-
-
 
   filterFormGroup: FormGroup;
   range: FormGroup;
@@ -88,16 +80,9 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
 
 
     this.filterFormGroup.get("statusControl").valueChanges.subscribe((v) => this.getCitas());
-<<<<<<< HEAD
     try {
 
       this.dataSource.filterPredicate = (data, filter) => {
-=======
-
-    this.dataSource.filterPredicate = (data, filter) => {
-
-    //  console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
->>>>>>> 720550d4bc81a63456f83101978a00380b9b2f22
 
         //  console.log(_moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a'));
 
