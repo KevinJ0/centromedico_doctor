@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Centromedico.Database.Context;
-using Centromedico.Database.DbModels;
-using System.Net;
 using CentromedicoDoctor.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Centromedico.Database.DbModels;
 
 namespace CentromedicoDoctor.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Secretary, Doctor, Patient")]
     [ApiController]
     public class GruposController : ControllerBase
     {
@@ -45,7 +40,23 @@ namespace CentromedicoDoctor.Controllers
 
             }
         }
+        [HttpGet("[action]")]
+        public async Task<grupo_doctor_secretaria> getGrupoTurnoAsync(int medicoID)
+        {
+            try
+            {
 
+                var result = await _grupoSvc.getGrupoTurnoAsync(medicoID);
+                return result;
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        
 
     }
 }

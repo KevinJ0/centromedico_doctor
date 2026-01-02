@@ -1,6 +1,4 @@
-﻿using Centromedico.Database.DbModels;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 namespace Doctor.DTO
 {

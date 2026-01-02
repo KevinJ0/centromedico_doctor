@@ -1,8 +1,10 @@
 ﻿using Centromedico.Database.Context;
 using Centromedico.Database.DbModels;
+using CentromedicoDoctor.Exceptions;
 using CentromedicoDoctor.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,17 +39,31 @@ namespace CentromedicoDoctor.Services
                .FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
             var groups = _db.grupo_doctor_secretaria
-                  .Where(x => x.MyIdentityUsers == user && x.medicosID == medicoID)
+                  .Where(x => x.type == "CitaNotificacion" && x.medicosID == medicoID)
                     .Select(g => new
                     {
                         type = g.type,
                         grup_name = g.group_name
-
-
                     })
                     .ToDictionary(kvp => kvp.type, kvp => kvp.grup_name);
 
             return groups;
+        }
+
+        public async Task<grupo_doctor_secretaria> getGrupoTurnoAsync(int medicoID)
+        {
+            MyIdentityUser user = await _userManager
+               .FindByNameAsync(_httpContextAccessor.HttpContext.User
+               .FindFirst(ClaimTypes.NameIdentifier)?.Value);
+
+            var group = await _db.grupo_doctor_secretaria
+                .Where(x => x.type == "TurnoNotificacion" && x.medicosID == medicoID).FirstOrDefaultAsync();
+                   
+
+            if (group == null)
+                throw new NoContentException();
+
+            return group;
         }
     }
 }

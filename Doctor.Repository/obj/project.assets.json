@@ -7240,7 +7240,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
       "net5.0": {
@@ -7303,7 +7304,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   },
@@ -7312,7 +7313,7 @@
       "code": "NU1902",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "El paquete \"Microsoft.AspNetCore.Authentication.JwtBearer\" 5.0.5 tiene una vulnerabilidad de gravedad moderada conocida, https://github.com/advisories/GHSA-q7cg-43mg-qp69",
+      "message": "Package 'Microsoft.AspNetCore.Authentication.JwtBearer' 5.0.5 has a known moderate severity vulnerability, https://github.com/advisories/GHSA-q7cg-43mg-qp69",
       "libraryId": "Microsoft.AspNetCore.Authentication.JwtBearer",
       "targetGraphs": [
         "net5.0"

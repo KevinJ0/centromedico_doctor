@@ -19,13 +19,13 @@ namespace CentromedicoDoctor.Services
     public class SqlDependencyService : IDatabaseChangeNotificationService
     {
         private readonly IConfiguration _configuration;
-        private readonly IHubContext<NotificationCitaHub> _hubContext;
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly MyDbContext _db;
 
         public SqlDependencyService(
             MyDbContext db,
             IConfiguration configuration,
-            IHubContext<NotificationCitaHub> hubContext)
+            IHubContext<NotificationHub> hubContext)
         {
             _configuration = configuration;
             _db = db;
@@ -35,11 +35,9 @@ namespace CentromedicoDoctor.Services
 
         public void Config()
         {
-            string connString = _configuration.GetConnectionString("DefaultConnection");
-
-           // new ServiceBrokerHelper().EnableServiceBroker(connString, "centromedico");
             SubscribePacienteTableOnChange();
             SubscribeCitaTableOnChange();
+            SubscribeTurnosTableOnChange();
 
         }
 
@@ -85,6 +83,26 @@ namespace CentromedicoDoctor.Services
             }
         }
 
+        private async void SubscribeTurnosTableOnChange()
+        {
+
+            string connString = _configuration.GetConnectionString("DefaultConnection");
+
+            try
+            {
+
+                var conn = new SqlTableDependency<turnos>(connString);
+
+                conn.OnChanged += TurnosCambio;
+                conn.Start();
+
+
+            }
+            catch (System.Exception)
+            {
+                // Log to administration
+            }
+        }
 
 
         private void CitaCambio(object sender, RecordChangedEventArgs<citas> e)
@@ -92,7 +110,6 @@ namespace CentromedicoDoctor.Services
 
             try
             {
-
 
                 if (e.ChangeType != ChangeType.None)
                 {
@@ -108,12 +125,12 @@ namespace CentromedicoDoctor.Services
                         //Obtenemos el nombre del grupo principal que llega el médico
 
                         groupname = context.grupo_doctor_secretaria
-                       .FirstOrDefault(g => g.type == "CitasNotificacion" && g.medicosID == medicoID)?
+                       .FirstOrDefault(g => g.type == "CitaNotificacion" && g.medicosID == medicoID)?
                        .group_name;
 
                         if (!string.IsNullOrWhiteSpace(groupname))
                         {
-                            _hubContext.Clients.Groups(groupname).SendAsync(groupname, "Ha ocurrido cambios en medico codigo: " + medicoID);
+                            _hubContext.Clients.Groups(groupname).SendAsync(groupname, "Ha ocurrido cambios en las citas del médico con el código: " + medicoID);
                         }
                     }
 
@@ -147,13 +164,13 @@ namespace CentromedicoDoctor.Services
                         if (medico != null)
                         {
                             groupname = context.grupo_doctor_secretaria
-                            .FirstOrDefault(g => g.type == "CitasNotificacion" && g.medicosID == medico.ID)
+                            .FirstOrDefault(g => g.type == "CitaNotificacion" && g.medicosID == medico.ID)
                             .group_name;
 
                             if (!string.IsNullOrWhiteSpace(groupname))
                             {
                                 _hubContext.Clients.Groups(groupname).SendAsync(groupname,
-                                    "Ha ocurrido cambios en el paciente codigo: " + changedEntity.ID);
+                                    "Ha ocurrido cambios en el paciente del código: " + changedEntity.ID);
                             }
                         }
                     }
@@ -167,5 +184,44 @@ namespace CentromedicoDoctor.Services
             }
         }
 
+        private void TurnosCambio(object sender, RecordChangedEventArgs<turnos> e)
+        {
+
+            try
+            {
+
+                if (e.ChangeType != ChangeType.None)
+                {
+                    
+                    string connString = _configuration.GetConnectionString("DefaultConnection");
+                    var changedEntity = e.Entity;
+
+                    string groupname;
+                    int medicoID = changedEntity.medicosID;
+
+                    using (var context = new MyDbContext(connString))
+                    {
+
+
+                        groupname = context.grupo_doctor_secretaria
+                       .FirstOrDefault(g => g.type == "TurnoNotificacion" && g.medicosID == medicoID)?
+                       .group_name;
+
+                        if (!string.IsNullOrWhiteSpace(groupname))
+                        {
+                            _hubContext.Clients.Groups(groupname).SendAsync(groupname, "cambio en los turnos"); //esto de turno solo es para notificar realmente
+                        }
+                    }
+
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
     }
+  
 }

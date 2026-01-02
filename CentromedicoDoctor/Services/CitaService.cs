@@ -32,13 +32,12 @@ namespace CentromedicoDoctor.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IHorarioMedicoRepository _horarioMedicoRepo;
         private readonly IMedicoRepository _medicoRepo;
-        private readonly ISecretariaRepository _secretaryRepo;
         private readonly IServicioRepository _servicioRepo;
         private readonly ICoberturaRepository _coberturaRepo;
         private readonly ISeguroRepository _seguroRepo;
         private readonly IPacienteRepository _pacienteRepo;
         private readonly IHorarioMedicoReservaRepository _horarioMRRepo;
-        private readonly IHubContext<NotificationCitaHub> _hubContext;
+        private readonly ITurnoService _turnoSvc;
 
         public CitaService(
             IHorarioMedicoReservaRepository horarioMRRepo,
@@ -51,20 +50,17 @@ namespace CentromedicoDoctor.Services
             IHttpContextAccessor httpContextAccessor,
             INotificationService notificationService,
             UserManager<MyIdentityUser> userManager,
-            ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepo,
             MyDbContext db,
             IMapper mapper,
-            IHubContext<NotificationCitaHub> hubContext)
+            ITurnoService turnoSvc)
         {
             _pacienteRepo = pacienteRepo;
             _horarioMedicoRepo = horarioMedicoRepo;
-            _hubContext = hubContext;
             _seguroRepo = seguroRepo;
             _horarioMRRepo = horarioMRRepo;
             _coberturaRepo = coberturaRepo;
             _servicioRepo = servicioRepo;
-            _secretaryRepo = secretaryRepo;
             _medicoRepo = medicoRepo;
             _horarioMedicoRepo = horarioMedicoRepo;
             _citaRepo = citaRepo;
@@ -74,6 +70,7 @@ namespace CentromedicoDoctor.Services
             _notificationService = notificationService;
             _db = db;
             _mapper = mapper;
+            _turnoSvc = turnoSvc;
         }
 
 
@@ -84,7 +81,7 @@ namespace CentromedicoDoctor.Services
 
             {
 
-                int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
+                int medicoID = await _medicoRepo.validMedicoIdAsync(medicoId);
 
                 List<citaDTO> citaslst = await _citaRepo.getCitasListAsync(medicoID, inicio, fin, estado, servicioId, seguroId);
 
@@ -334,7 +331,7 @@ namespace CentromedicoDoctor.Services
                 int medicoID = formdata.medicoID.Value;
                 decimal descuento = formdata.descuento is not null ? formdata.descuento.Value : decimal.Zero;
 
-                medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicoID);
+                medicoID = await _medicoRepo.validMedicoIdAsync(formdata.medicoID);
 
                 citas _cita = _db.citas.Include(y => y.pacientes).FirstOrDefault(x => x.ID == formdata.ID
                                                             && x.medicosID == medicoID);
@@ -369,10 +366,15 @@ namespace CentromedicoDoctor.Services
 
                 _cita.observacion = String.IsNullOrWhiteSpace(formdata.observacion) ? null : formdata.observacion;
                 _cita.estado = false;
+                _cita.deleted = true;
 
                 _citaRepo.Update(_cita);
                 var r = _db.SaveChanges();
                 // si hago ambos juntos solo hace el remove
+
+                //actulizo los turnos
+                await _turnoSvc.SaveTurnoAsync(_cita.turno, _cita.medicosID);
+
 
 
                 if (r <= 0)
@@ -390,7 +392,7 @@ namespace CentromedicoDoctor.Services
         {
             try
             {
-                int medicoID = _medicoRepo.getMedicoIdAsync(medicoId).Result;
+                int medicoID = _medicoRepo.validMedicoIdAsync(medicoId).Result;
 
                 citaDTO cita = _mapper.Map<citaDTO>(_citaRepo.get(Id, medicoID));
 
@@ -413,7 +415,7 @@ namespace CentromedicoDoctor.Services
         public async Task<citaFormDTO> getFormCitaAsync(int citaId, int medicoId)
         {
 
-            int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
+            int medicoID = await _medicoRepo.validMedicoIdAsync(medicoId);
             medicos medico = _medicoRepo.validateAndGetId(medicoID);
             //Tiene que existir al menos 1 cobertura por defecto que es la privada.
             var coberturaslst = await _coberturaRepo.getAllByDoctorIdAsync(medicoID);
@@ -461,7 +463,7 @@ namespace CentromedicoDoctor.Services
             try
             {
 
-                int medicoID = await _medicoRepo.getMedicoIdAsync(medicoId);
+                int medicoID = await _medicoRepo.validMedicoIdAsync(medicoId);
 
                 citas cita = await _db.citas.Include(x => x.pacientes).FirstOrDefaultAsync(c => c.ID == citaId && c.medicosID == medicoID);
 
@@ -497,7 +499,7 @@ namespace CentromedicoDoctor.Services
             try
             {
 
-                int medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicosID);
+                int medicoID = await _medicoRepo.validMedicoIdAsync(formdata.medicosID);
 
                 //Validate incoming data
                 medicos medico = _medicoRepo.validateAndGetId(medicoID);
@@ -820,7 +822,7 @@ namespace CentromedicoDoctor.Services
             {
 
 
-                int medicoID = await _medicoRepo.getMedicoIdAsync(formdata.medicosID);
+                int medicoID = await _medicoRepo.validMedicoIdAsync(formdata.medicosID);
 
                 //Validate incoming data
                 medicos medico = _medicoRepo.validateAndGetId(medicoID);
@@ -936,6 +938,10 @@ namespace CentromedicoDoctor.Services
                 throw;
             }
         }
+
+    
+
+
         private string generateCV(string value1, string value2)
         {
 

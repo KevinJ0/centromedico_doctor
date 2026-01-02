@@ -35,7 +35,7 @@ namespace Doctor.Repository.Repositories
 
             try
             {
-                int medicoID = _medicoRepo.getMedicoIdAsync(null).Result;
+                int medicoID = _medicoRepo.validMedicoIdAsync(null).Result;
 
                 List<especialidadDTO> r = _db.especialidades_medicos.Include("especialidades")
                     .Where(es => es.medicosID == medicoID)

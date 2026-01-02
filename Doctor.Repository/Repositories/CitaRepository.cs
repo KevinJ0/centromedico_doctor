@@ -77,16 +77,29 @@ namespace Doctor.Repository.Repositories
             try
             {
 
-                List<citaDTO> citaslst = _db.citas
-                    .Include(m => m.medicos).ThenInclude(hm => hm.horarios_medicos)
+                List<citaDTO> citaslst = await _db.citas
+                        .Include(c => c.medicos)
+                        .ThenInclude(m => m.turnos)
+                        .Include(c => c.medicos)
+                        .ThenInclude(m => m.horarios_medicos)
                     .Where(p => p.medicosID == medicoId
-                                && !p.deleted 
+                                && !p.deleted
                                 && p.serviciosID == (servicioId == null ? p.serviciosID : servicioId.Value)
                                 && p.segurosID == (seguroId == null ? p.segurosID : seguroId.Value)
                                 && p.fecha_hora.Date >= (inicio == null ? p.fecha_hora.Date : inicio.Value.Date)
                                 && p.fecha_hora.Date <= (fin == null ? p.fecha_hora.Date : fin.Value.Date)
                                 && p.estado == (estado == null ? p.estado : estado.Value))
-                    .ProjectTo<citaDTO>(_mapper.ConfigurationProvider).ToList();
+                    .ProjectTo<citaDTO>(_mapper.ConfigurationProvider).ToListAsync();
+
+                citaslst.ForEach(citaDTO =>
+                {
+                    if (int.TryParse(citaDTO.medicosID.ToString(), out int _medicoID))
+                    {
+                        citaDTO.turno_paciente.cant_pacientes_adelante = getCantCitasPendientes(citaDTO.fecha_hora, _medicoID);
+                        citaDTO.turno_paciente.ultima_entrada = getLastTurnByDate(citaDTO.fecha_hora, _medicoID);
+                        citaDTO.turno_paciente.primera_entrada = getFirstTurnByDate(citaDTO.fecha_hora, _medicoID);
+                    }
+                });
 
                 return citaslst;
             }
@@ -96,6 +109,29 @@ namespace Doctor.Repository.Repositories
             }
         }
 
+        public DateTime? getFirstTurnByDate(DateTime fecha_hora, int medicoID)
+        {
+            var res = _db.citas
+                         .Where(x => x.fecha_hora.Date == fecha_hora.Date
+                                  && x.medicosID == medicoID
+                                  && x.deleted)
+                         .Min(c => c.deleted_date);
+
+            return res;
+
+        }
+
+        public DateTime? getLastTurnByDate(DateTime fecha_hora, int medicoID)
+        {
+            var res = _db.citas
+                         .Where(x => x.fecha_hora.Date == fecha_hora.Date
+                                  && x.medicosID == medicoID
+                                  && x.deleted)
+                         .Max(c => c.deleted_date);
+
+            return res;
+
+        }
 
         private string getCV(MyIdentityUser user)
         {
@@ -129,7 +165,17 @@ namespace Doctor.Repository.Repositories
             }
         }
 
- 
+        public int getCantCitasPendientes(DateTime fecha_hora_cita, int medicosID)
+        {
+            var res = _db.citas.Where(x =>
+                        !x.deleted
+                        && x.fecha_hora.Date == fecha_hora_cita.Date
+                        && x.medicosID == medicosID
+                        && x.fecha_hora.TimeOfDay < fecha_hora_cita.TimeOfDay
+                        ).Count();
+
+            return res;
+        }
         public void Remove(citas entity)
         {
             try

@@ -63,7 +63,6 @@ namespace Doctor.DTO
         public int turno { get; set; }
         public bool estado{ get; set; }
         public TimeSpan appointmentDuration { get; set; }
-
-
+        public turnoDTO turno_paciente { get; set; }
     }
 }

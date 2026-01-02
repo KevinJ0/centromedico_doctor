@@ -162,9 +162,9 @@ namespace CentromedicoDoctor.Services
                 medicosOrMedicoId = roles.FirstOrDefault() == "Secretary" ? _db.medicos.Include("secretarias_medicos")
                                                                                     .Where(x => x.secretarias_medicos
                                                                                                 .Any(s => s.secretarias.MyIdentityUsers == user))
-                                                                                    .ProjectTo<medicoDTO>(_mapper.ConfigurationProvider).ToList() 
+                                                                                    .ProjectTo<medicoDTO>(_mapper.ConfigurationProvider).ToList()
                                                                           : _db.medicos.FirstOrDefault(x => x.MyIdentityUsers == user).ID,
-                                                                   
+
 
             };
         }
@@ -201,25 +201,21 @@ namespace CentromedicoDoctor.Services
         {
             try
             {
-                // check if the received refreshToken exists for the given clientId
                 var rt = _db.token
                     .FirstOrDefault(t =>
                     t.ClientId == _configuration["Authorization:ClientId"]
                     && t.Value == model.RefreshToken.ToString());
 
                 if (rt == null)
-                    // refresh token not found or invalid (or invalid clientId)
                     throw new UnauthorizedException("El refresh token no se ha encontrado o es inválido.");
 
                 // check if refresh token is expired
                 if (rt.ExpiryTime < DateTime.UtcNow)
                     throw new UnauthorizedException("El resfresh token ha expirado.");
 
-                // check if there's an user with the refresh token's userId
                 var user = await _userManager.FindByIdAsync(rt.UserId);
 
                 if (user == null)
-                    // UserId not found or invalid
                     throw new UnauthorizedException("El userId no es valido.");
 
                 // generate a new refresh token 
@@ -229,10 +225,8 @@ namespace CentromedicoDoctor.Services
                 // invalidate the old refresh token (by deleting it)
                 _tokenRepo.Remove(rt);
 
-                // add the new refresh token
                 _tokenRepo.Add(rtNew);
 
-                // persist changes in the DB
                 _db.SaveChanges();
 
 

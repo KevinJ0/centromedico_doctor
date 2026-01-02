@@ -30,6 +30,8 @@ using CentromedicoDoctor.Services.Helpers;
 using CentromedicoDoctor.Hubs;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using Amazon.Runtime;
+using Amazon;
 
 namespace CentromedicoDoctor
 
@@ -46,8 +48,6 @@ namespace CentromedicoDoctor
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // configure strongly typed settings object
-
 
             services.AddHttpContextAccessor();
 
@@ -77,24 +77,49 @@ namespace CentromedicoDoctor
             services.AddScoped<ISecretariaRepository, SecretariaRepository>();
             services.AddScoped<IEspecialidadRepository, EspecialidadRepository>();
             services.AddScoped<IBalanceRepository, BalanceRepository>();
+            services.AddScoped<ITurnoService, TurnoService>();
+            services.AddScoped<ITurnoRepository, TurnoRepository>();
             services.AddScoped<IDatabaseChangeNotificationService, SqlDependencyService>();
-            
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSingleton<IS3Service, S3Service>();
-            services.AddAWSService<IAmazonS3>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            //services.AddSingleton<IS3Service, S3Service>();
+
+            string accessKey = Configuration["AWS:AccessKey"];
+            string secretKey = Configuration["AWS:SecretKey"];
+            //string region = Configuration["AWS:Region"];
+
+
+            var awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
+            var s3Client = new AmazonS3Client(awsCredentials, RegionEndpoint.USEast2);
+
+            services.AddSingleton<IAmazonS3>(s3Client);
+
+            //services.AddDefaultAWSOptions(Configuration.GetAWSOptions("AWS"));
+            //services.AddAWSService<IAmazonS3>();
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
 
             services.AddCors(options =>
             {
                 options.AddPolicy("EnableCORS", builder =>
                 {
-                    builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed((Host) => true).AllowCredentials();
+                var allowedOrigins = new string[] { "http://localhost:4211", "http://localhost:4200" };
+
+                builder.WithOrigins(allowedOrigins)
+                              .AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .AllowCredentials();
+
+                   /*
+                    builder.AllowAnyHeader()
+.AllowAnyMethod()
+.SetIsOriginAllowed((Host) => true)
+.AllowCredentials();*/
+
                 });
             });
-            services.AddSignalR();
+            services.AddSignalR(opt => opt.EnableDetailedErrors = true);
 
-            services.AddControllersWithViews();
+            //services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -137,7 +162,6 @@ namespace CentromedicoDoctor
 
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-
 
 
             var mapperConfig = new MapperConfiguration(m => m.AddProfile(new MappingProfile()));
@@ -200,7 +224,7 @@ namespace CentromedicoDoctor
 
                             // If the request is for our hub...
                             var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/citas")))
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/notificacion")))
                             {
                                 context.Token = accessToken;
                             }
@@ -212,48 +236,28 @@ namespace CentromedicoDoctor
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("RequireLoggedIn",
-                    policy => policy.RequireRole("Doctor", "Secretary").RequireAuthenticatedUser());
+                    policy => policy.RequireRole("Doctor", "Secretary", "Patient").RequireAuthenticatedUser());
+
 
             });
+        
 
-            /* services.AddSwaggerGen(c =>
-             {
-                 c.SwaggerDoc("v1", new OpenApiInfo
-                 {
-                     Title = "Centro Medico Doctor Api",
-                     Version = "v1",
-                     Description = "Esta api describe las funciones de los diferentes endpoint que trabajan en la applicación que da vista al doctor y secretaria.",
-                 });
-                 // Set the comments path for the Swagger JSON and UI.
-                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                 c.IncludeXmlComments(xmlPath);
-             });*/
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(
             IApplicationBuilder app,
             IWebHostEnvironment env,
             IDatabaseChangeNotificationService notificationService)
         {
-            if (env.IsDevelopment())
-            {
+
+
             app.UseDeveloperExceptionPage();
-                 }
-               else
-            {
-                   app.UseExceptionHandler("/Error");
-                   app.UseHsts();
-               }
-            app.UseCors("EnableCORS");
+
+
+            app.UseCors("EnableCORS"); 
 
             app.UseHttpsRedirection();
-            /*app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Centro Medico Doctor API");
-            });*/
+
             app.UseStaticFiles();
             app.UseAuthentication();
 
@@ -270,7 +274,7 @@ namespace CentromedicoDoctor
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<NotificationCitaHub>("/citas").RequireAuthorization();
+                endpoints.MapHub<NotificationHub>("/notificacion").RequireAuthorization();
             });
 
 
@@ -281,8 +285,8 @@ namespace CentromedicoDoctor
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4212");
-                    // spa.UseAngularCliServer(npmScript: "start");
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    spa.UseAngularCliServer(npmScript: "start");
                 }
             });
 

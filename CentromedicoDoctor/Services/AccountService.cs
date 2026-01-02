@@ -31,7 +31,6 @@ namespace CentromedicoDoctor.Services
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IMapper _mapper;
         private readonly IBalanceRepository _balanceRepo;
-        private readonly IAccountRepository _accountRepo;
         private readonly IMedicoRepository _medicoRepos;
         private readonly ISecretariaRepository _secretaryRepo;
         private readonly IAmazonS3 _amazons3;
@@ -44,12 +43,10 @@ namespace CentromedicoDoctor.Services
             IMapper mapper,
             ISecretariaRepository secretaryRepo,
             IMedicoRepository medicoRepos,
-            IAmazonS3 amazonS3,
-            IAccountRepository accountRepo)
+            IAmazonS3 amazonS3)
         {
             _secretaryRepo = secretaryRepo;
             _balanceRepo = balanceRepo;
-            _accountRepo = accountRepo;
             _medicoRepos = medicoRepos;
             _roleManager = roleManager;
             _httpContextAccessor = httpContextAccessor;

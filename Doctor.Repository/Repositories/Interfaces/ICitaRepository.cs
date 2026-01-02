@@ -18,6 +18,11 @@ namespace Doctor.Repository.Repositories.Interfaces
         public void Add(citas entity);
         public void Update(citas entity);
         public void Remove(citas entity);
+        int getCantCitasPendientes(DateTime fecha_hora_cita, int medicosID);
+        DateTime? getFirstTurnByDate(DateTime fecha_hora, int medicoID);
+        DateTime? getLastTurnByDate(DateTime fecha_hora, int medicoID);
+
+
 
     }
 }

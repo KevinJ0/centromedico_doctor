@@ -16,6 +16,7 @@ namespace CentromedicoDoctor.Profiles
         public MappingProfile()
         {
 
+            CreateMap<turnos, turnoDTO>();
             CreateMap<MyIdentityUser, UserInfo>().ReverseMap();
 
             CreateMap<citas, citaPacienteDTO>()
@@ -47,6 +48,7 @@ namespace CentromedicoDoctor.Profiles
                 .ForMember(dest => dest.paciente_apellido_tutor, opt => opt.MapFrom(src => src.pacientes.apellido_tutor))
                 .ForMember(dest => dest.servicio_descrip, opt => opt.MapFrom(src => src.servicios.descrip))
                 .ForMember(dest => dest.seguro_descrip, opt => opt.MapFrom(src => src.seguros.descrip))
+                .ForMember(dest => dest.turno_paciente, opt => opt.MapFrom(src => src.medicos.turnos))
                 .ForMember(dest => dest.appointmentDuration, opt => opt.MapFrom(src => src.medicos.horarios_medicos.tiempo_cita));
 
             CreateMap<cobertura_medicos, coberturaDTO>()
@@ -122,7 +124,7 @@ namespace CentromedicoDoctor.Profiles
             .ForMember(x => x.telefono1_contact, opt => opt.MapFrom(src => src.telefono1_contact))
             .ForMember(x => x.telefono2_contact, opt => opt.MapFrom(src => src.telefono2_contact))
             .ForMember(x => x.ProfilePhoto, opt => opt.Condition(src => src.ProfilePhoto?.FileName != null))
-            .ForMember(x => x.ProfilePhoto, opt => opt.MapFrom( src => src.ProfilePhoto.FileName))
+            .ForMember(x => x.ProfilePhoto, opt => opt.MapFrom(src => src.ProfilePhoto.FileName))
             .ForMember(x => x.consultorio, opt => opt.MapFrom(src => src.consultorio))
             .ForMember(x => x.url_facebook, opt => opt.MapFrom(src => src.url_facebook))
             .ForMember(x => x.url_twitter, opt => opt.MapFrom(src => src.url_twitter))

@@ -102,7 +102,7 @@ namespace Doctor.Repository.Repositories
             }
         }
 
-        public async Task<int> getMedicoIdAsync(int? medicoID)
+        public async Task<int> validMedicoIdAsync(int? medicoID)
         {
             try
             {
@@ -112,8 +112,8 @@ namespace Doctor.Repository.Repositories
                  .FindByNameAsync(_httpContextAccessor.HttpContext.User
                  .FindFirst(ClaimTypes.NameIdentifier)?.Value);
 
-                bool isSecretary = _userManager.IsInRoleAsync(user, "Secretary").Result;
-                bool isDoctor = _userManager.IsInRoleAsync(user, "Doctor").Result;
+                bool isSecretary = await _userManager.IsInRoleAsync(user, "Secretary");
+                bool isDoctor = await _userManager.IsInRoleAsync(user, "Doctor");
 
                 int _medicoID = 0;
 

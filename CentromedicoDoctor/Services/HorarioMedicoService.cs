@@ -36,7 +36,7 @@ namespace CentromedicoDoctor.Services
             {
 
                 //get the  appointment list schedule of this doctor
-                int medicoID = _medicoRepo.getMedicoIdAsync(medicoId).Result;
+                int medicoID = _medicoRepo.validMedicoIdAsync(medicoId).Result;
 
                 var dateTimeDic = _horarioMedicoRepo.getAvailableHoursTurnDic(fecha_hora, medicoID);
 
