@@ -1,98 +1,103 @@
-header {
+:host {
+  display: block;
   width: 100%;
-  background-color: #313131;
-  color: whitesmoke;
-  display: grid;
-  grid-auto-flow: column;
-
-  position: fixed;
+  position: sticky;
   top: 0;
-  left: 0;
-  z-index: 999;
-  height: 60px;
-  align-items: center;
-
+  z-index: 1000;
 }
 
-header .mat-button {
-  width: auto;
-  height: auto;
+.navbar-container {
+  height: 50px;
+  /* Reduced from 70px */
+  background-color: var(--header-bg-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  padding: 0 1.5rem;
+  /* Slightly reduced padding */
+  transition: all 0.3s ease;
+}
+
+.logo-section .logo {
+  height: 32px;
+  /* Reduced from 45px */
+  object-fit: contain;
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* User Profile Button Fixes */
+.user-profile-btn {
+  padding: 0 12px !important;
+  /* Reduced padding */
+  border-radius: 30px !important;
+  background-color: transparent;
+  transition: background-color 0.2s;
+  height: auto !important;
   line-height: normal !important;
 }
 
-.session-container {
-  display: inline-block;
-  justify-self: flex-end;
+/* Target the inner wrapper of mat-button */
+::ng-deep .user-profile-btn .mat-button-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* Reduced gap */
 }
 
-.session-info {
+.user-profile-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Dark mode hover */
+}
+
+.avatar-circle {
+  width: 32px;
+  /* Reduced from 40px */
+  height: 32px;
+  /* Reduced from 40px */
+  min-width: 32px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.avatar-circle mat-icon {
+  font-size: 20px;
+  /* Reduced from 24px */
+  height: 20px;
+  width: 20px;
+}
+
+.user-info {
   display: flex;
   flex-direction: column;
-  padding: 10px;
-  text-align: left;
-}
-
-.session {
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
-
-.flex-center {
-  display: flex;
-  align-items: center;
-  width: 50px;
-  height: 50px;
-}
-
-.mat-icon {
-  color: rgb(105, 105, 105);
-  height: 2rem;
-  line-height: 2rem !important;
-  width: 2rem;
-  font-size: 2rem;
-
-}
-
-.mat-menu-item .mat-icon {
-  height: 24px;
-  width: 24px;
-  font-size: 24px;
-  margin-right: 8px;
-  line-height: 24px !important;
-}
-
-.expand {
-  height: 16px;
-  line-height: 16px !important;
-  width: 16px;
-  font-size: 16px;
+  align-items: flex-start;
+  line-height: 1.2;
 }
 
 .user-name {
-  font-size: 14px;
-  font-weight: 400;
-  color: #e3e3e3;
+  font-weight: 600;
+  color: var(--menu-text-color);
+  /* Updated for dark theme */
+  font-size: 0.95rem;
+  text-transform: none;
+  /* Prevent uppercase */
 }
 
-.role {
-  font-size: 12px;
-  font-weight: 400;
-  color: #e3e3e3;
+.user-role {
+  font-size: 0.75rem;
+  color: var(--menu-text-secondary);
+  /* Updated for dark theme */
+  text-transform: none;
 }
 
-
-.logo p {
-  color: rgb(105, 105, 105);
-}
-
-
-.logo {
-  /* display: flex;
-  align-items: center;
-  margin-left: clamp(1rem, 20vw, 3rem);
-   */
-  width: 229px;
-  margin-left: 11px;
-  height: auto;
+.dropdown-icon {
+  color: var(--menu-text-secondary);
+  /* Updated for dark theme */
 }

@@ -1,186 +1,187 @@
 :root {
   --primary-color: #067ACC;
+  /* Keep primary */
+  --primary-light: #4faaff;
+  --primary-dark: #004d99;
   --secondary-color: #79818a;
-  --max-width: 1360px;
-  --screen-width: 320px;
-  --screen-height: 560px;
-  --header-bg-color: #25283d;
-  --splash-bg-color: #1f8fff;
+  --bg-color: #f4f7fa;
+  /* Modern light blue-grey background */
+  --surface-color: #ffffff;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --header-bg-color: #1e1e2d;
+  /* Dark theme for header */
+  --sidebar-bg-color: #1e1e2d;
+  /* Dark theme for sidebar */
+  --menu-text-color: #ffffff;
+  /* Text color for dark menus */
+  --menu-text-secondary: #a2a3b7;
+  /* Secondary text for dark menus */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
+  --radius-md: 16px;
+  --radius-lg: 24px;
 }
-
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
-
-code {
-  color: #e01a76;
-}
-
-p {
-  margin: 0;
-}
-
-.mat-icon-button .mat-icon {
-  line-height: auto;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-main {
-  max-width: 1920px;
-}
-
 
 html,
 body {
-  box-sizing: border-box;
   height: 100%;
-  background-color: #fafafa;
-}
-
-body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: 'Roboto', "Helvetica Neue", sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  box-sizing: border-box;
 }
 
-main:not(.app-main, .no-styles) {
-  margin: 2rem .5rem;
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-mat-form-field mat-icon {
-  color: var(--secondary-color);
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* para que los inputs no se superpongan en el formulario de modificacion */
-.appointment-modify .mat-form-field-infix {
-  width: auto !important;
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
 }
 
-.title-container {
-  margin-bottom: 2rem;
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
 }
 
-.mat-drawer-content {
-
-  transition: margin 200ms cubic-bezier(0.13, 0.06, 0.58, 1.18) 0s !important;
-  padding: 12px;
-  overflow-x: hidden !important;
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
-
-.background-red {
-  background-color: rgb(153, 50, 50);
-  color: white;
+a:hover {
+  color: var(--primary-dark);
 }
 
-.background-red span.mat-button-wrapper {
+/* Material Overrides for Modern Look */
+.mat-card {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  background: var(--surface-color) !important;
+}
+
+.mat-flat-button,
+.mat-raised-button,
+.mat-stroked-button,
+.mat-button {
+  border-radius: 8px !important;
+  /* Consistent rounded corners */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500 !important;
+  transition: all 0.2s ease-in-out !important;
+  padding: 0 24px !important;
+  /* Comfortable padding */
+  line-height: 36px !important;
+  /* Consistent height */
+}
+
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-fab.mat-primary,
+.mat-mini-fab.mat-primary {
+  background-color: var(--primary-color) !important;
   color: white !important;
 }
 
-.background-green {
-  background-color: var(--bs-success);
-  color: white;
+.mat-stroked-button {
+  border-color: var(--secondary-color) !important;
 }
 
-.mat-simple-snackbar-action .mat-button-wrapper {
-  color: white;
+/* Button Hover Effects */
+.mat-flat-button:not([disabled]):hover,
+.mat-raised-button:not([disabled]):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
-.loading-layer {
-  background: white;
+.mat-drawer-container {
+  background-color: var(--bg-color) !important;
+}
 
-  z-index: 55;
-  position: absolute;
-  height: 100%;
-  width: 100%;
+.mat-drawer {
+  background-color: var(--sidebar-bg-color) !important;
+  border-right: none !important;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Modern Dialog Overrides */
+.mat-dialog-container {
+  border-radius: var(--radius-lg) !important;
+  background-color: var(--surface-color) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 24px !important;
+  /* Ensure consistent padding */
+}
+
+/* Dialog Title */
+.mat-dialog-title {
+  font-family: 'Roboto', sans-serif !important;
+  font-weight: 500 !important;
+  font-size: 1.5rem !important;
+  color: var(--text-primary) !important;
+  margin: 0 0 20px !important;
+}
+
+/* Dialog Actions */
+.mat-dialog-actions {
+  padding: 12px 0 0 !important;
+  margin-bottom: 0 !important;
+  gap: 12px;
+}
+
+/* Utilities */
+.flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
-  align-content: center;
-  flex-direction: column;
-  flex-wrap: nowrap;
 }
 
-.progress-content {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.no-styles {
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.progress-content>.mat-progress-spinner {
-  margin: auto;
-
+.spacer {
+  flex: 1 1 auto;
 }
 
-.mat-step-header .mat-step-icon {
-  display: none !important;
-}
-
-/* text with icon in step-header I'm using custom style */
-#dashboard-stepper .mat-step-text-label,
-#config-stepper .mat-step-text-label {
-
-  display: flex !important;
-  gap: 7px;
-}
-
-#config-stepper .mat-stepper-horizontal-line {
-  flex: none !important;
-  width: 50px;
-}
-
-/* this is 👁️‍🗨️ icon*/
-table .action .mat-icon {
-  color: #999999;
-}
-
-/*this is speciality component*/
-.add-form mat-form-field div.mat-form-field-wrapper {
-  padding-bottom: 0 !important;
-  margin-bottom: 0;
-}
-
-
-html,
-body {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-
+/* Loader */
 .loader-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-color);
 }
 
 .loader {
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  background: linear-gradient(0deg, #fafafa 50%, var(--primary-color) 100%);
+  background: linear-gradient(0deg, var(--bg-color) 50%, var(--primary-color) 100%);
   animation: spin 1s linear infinite;
 }
 
 .inner-circle {
   width: 90%;
   height: 90%;
-  background-color: #fafafa;
+  background-color: var(--bg-color);
   border-radius: 50%;
 }
 
@@ -192,4 +193,58 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Global Spinner Centering */
+mat-progress-spinner {
+  margin: 0 auto !important;
+  /* Force centering globally */
+  display: block;
+  /* Ensure it behaves as a block for margin auto to work */
+}
+
+/* Global Icon Centering */
+mat-icon {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  /* Ensure it aligns with text */
+}
+
+/* Ensure icons inside buttons are also centered */
+.mat-icon-button mat-icon,
+.mat-button mat-icon,
+.mat-flat-button mat-icon,
+.mat-raised-button mat-icon,
+.mat-stroked-button mat-icon {
+  display: flex !important;
+  margin: 0 auto;
+}
+
+/* Global Table Styling */
+.container-table,
+.mat-elevation-z1,
+.mat-elevation-z8 {
+  border-radius: var(--radius-md) !important;
+  overflow: hidden !important;
+  /* Clips table corners */
+  background: var(--surface-color) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.mat-table {
+  background: transparent !important;
+}
+
+.mat-header-cell {
+  background-color: #f8fafc !important;
+  font-weight: 600 !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure icons inside tables are also centered */
+td.mat-cell mat-icon,
+td.mat-footer-cell mat-icon,
+th.mat-header-cell mat-icon {
+  margin: 0 auto !important;
 }

@@ -1,39 +1,52 @@
 <app-navbar></app-navbar>
 <main class="app-main">
-  <mat-drawer-container class="example-container" autosize>
-    <mat-drawer (mouseleave)="showFiller=false" (mouseenter)="showFiller=false" #drawer disableClose opened
-      class="example-sidenav" mode="side">
+  <mat-drawer-container class="main-container">
+    <mat-drawer (mouseleave)="showFiller=false" (mouseenter)="showFiller=true" #drawer disableClose
+      class="sidebar-drawer" mode="side" [class.sidebar-expanded]="showFiller" opened>
 
-      <mat-action-list>
+      <mat-action-list class="sidebar-list">
 
-        <mat-list-item routerLinkActive="active" [routerLink]="['crear-cita']">
-          <mat-icon>add</mat-icon>
-          <span *ngIf="showFiller">Nueva cita</span>
-        </mat-list-item>
+        <div class="menu-item-wrapper" data-aos="fade-right" data-aos-delay="100">
+          <mat-list-item routerLinkActive="active-menu-item" [routerLink]="['crear-cita']" class="modern-menu-item">
+            <mat-icon mat-list-icon>add_circle_outline</mat-icon>
+            <span class="menu-label" *ngIf="showFiller">Nueva cita</span>
+          </mat-list-item>
+        </div>
 
-        <mat-list-item class="home" routerLinkActive="active" [routerLink]="['dashboard']">
-          <mat-icon>event</mat-icon>
-          <span *ngIf="showFiller">Calendario</span>
-        </mat-list-item>
+        <div class="menu-item-wrapper" data-aos="fade-right" data-aos-delay="200">
+          <mat-list-item routerLinkActive="active-menu-item" [routerLink]="['dashboard']" class="modern-menu-item">
+            <mat-icon mat-list-icon>calendar_today</mat-icon>
+            <span class="menu-label" *ngIf="showFiller">Calendario</span>
+          </mat-list-item>
+        </div>
 
+        <div class="menu-item-wrapper" data-aos="fade-right" data-aos-delay="300">
+          <mat-list-item routerLinkActive="active-menu-item" [routerLink]="['citas']" class="modern-menu-item">
+            <mat-icon mat-list-icon>list_alt</mat-icon>
+            <span class="menu-label" *ngIf="showFiller">Registro de citas</span>
+          </mat-list-item>
+        </div>
 
-        <mat-list-item routerLinkActive="active" [routerLink]="['citas']">
-          <mat-icon>recent_actors</mat-icon>
-          <span *ngIf="showFiller">Registro de citas</span>
-        </mat-list-item>
+        <div class="menu-item-wrapper" data-aos="fade-right" data-aos-delay="400">
+          <mat-list-item routerLinkActive="active-menu-item" [routerLink]="['reportes']" class="modern-menu-item">
+            <mat-icon mat-list-icon>analytics</mat-icon>
+            <span class="menu-label" *ngIf="showFiller">Reportes</span>
+          </mat-list-item>
+        </div>
 
-        <mat-list-item routerLinkActive="active" [routerLink]="['reportes']">
-          <mat-icon>description</mat-icon>
-          <span *ngIf="showFiller">Reportes</span>
-        </mat-list-item>
-        <mat-list-item routerLinkActive="active" [routerLink]="['configuracion']">
-          <mat-icon>settings</mat-icon>
-          <span *ngIf="showFiller">Configuración</span>
-        </mat-list-item>
+        <div class="menu-item-wrapper" data-aos="fade-right" data-aos-delay="500">
+          <mat-list-item routerLinkActive="active-menu-item" [routerLink]="['configuracion']" class="modern-menu-item">
+            <mat-icon mat-list-icon>settings</mat-icon>
+            <span class="menu-label" *ngIf="showFiller">Configuración</span>
+          </mat-list-item>
+        </div>
+
       </mat-action-list>
     </mat-drawer>
-    <div>
+
+    <div class="content-wrapper">
       <router-outlet></router-outlet>
     </div>
+
   </mat-drawer-container>
 </main>

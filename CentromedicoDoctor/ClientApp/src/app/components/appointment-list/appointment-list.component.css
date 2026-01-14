@@ -1,35 +1,93 @@
 .balance {
   display: flex;
-  box-shadow: rgba(0, 0, 0, .1) 0px 2px 5px;
-  margin: 1rem auto;
-  background-color: white;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
   flex-wrap: wrap;
-
-
+  box-shadow: none;
+  background-color: transparent;
 }
 
 .b-item {
+  flex: 1;
+  min-width: 200px;
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
   display: flex;
-  margin-right: clamp(1rem, 4vw, 8rem);
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-right: 0;
+  /* Removing old margin */
 }
 
-mat-card-title {
-  font-size: 1.2rem;
+.b-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.item-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 0;
+  flex-shrink: 0;
+}
+
+.difference .item-icon {
+  background-color: rgba(142, 142, 142, 0.1);
+  color: #666;
+}
+
+.insurance .item-icon {
+  background-color: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+}
+
+.no-insurance .item-icon {
+  background-color: rgba(244, 192, 54, 0.1);
+  color: #f4c036;
+}
+
+.discount .item-icon {
+  background-color: rgba(162, 20, 255, 0.1);
+  color: #a214ff;
+}
+
+.total .item-icon {
+  background-color: rgba(90, 195, 127, 0.1);
+  color: #5ac37f;
+}
+
+.b-item .item-icon mat-icon {
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  color: inherit !important;
 }
 
 .b-item .item-content {
-  padding: 0.6rem 0 1.2rem 0;
-}
-
-.b-item .item-content .value {
-  font-size: 1rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .b-item .item-content .item-header {
-  font-size: .8rem;
-  font-weight: bold;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 2px;
 }
 
+.b-item .item-content .value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
 
 .form-group {
   padding-top: 1rem;
@@ -40,45 +98,6 @@ mat-card-title {
   gap: .4rem;
   align-items: start;
   max-width: 1000px;
-
-}
-
-.item-icon {
-  padding: 0.5rem 1rem;
-  display: flex;
-  background-color: blueviolet;
-  margin-right: 5px;
-  align-items: center;
-}
-
-.difference .item-icon {
-  background-color: #8e8e8e;
-}
-
-.insurance .item-icon {
-  background-color: #f44336;
-}
-
-.no-insurance .item-icon {
-  background-color: #f4c036;
-}
-
-.discount .item-icon {
-  background-color: #a214ff;
-}
-
-.total .item-icon {
-  background-color: #5ac37f;
-}
-
-.b-item .item-icon mat-icon {
-  color: white;
-  font-size: 2rem;
-  width: 35px;
-  height: 35px;
-
-  display: flex;
-  align-items: center;
 }
 
 .radio-wrapper {

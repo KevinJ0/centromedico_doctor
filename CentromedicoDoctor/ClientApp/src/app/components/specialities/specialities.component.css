@@ -12,6 +12,10 @@
   gap: 1rem;
 }
 
+.add-form button {
+  box-shadow: none !important;
+}
+
 .container-table {
 
   position: relative;
@@ -32,4 +36,8 @@ table {
   left: 0rem;
   z-index: 9999999;
   background: rgba(0, 0, 0, .06);
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
 }

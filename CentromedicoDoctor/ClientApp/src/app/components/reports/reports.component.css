@@ -5,16 +5,15 @@
 }
 
 .filter {
-  width: fit-content;
+  margin-top: 2rem;
 }
 
-.mat-card-content{
-    margin-top: .6rem;
+.mat-card-content {
+  margin-top: .6rem;
 }
 
 .form-group {
   display: flex;
   gap: 10px;
   flex-direction: column;
-  width: 35rem;
 }

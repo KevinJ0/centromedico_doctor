@@ -1,28 +1,27 @@
-<header>
+<header class="navbar-container" data-aos="fade-down">
+  <div class="logo-section">
+    <img class="logo" src="../../../assets/images/header_logo.png" alt="Centro Médico Logo">
+  </div>
 
+  <div class="spacer"></div>
 
-  <div class="logo-container"> <img class="logo" src="../../../assets/images/header_logo.png" alt=""></div>
-
-  <div class="session-container">
-
-    <button mat-button [matMenuTriggerFor]="menu" aria-label="icon-button with a menu">
-      <div class="session">
-        <div class="session-info">
-          <span class="user-name">{{userName}}</span>
-          <span class="role">{{userRole}}</span>
-        </div>
-        <div class="flex-center">
-          <mat-icon>account_circle</mat-icon>
-          <mat-icon class="expand">expand_more</mat-icon>
-        </div>
+  <div class="user-section">
+    <button mat-button [matMenuTriggerFor]="menu" class="user-profile-btn" data-aos="fade-left" data-aos-delay="200">
+      <div class="avatar-circle">
+        <mat-icon>person</mat-icon>
       </div>
+      <div class="user-info">
+        <span class="user-name">{{userName}}</span>
+        <span class="user-role">{{userRole}}</span>
+      </div>
+      <mat-icon class="dropdown-icon">expand_more</mat-icon>
     </button>
-    <mat-menu xPosition="before" #menu="matMenu">
+
+    <mat-menu #menu="matMenu" class="modern-menu" xPosition="before">
       <button (click)="LogOut()" mat-menu-item>
         <mat-icon>logout</mat-icon>
         <span>Cerrar sesión</span>
       </button>
-
     </mat-menu>
   </div>
 </header>
