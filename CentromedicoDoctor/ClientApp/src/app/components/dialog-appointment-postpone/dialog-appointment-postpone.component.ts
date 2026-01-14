@@ -5,9 +5,9 @@ import { catchError, of } from "rxjs";
 import { citaCalendar, citaForm, citaPaciente, cobertura, CustomError, hora, seguro, servicioCobertura, UserInfo, } from "src/app/interfaces/InterfacesDto";
 import { CitaService } from "src/app/services/cita.service";
 import { HorarioMedicoService } from "src/app/services/horario-medico-service.service";
-import * as _moment from "moment";
+import moment from "moment";
+import "moment-timezone";
 import { SnackBarService } from "src/app/services/snack-bar.service";
-import * as moment from "moment-timezone";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { CalendarEvent } from "angular-calendar";
 
@@ -65,7 +65,7 @@ export class DialogAppointmentPostponeComponent implements OnInit {
 
           return this.diasLaborables.find(
             (x) =>
-              _moment.utc(x).format("l") == _moment.utc(_date).format("l")
+              moment.utc(x).format("l") == moment.utc(_date).format("l")
           )
             ? true
             : false;
@@ -105,9 +105,9 @@ export class DialogAppointmentPostponeComponent implements OnInit {
 
             this.Horas = keys.map((key, index) => {
               return {
-                id: new Date(_moment(key).utc().format()).toISOString(),
+                id: new Date(moment(key).utc().format()).toISOString(),
                 descrip:
-                  _moment(key).utc().format(" hh:mm A") + " - Turno " + r[key],
+                  moment(key).utc().format(" hh:mm A") + " - Turno " + r[key],
               };
             });
 
@@ -118,7 +118,7 @@ export class DialogAppointmentPostponeComponent implements OnInit {
               this.Horas.push({
                 id: _fechaISOString,
                 descrip:
-                  _moment(this.data.fecha_hora).format(" hh:mm A") +
+                  moment(this.data.fecha_hora).format(" hh:mm A") +
                   " - Turno " +
                   this.data.turno +
                   " Actual",

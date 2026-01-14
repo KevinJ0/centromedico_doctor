@@ -10,7 +10,7 @@ import {
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
-import * as _moment from "moment";
+import moment from "moment";
 import { CalendarEvent } from "angular-calendar";
 import {
   citaEntry,
@@ -64,7 +64,7 @@ export class DialogEntryPatientComponent implements OnInit {
       observation: [""],
     });
 
-    this._fechaHora = _moment(this.data.fecha_hora)
+    this._fechaHora = moment(this.data.fecha_hora)
       .format("D/M/YYYY - hh:mm a")
       .toString();
 

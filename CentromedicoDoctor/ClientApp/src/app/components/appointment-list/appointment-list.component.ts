@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, Validators, FormBuilder, FormControl } from '@angular/forms';
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { SeguroService } from 'src/app/services/seguro.service';
 import { MatTableDataSource } from '@angular/material/table';

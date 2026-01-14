@@ -21,7 +21,7 @@ import {
 } from "angular-calendar";
 import { CitaService } from "src/app/services/cita.service";
 import { citaCalendar } from "src/app/interfaces/InterfacesDto";
-import * as _moment from "moment";
+import moment from "moment";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { MatDialog } from "@angular/material/dialog";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -151,8 +151,8 @@ export class DashboardComponent implements OnInit {
 
           return {
             start: new Date(r.fecha_hora),
-            end: _moment(new Date(r.fecha_hora))
-              .add(_moment.duration(r.appointmentDuration))
+            end: moment(new Date(r.fecha_hora))
+              .add(moment.duration(r.appointmentDuration))
               .toDate(),
             title: r.paciente_nombre + " " + r.paciente_apellido,
             color: colors.blue,

@@ -1,13 +1,15 @@
 import { ChangeDetectionStrategy, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { AccountService } from 'src/app/services/account.service';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AutoUnsubscribe } from "ngx-auto-unsubscribe";
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DialogContentComponent } from '../dialog-content/dialog-content.component';
+
+import * as AOS from 'aos';
 
 @AutoUnsubscribe()
 @Component({
@@ -53,7 +55,6 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private accountSvc: AccountService,
     private _formBuilder: FormBuilder) {
-    //go back user is already logged in
     if (this.accountSvc.CheckLoginStatus())
       this.router.navigate(['app']);
   }
@@ -62,11 +63,8 @@ export class LoginComponent implements OnInit {
     const dialogRef = this.dialog.open(DialogContentComponent, { data: dataMjs });
   }
 
-
-
   ngOnInit(): void {
-
-    //this.returnUrl = this.rutaActiva.snapshot.queryParams['returnUrl'] || '/';
+    AOS.init();
 
     this.loginFormGroup = this._formBuilder.group({
       loginEmailControl: ['', [

@@ -3,13 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { NavigationStart, Router } from '@angular/router';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { ServicioService } from 'src/app/services/servicio.service';
 import { SeguroService } from 'src/app/services/seguro.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { CitaService } from 'src/app/services/cita.service';
 import { MatDialog } from '@angular/material/dialog';
-const moment = _moment;
 
 @Component({
   selector: 'app-reports',
@@ -73,7 +72,7 @@ export class ReportsComponent implements OnInit {
 
       });
 
-  
+
     let medicoId = sessionStorage.getItem('medicoId');
 
     this.seguroSvc.GetAllSeguros(medicoId).subscribe(
@@ -109,7 +108,7 @@ export class ReportsComponent implements OnInit {
       .subscribe(
         (r) => {
           this.citaSvc._citasDataRepo = r;
-          
+
           this.router.navigate(['app/reportes/reporte-citas']).then(() => {
             this.routerUrl = this.router.url;
           });

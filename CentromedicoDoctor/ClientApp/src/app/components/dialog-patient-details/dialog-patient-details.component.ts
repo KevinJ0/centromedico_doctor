@@ -12,7 +12,7 @@ import {
   seguro,
   servicioCobertura,
 } from "src/app/interfaces/InterfacesDto";
-import * as _moment from "moment";
+import moment from "moment";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
 import { ProgressSpinnerMode } from "@angular/material/progress-spinner";
 import { ServicioService } from "src/app/services/servicio.service";
@@ -69,7 +69,7 @@ export class DialogPatientDetailsComponent implements OnInit {
       tutorIdentification: new FormControl(this.data.doc_identidad),
     });
 
-    this._fechaHora = _moment(this.data.fecha_hora)
+    this._fechaHora = moment(this.data.fecha_hora)
       .format("D/M/YYYY - hh:mm a")
       .toString();
 

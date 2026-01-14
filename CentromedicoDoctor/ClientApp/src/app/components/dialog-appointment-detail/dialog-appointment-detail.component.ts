@@ -6,7 +6,7 @@ import {
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
 import { CalendarEvent } from "angular-calendar";
-import * as _moment from "moment";
+import moment from "moment";
 import { citaCalendar } from "src/app/interfaces/InterfacesDto";
 
 export interface DialogData {
@@ -31,7 +31,7 @@ export class DialogAppointmentDetailComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data);
-    
+
   }
 
   onNoClick(): void {

@@ -6,9 +6,9 @@ import { catchError, of } from "rxjs";
 import { citaForm, citaPaciente, cobertura, CustomError, hora, seguro, servicioCobertura } from "src/app/interfaces/InterfacesDto";
 import { CitaService } from "src/app/services/cita.service";
 import { HorarioMedicoService } from "src/app/services/horario-medico-service.service";
-import * as _moment from "moment";
+import moment from "moment";
+import "moment-timezone";
 import { SnackBarService } from "src/app/services/snack-bar.service";
-import * as moment from "moment-timezone";
 import { NavigationService } from "src/app/services/navigation.service";
 
 @Component({
@@ -91,7 +91,7 @@ export class AppointmentModifyComponent implements OnInit {
 
             return this.diasLaborables.find(
               (x) =>
-                _moment.utc(x).format("l") == _moment.utc(_date).format("l")
+                moment.utc(x).format("l") == moment.utc(_date).format("l")
             )
               ? true
               : false;
@@ -165,9 +165,9 @@ export class AppointmentModifyComponent implements OnInit {
 
             this.Horas = keys.map((key, index) => {
               return {
-                id: new Date(_moment(key).utc().format()).toISOString(),
+                id: new Date(moment(key).utc().format()).toISOString(),
                 descrip:
-                  _moment(key).utc().format(" hh:mm A") + " - Turno " + r[key],
+                  moment(key).utc().format(" hh:mm A") + " - Turno " + r[key],
               };
             });
 
@@ -179,7 +179,7 @@ export class AppointmentModifyComponent implements OnInit {
               this.Horas.push({
                 id: _fechaISOString,
                 descrip:
-                  _moment(this.citaData.fecha_hora).format(" hh:mm A") +
+                  moment(this.citaData.fecha_hora).format(" hh:mm A") +
                   " - Turno " +
                   this.citaData.turno
               });
@@ -281,11 +281,11 @@ export class AppointmentModifyComponent implements OnInit {
         let apellido_tutor = formdata["tutorLastNameControl"];
         let doc_identidad = formdata["identityDocControl"];
         let sexo = formdata["userSexControl"];
-        let fecha_nacimiento = _moment(
+        let fecha_nacimiento = moment(
           formdata["userBirthDateControl"]
         ).toISOString();
 
-      
+
 
 
         cita_paciente = {

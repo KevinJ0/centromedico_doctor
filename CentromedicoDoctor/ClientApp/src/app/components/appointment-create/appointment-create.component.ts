@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, catchError } from 'rxjs/operators';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { CitaService } from 'src/app/services/cita.service';
@@ -17,8 +17,6 @@ import { HorarioMedicoService } from '../../services/horario-medico-service.serv
 import { MatDialog } from '@angular/material/dialog';
 import { DialogContentComponent } from '../dialog-content/dialog-content.component';
 import { PacienteService } from 'src/app/services/paciente.service';
-
-const moment = _moment;
 
 @AutoUnsubscribe()
 @Component({
@@ -118,8 +116,8 @@ export class AppointmentCreateComponent implements OnInit {
           this.dateFilter = (d: Date): boolean => {
             const _date = new Date(d);
 
-            return this.diasLaborables.find(x => _moment.utc(x).format("l") ==
-              _moment.utc(_date).format("l")) ? true : false;
+            return this.diasLaborables.find(x => moment.utc(x).format("l") ==
+              moment.utc(_date).format("l")) ? true : false;
           }
           this.loading = false;
           console.table(this.diasLaborables);
@@ -199,7 +197,7 @@ export class AppointmentCreateComponent implements OnInit {
               this.Horas = keys.map((key, index) => {
                 return {
                   id: new Date(key),
-                  descrip: _moment(key).utc().format(' hh:mm A') + " - Turno " + r[key]
+                  descrip: moment(key).utc().format(' hh:mm A') + " - Turno " + r[key]
                 };
               });
 

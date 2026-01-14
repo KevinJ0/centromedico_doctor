@@ -1,15 +1,13 @@
 import { AfterViewInit, ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { citaCalendar, seguro, servicio } from 'src/app/interfaces/InterfacesDto';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { CitaService } from 'src/app/services/cita.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAppointmentDetailComponent } from '../dialog-appointment-detail/dialog-appointment-detail.component';
-
-const moment = _moment;
 
 @Component({
   selector: 'app-table-appointments',
@@ -91,7 +89,7 @@ export class TableAppointmentsComponent implements OnInit, AfterViewInit {
           (data.paciente_nombre + " " + data.paciente_apellido).toLowerCase().indexOf(filter) !== -1 ||
           data.servicio_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
           data.seguro_descrip.toString().toLowerCase().indexOf(filter) !== -1 ||
-          _moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a').toLowerCase().indexOf(filter) !== -1 ||
+          moment(data.fecha_hora).format('DD/MM/YYYY hh:mm:ss a').toLowerCase().indexOf(filter) !== -1 ||
           data.cobertura.toString().toLowerCase().indexOf(filter) !== -1 ||
           data.diferencia.toString().toLowerCase().indexOf(filter) !== -1 ||
           data.pago.toString().toLowerCase().indexOf(filter) !== -1 ||

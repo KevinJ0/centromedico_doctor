@@ -4,7 +4,7 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from "@angular/material/dialog";
-import * as _moment from "moment";
+import moment from "moment";
 
 export interface DialogData {
   msj: string;

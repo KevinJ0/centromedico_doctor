@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { map, catchError } from 'rxjs/operators';
-import * as _moment from 'moment';
+import moment from 'moment';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
 import { CoberturaService } from 'src/app/services/cobertura.service';
@@ -16,8 +16,6 @@ import { SeguroService } from 'src/app/services/seguro.service';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
 import { AutoUnsubscribe } from "ngx-auto-unsubscribe";
 import { HorarioMedicoService } from '../../services/horario-medico-service.service';
-
-const moment = _moment;
 
 @AutoUnsubscribe()
 @Component({
@@ -112,8 +110,8 @@ export class AppointmentAddComponent implements OnInit {
           this.dateFilter = (d: Date): boolean => {
             const _date = new Date(d);
 
-            return this.diasLaborables.find(x => _moment.utc(x).format("l") ==
-              _moment.utc(_date).format("l")) ? true : false;
+            return this.diasLaborables.find(x => moment.utc(x).format("l") ==
+              moment.utc(_date).format("l")) ? true : false;
           }
           this.loading = false;
           console.table(this.diasLaborables);
@@ -270,9 +268,9 @@ export class AppointmentAddComponent implements OnInit {
     if (!this.loading) {
       this.loading = true;
 
-      let formdata = Object.assign(this.firstFormGroup.value, 
-                                   this.secondFormGroup.value,
-                                   this.thirdFormGroup.value);
+      let formdata = Object.assign(this.firstFormGroup.value,
+        this.secondFormGroup.value,
+        this.thirdFormGroup.value);
 
       let _cita: cita;
       let fecha_hora: Date = formdata["timeControl"];
