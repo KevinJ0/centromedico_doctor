@@ -34,6 +34,10 @@ body {
   box-sizing: border-box;
 }
 
+p {
+  margin: 0 !important;
+}
+
 /* Modern Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -247,4 +251,30 @@ td.mat-cell mat-icon,
 td.mat-footer-cell mat-icon,
 th.mat-header-cell mat-icon {
   margin: 0 auto !important;
+}
+
+/* Stepper Label Alignment - Forceful Flex */
+.mat-step-text-label,
+::ng-deep .mat-step-text-label {
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: row !important;
+  gap: 8px !important;
+  overflow: visible !important;
+  line-height: normal !important;
+}
+
+.mat-step-label,
+::ng-deep .mat-step-label {
+  display: flex !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+.mat-step-label mat-icon,
+::ng-deep .mat-step-label mat-icon {
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }

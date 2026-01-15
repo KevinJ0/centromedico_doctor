@@ -99,9 +99,6 @@ export class LoginComponent implements OnInit {
                 this.router.navigate(['app/dashboard']);
 
               } else {
-                //otherwise secretary
-
-                sessionStorage.setItem("secretariaId", (result.secretariaId));
 
                 this.router.navigate(['select-doctor'], {
                   state: { medicos: result.medicosOrMedicoId },

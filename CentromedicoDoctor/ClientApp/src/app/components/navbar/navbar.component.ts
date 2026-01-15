@@ -13,7 +13,7 @@ export class NavbarComponent implements OnInit {
 
   userName: string;
   userRole: string;
-  
+
   isExpanded = false;
   currentUserName$ = this.accountSvc.currentUserName;
   currentUserRole$ = this.accountSvc.currentUserRole;
@@ -23,21 +23,21 @@ export class NavbarComponent implements OnInit {
     private accountSvc: AccountService,
     private router: Router) { }
 
-    ngOnInit(): void {
-      this.currentUserName$.subscribe(r => {
-        this.userName = r; 
-      });
-      this.currentUserRole$.subscribe(r => {
-        this.userRole = r; 
-      });
-    }
+  ngOnInit(): void {
+    this.currentUserName$.subscribe(r => {
+      this.userName = r;
+    });
+    this.currentUserRole$.subscribe(r => {
+      this.userRole = r;
+    });
+  }
   LogOut() {
-    this.accountSvc.Logout().then(()=>{
-        this.router.navigate(['login']);
+    this.accountSvc.Logout().then(() => {
+      this.router.navigate(['login']);
     });
   }
 
   ngOnDestroy() {
-    // We'll throw an error if it doesn't
+
   }
 }

@@ -19,7 +19,6 @@
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s, box-shadow 0.2s;
   margin-right: 0;
-  /* Removing old margin */
 }
 
 .b-item:hover {
@@ -161,7 +160,12 @@ table {
 .progress-content {
   position: absolute;
   top: 0;
-  left: 0rem;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 9999999;
-  background: rgba(0, 0, 0, .06);
+  background: rgba(255, 255, 255, 0.7);
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }

@@ -8,19 +8,16 @@
 
 .navbar-container {
   height: 50px;
-  /* Reduced from 70px */
   background-color: var(--header-bg-color);
   box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  /* Slightly reduced padding */
   transition: all 0.3s ease;
 }
 
 .logo-section .logo {
   height: 32px;
-  /* Reduced from 45px */
   object-fit: contain;
 }
 
@@ -28,10 +25,9 @@
   flex: 1;
 }
 
-/* User Profile Button Fixes */
+
 .user-profile-btn {
   padding: 0 12px !important;
-  /* Reduced padding */
   border-radius: 30px !important;
   background-color: transparent;
   transition: background-color 0.2s;
@@ -39,24 +35,19 @@
   line-height: normal !important;
 }
 
-/* Target the inner wrapper of mat-button */
 ::ng-deep .user-profile-btn .mat-button-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Reduced gap */
 }
 
 .user-profile-btn:hover {
   background-color: rgba(255, 255, 255, 0.1);
-  /* Dark mode hover */
 }
 
 .avatar-circle {
   width: 32px;
-  /* Reduced from 40px */
   height: 32px;
-  /* Reduced from 40px */
   min-width: 32px;
   border-radius: 50%;
   background-color: var(--primary-color);
@@ -69,7 +60,6 @@
 
 .avatar-circle mat-icon {
   font-size: 20px;
-  /* Reduced from 24px */
   height: 20px;
   width: 20px;
 }
@@ -84,20 +74,16 @@
 .user-name {
   font-weight: 600;
   color: var(--menu-text-color);
-  /* Updated for dark theme */
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   text-transform: none;
-  /* Prevent uppercase */
 }
 
 .user-role {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--menu-text-secondary);
-  /* Updated for dark theme */
   text-transform: none;
 }
 
 .dropdown-icon {
   color: var(--menu-text-secondary);
-  /* Updated for dark theme */
 }

@@ -5,87 +5,90 @@
       <mat-divider></mat-divider>
     </div>
 
+
+
     <div *ngIf="!loadingC else load" class="">
 
-      <mat-stepper id="dashboard-stepper" #stepper>
-
-        <mat-step>
-          <ng-template matStepLabel>
-            <mat-icon>event</mat-icon> Calendario
+      <mat-tab-group>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">event</mat-icon>
+            <span>Calendario</span>
           </ng-template>
 
-          <div style="margin-top:10px">
-            <div class="row text-center">
-              <div class="col-md-4">
-                <div class="btn-group">
-                  <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
-                    (viewDateChange)="closeOpenMonthViewDay()">
-                    Atrás
-                  </div>
-                  <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
-                    Hoy
-                  </div>
-                  <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
-                    (viewDateChange)="closeOpenMonthViewDay()">
-                    Siguiente
+          <div class="tab-content-wrapper">
+            <div style="margin-top:20px">
+              <div class="row text-center">
+                <div class="col-md-4">
+                  <div class="btn-group">
+                    <div class="btn btn-primary" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate"
+                      (viewDateChange)="closeOpenMonthViewDay()">
+                      Atrás
+                    </div>
+                    <div class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate">
+                      Hoy
+                    </div>
+                    <div class="btn btn-primary" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate"
+                      (viewDateChange)="closeOpenMonthViewDay()">
+                      Siguiente
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="col-md-4">
-                <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es-DO' }}</h3>
-              </div>
-              <div class="col-md-4">
-                <div class="btn-group">
-                  <div class="btn btn-primary" (click)="setView(CalendarView.Month)"
-                    [class.active]="view === CalendarView.Month">
-                    Mes
-                  </div>
-                  <div class="btn btn-primary" (click)="setView(CalendarView.Week)"
-                    [class.active]="view === CalendarView.Week">
-                    Semana
-                  </div>
-                  <div class="btn btn-primary" (click)="setView(CalendarView.Day)"
-                    [class.active]="view === CalendarView.Day">
-                    Día
+                <div class="col-md-4">
+                  <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'es-DO' }}</h3>
+                </div>
+                <div class="col-md-4">
+                  <div class="btn-group">
+                    <div class="btn btn-primary" (click)="setView(CalendarView.Month)"
+                      [class.active]="view === CalendarView.Month">
+                      Mes
+                    </div>
+                    <div class="btn btn-primary" (click)="setView(CalendarView.Week)"
+                      [class.active]="view === CalendarView.Week">
+                      Semana
+                    </div>
+                    <div class="btn btn-primary" (click)="setView(CalendarView.Day)"
+                      [class.active]="view === CalendarView.Day">
+                      Día
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+
+            <br>
+
+            <div [ngSwitch]="view">
+              <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+                [locale]="locale" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen"
+                (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
+                (eventTimesChanged)="eventTimesChanged($event)">
+              </mwl-calendar-month-view>
+              <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [locale]="locale" [viewDate]="viewDate"
+                [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
+                (eventTimesChanged)="eventTimesChanged($event)">
+              </mwl-calendar-week-view>
+              <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [locale]="locale" [viewDate]="viewDate"
+                [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
+                (eventTimesChanged)="eventTimesChanged($event)">
+              </mwl-calendar-day-view>
+            </div>
           </div>
+        </mat-tab>
 
-          <br>
-
-          <div [ngSwitch]="view">
-            <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
-              [locale]="locale" [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen"
-              (dayClicked)="dayClicked($event.day)" (eventClicked)="handleEvent('Clicked', $event.event)"
-              (eventTimesChanged)="eventTimesChanged($event)">
-            </mwl-calendar-month-view>
-            <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [locale]="locale" [viewDate]="viewDate"
-              [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
-              (eventTimesChanged)="eventTimesChanged($event)">
-            </mwl-calendar-week-view>
-            <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [locale]="locale" [viewDate]="viewDate"
-              [events]="events" [refresh]="refresh" (eventClicked)="handleEvent('Clicked', $event.event)"
-              (eventTimesChanged)="eventTimesChanged($event)">
-            </mwl-calendar-day-view>
-          </div>
-        </mat-step>
-
-
-
-        <mat-step>
-          <ng-template matStepLabel>
-            <mat-icon>toc</mat-icon> Tabla
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">toc</mat-icon>
+            <span>Tabla</span>
           </ng-template>
 
-          <div style="margin-top:10px">
+          <div class="tab-content-wrapper p-3">
             <app-table-appointments [citas]="_citasArr"></app-table-appointments>
           </div>
-        </mat-step>
-      </mat-stepper>
+        </mat-tab>
+      </mat-tab-group>
     </div>
-    
+
 
 
     <ng-template #load>

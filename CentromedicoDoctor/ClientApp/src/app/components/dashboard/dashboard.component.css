@@ -1,8 +1,3 @@
-main {
-  margin: 2rem .5rem;
-}
-
-
 .title-container {
   margin-bottom: 2rem;
 
@@ -18,6 +13,24 @@ pre {
 }
 
 .mat-progress-spinner {
-
   margin: auto;
+}
+
+.tab-icon {
+  margin-right: 8px;
+}
+
+.tab-content-wrapper {
+  padding: 1rem 0;
+}
+
+::ng-deep .mat-tab-label {
+  display: flex !important;
+  align-items: center !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+
+::ng-deep .mat-ink-bar {
+  background-color: var(--primary-color) !important;
 }

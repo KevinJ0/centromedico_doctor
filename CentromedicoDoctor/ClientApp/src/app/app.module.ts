@@ -59,7 +59,6 @@ import { NgbModalModule } from "@ng-bootstrap/ng-bootstrap";
 import { registerLocaleData } from "@angular/common";
 import localeEs from "@angular/common/locales/es";
 import { NavbarComponent } from "./components/navbar/navbar.component";
-//import { FlatpickrModule } from "angularx-flatpickr";
 import { DialogPatientDetailsComponent } from "./components/dialog-patient-details/dialog-patient-details.component";
 import { ServicioService } from "./services/servicio.service";
 import { CitaService } from "./services/cita.service";
@@ -96,7 +95,6 @@ import { AppointmentCreateComponent } from "./components/appointment-create/appo
 import localeEsDO from '@angular/common/locales/es-DO';
 import { DEFAULT_CURRENCY_CODE } from '@angular/core';
 
-// Registrar el locale de República Dominicana
 registerLocaleData(localeEsDO, 'es-DO');
 
 export function tokenGetter() {
@@ -105,9 +103,6 @@ export function tokenGetter() {
 }
 
 export const MY_FORMATS = {
-  // parse: {
-  //   dateInput: 'LL',
-  // },
   display: {
 
     dateInput: 'dddd DD MMM Y',
@@ -249,7 +244,6 @@ export const MY_FORMATS = {
   providers: [
     { provide: MatPaginatorIntl, useValue: CustomPaginator() },
     { provide: MAT_DATE_LOCALE, useValue: 'es-DO' },
-    //{ provide: MAT_MOMENT_DATE_ADAPTER_OPTIONS, useValue: { useUtc: true } },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     { provide: LOCALE_ID, useValue: 'es-DO' },
