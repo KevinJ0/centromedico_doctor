@@ -1,38 +1,41 @@
-# Centro Médico Doctor
+# Centro Médico — Panel de administración (`centromedico_doctor`)
 
-Bienvenido al repositorio del proyecto **Centro Médico Doctor**. Este proyecto es una aplicación web diseñada para gestionar las operaciones de un centro médico, incluyendo la gestión de citas, pacientes, médicos y otros servicios relacionados.
+Backend y panel de administración del ecosistema **Centro Médico**: una aplicación integral para la gestión de un centro médico dominicano.
+
+| Repositorio | Rol |
+| --- | --- |
+| [`centromedico_database`](https://github.com/KevinJ0/centromedico_database) | Capa de datos central (EF Core, 30 entidades) |
+| [`centromedico_doctor`](https://github.com/KevinJ0/centromedico_doctor) | **Este repositorio**: API de administración + panel web |
+| [`centromedico_cliente`](https://github.com/KevinJ0/centromedico_cliente) | Portal público para pacientes + API |
 
 ## Características
 
-- **Gestión de Pacientes**: Permite registrar, actualizar y eliminar información de pacientes.
-- **Gestión de Médicos**: Facilita la administración de los perfiles de los médicos, sus especialidades y horarios.
-- **Programación de Citas**: Los pacientes pueden programar, reprogramar o cancelar citas médicas.
-- **Historial Médico**: Acceso al historial de consultas y tratamientos de los pacientes.
-- **Notificaciones**: Envía recordatorios y notificaciones tanto a pacientes como a médicos sobre citas y otros eventos importantes.
+- **Autenticación y roles**: ASP.NET Identity + JWT Bearer. Roles Doctor / Secretary / Patient, con autorización por recurso (cada médico solo accede a su consultorio).
+- **Tiempo real sobre la base de datos**: `SqlTableDependency` detecta cambios en `Citas`, `Turnos` y `Pacientes` y los propaga por **SignalR** a grupos por médico/secretario.
+- **Agenda inteligente**: horarios por slot, duración de consulta configurable, feriados, bloque de almuerzo y generación automática de turnos con código de verificación único.
+- **Gestión clínica y operativa**: pacientes, citas, laboratorio, cobros con cobertura de seguros, reportes y estado de cuenta.
+- **Notificaciones**: emails transaccionales con plantilla HTML vía **MailKit** (con reintentos resilientes con **Polly**); notificaciones por **WhatsApp (Twilio)**.
+- **Archivos**: fotos de perfil de médicos y pacientes en **AWS S3**.
+- **API documentada**: Swagger/OpenAPI con comentarios XML.
 
-## Tecnologías Utilizadas
+## Stack
 
-- **Backend**: ASP.NET Core
-- **Frontend**: Angular
-- **Base de Datos**: SQL Server
-- **Control de Versiones**: Git
+- **Backend**: ASP.NET Core 5 (Web API) + Entity Framework Core 5 + AutoMapper
+- **Frontend**: Angular 14 + Angular Material + Bootstrap
+- **Datos**: SQL Server (modelo central en `centromedico_database`)
 
-## Requisitos del Sistema
+## Estructura
 
-- .NET Core SDK 3.1 o superior
-- Node.js v14 o superior
-- Angular CLI
-- SQL Server 2017 o superior
-- Git
+```
+CentromedicoDoctor/    # API + ClientApp (Angular)
+Doctor.Repository/     # Repositorios (data access)
+Doctor.DTO/            # Objetos de transferencia de datos
+```
 
-## Instalación
-
-1. **Clonar el repositorio**:
-
-   ```bash
-   git clone https://github.com/KevinJ0/centromedico_doctor.git
-   ```
 ## Demostración
 
-[Ver Demo en YouTube](https://youtu.be/lxWGj7Vem54)
+[Ver demo en YouTube](https://youtu.be/lxWGj7Vem54)
 
+## Configuración
+
+> ⚠️ **Seguridad**: este repositorio es **público**. No uses credenciales reales en `appsettings.json` — muévelas a variables de entorno, *User Secrets* o un gestor de secretos, y rota cualquier llave que haya sido expuesta.
